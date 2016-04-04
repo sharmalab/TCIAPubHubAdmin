@@ -2,12 +2,14 @@ var React = require("react");
 var ReactDOM = require("react-dom");
 var Dropzone = require("react-dropzone");
 var jQuery = require("jquery");
+var async = require("async");
+var superagent = require("superagent");
 
 window.jQuery = jQuery;
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
-    url = url.toLowerCase(); // This is just to avoid case sensitiveness  
+    //url = url.toLowerCase(); // This is just to avoid case sensitiveness  
     name = name.replace(/[\[\]]/g, "\\$&").toLowerCase();// This is just to avoid case sensitiveness for query parameter name
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
         results = regex.exec(url);
@@ -17,7 +19,7 @@ function getParameterByName(name, url) {
 }
 
 
-
+/*
 var ResourceInfo = React.createClass({
     getInitialState: function(){
         return ({url: "", name: "", description: "" });
@@ -134,10 +136,11 @@ var ResourceSelector = React.createClass({
         );
     }
 });
+*/
 
 var AddResourcePanel = React.createClass({
     getInitialState: function() {
-        return {resources :[], type: "", info: {}, selectType:""};
+        return {resources :[], type: "", info: {}, selectType:"", files: {}};
     },
     showResources: function(e){
         e.preventDefault();
@@ -145,15 +148,15 @@ var AddResourcePanel = React.createClass({
     getResourceInfo: function(type, info){
         //console.log("Parent: "+type + val);
         //console.log({
-        console.log(type, info);
-        console.log("getting resources");
-        console.log(this.state.resources);
+        //console.log(type, info);
+        //console.log("getting resources");
+        //console.log(this.state.resources);
         var resources = this.state.resources;
         this.setState({"type": type, "info": info, resources: resources});
     },
     addResource: function(e) {
         e.preventDefault();
-        console.log("adding resource");
+        //console.log("adding resource");
         var resources = this.state.resources.slice();
         var type = this.state.selectType;
         var info = {
@@ -162,24 +165,32 @@ var AddResourcePanel = React.createClass({
             resourceName: this.state.resourceName,
             resourceDescription: this.state.resourceDescription
         };
-        console.log("still inside addResource");
+        var files = this.state.files;
+        if(type == "file"){
+            var obj = {};
+            obj[info.resourceData.name] = info.resourceData;
+            //files.push(obj);
+            //info.resourceData = info.resourceData.name;
+
+        }
+        //console.log("still inside addResource");
         var new_resource = {"type": type, "info": info};
         resources.push(new_resource);
-        this.props.sendResourcesToParent(resources);
-        this.setState({resources: resources});
+        this.props.sendResourcesToParent(resources, files);
+        this.setState({resources: resources, files: files, selectType: "", name: "", description: ""});
     },
     deleteResource: function(id){
         var index = id-1;
-        console.log(this.state);
+        //console.log(this.state);
         var resources = this.state.resources;
         resources.splice(index, 1);
         this.setState({resources: resources});
     },
     handleSelectResourceType: function(e){
-        console.log(e);
+        //console.log(e);
         //var self = this;
 		//console.log(this.state.type);
-        console.log(e.target.value);	
+        //console.log(e.target.value);	
         //this.props.resourceType(e.target.value);
         this.setState({selectType: e.target.value});
     },
@@ -188,9 +199,11 @@ var AddResourcePanel = React.createClass({
         this.setState({resourceData: e.target.value});
     },
     handleFile: function(f) {
-        var file = f[0]; 
-        this.props.resourceInfoToSelector({"resourceData": file});
-        this.setState({file: file});
+        var file = f[0];
+        //console.log(file);
+        //this.props.resourceDataToSelector({"resourceData", file
+        //this.props.resourceInfoToSelector({"resourceData": file});
+        this.setState({resourceData: file, fileName: file.fileName});
     },
     handleName: function(e){
         //console.log(e.target.value);
@@ -266,15 +279,14 @@ var AddResourcePanel = React.createClass({
             return (
             <li className="list-group-item" key={id}> 
 
-                <span className="resourceType">{res.type} </span>
-                {
-                    res.type == "file"
-                    ?
-                         <span>{res.val.resourceName} </span>
-                    :
-                        <span>{res.info.resourceData}</span>
-                }
-                   <span className="resourceDelete" aria-hidden="true" onClick={self.deleteResource.bind(self,id)} title="Delete resource">⛔ </span>
+                <h5 className="list-group-item-heading">{res.info.resourceName} </h5>
+                <div className="row">
+                <p className="small" className="col-md-10">
+                    {res.info.resourceDescription}
+                </p>
+                   <span className="resourceDelete col-md-1" aria-hidden="true" onClick={self.deleteResource.bind(self,id)} title="Delete resource"><span className="glyphicon glyphicon-remove"></span>
+                   </span>
+                </div>
 
 
             </li>
@@ -284,7 +296,7 @@ var AddResourcePanel = React.createClass({
 			<div>
             {
                 resources.length ?
-                    <label> Resources </label>
+                    <label>Added Resources: </label>
                 : 
                     <div />
             }
@@ -300,72 +312,242 @@ var AddResourcePanel = React.createClass({
     }
 });
 
+function isInArray(value, array) {
+      return array.indexOf(value) > -1;
+}
+
 var OldResources = React.createClass({
     getInitialState: function(){
-        return {resources: null};
+        return {resources: [], selectedResources: []};
     },
     componentDidMount: function(){
         var self = this;
         var url = window.location.href;
         var doi = getParameterByName("doi", url);
-
+        
         //var getRes = "http://localhost:3000/api/getResourcesForDOI?doi="+encodeURI(doi);
         //console.log(getRes);
-        var getURL = "http://localhost:3000/api/getResourcesForDOI?doi=http://dx.doi.org/10.5072/FK22014JdnHkevY";
+        var getURL = "http://localhost:3000/api/getResourcesForDOI?doi="+doi;
         jQuery.get(getURL, function(data){
+
             //console.log(data.doi[0]);
-            var resources = data.doi[0].resources;
+            var resources = data;
+            console.log(data);
+            console.log(resources);
             //console.log(resources);
             self.setState({resources: resources});
         });
     },
+    handleCheck: function(e){
+        var resourceID = e.target.value;
+        var resources = this.state.selectedResources;
+        var pos = resources.indexOf(resourceID);
+        
+
+        if(pos > -1){
+            //Remove if exists
+            resources.splice(pos,1);
+        } else {
+            //Add if doesnt exists
+            resources.push(resourceID);
+        }
+        //console.log(resources);
+        this.props.sendResourcesToParent(resources);
+        this.setState({selectedResources: resources});
+        //console.log(e.target.value); 
+    },
     render: function(){
         var self = this;
         var ResourceList = <div />;
+
+        
+        //console.log(self.state.resources);
         if(self.state.resources){
             var id = 0;
             ResourceList = self.state.resources.map(function(resource){
                 id++;
-                console.log(resource);
+                //console.log(resource);
+                if(resource.resourceID){
+                   // console.log(resource.resourceID);
+
                 return <li className="list-group-item" key={id}>
 							<div className="checkbox">
 							<label>
-							<input type="checkbox" id="cbox1" />
-							{resource.type}
+							<input type="checkbox" id="cbox1" onClick={self.handleCheck} value={resource.resourceID}/>
+							<h5 className="list-group-item-heading">{resource.info.resourceName}</h5>
+                            <p className="list-group-item-text small">
+                                {resource.info.resourceDescription}
+                            </p>
+
 							</label>
 							</div>
                         </li>;
+                } else
+                    return <div key={id}/>;
             });
         }
-        return(<div className="list-group">
-        {
-				
-				ResourceList
-			}
-			</div>
-		);
+        if(self.state.resources.length){
+            
+            console.log(self.state.resources.length);
+            console.log(self.state.resources);
+            return(
+                <div>
+                    <h5>Older resources </h5>
+                    <div className="previousResources">
+
+                        <div className="list-group">
+
+                            {ResourceList}
+                        </div>
+                    </div>
+                </div>
+		    );
+        } else {
+            return <div />;
+        }
     }
 
 });
 
 var App = React.createClass({
-    getResources: function(resources){
-        
+    getInitialState: function(){
+        return {
+            "previousResources": [],
+            "addedResources": [],
+            "files":[]
+        };
+    },
+    getResources: function(resources, files){
+        var self  = this; 
         //console.log("in App");
         //console.log(resources);
-        //self.setState({"addedResources": resources});
+        self.setState({"addedResources": resources, "files" :files});
     },
-    onSubmit: function(){  
+    getOldResources: function(resources){
+        var self  = this; 
+        //console.log("in App");
+        //console.log(resources);
+        self.setState({"previousResources": resources});
+    },
+    onSubmit: function(e){  
+        var self = this;
         //Get a list of all the resources that were selected from previous version
         //
-        var previousResource = [];
+        var previousResources = self.state.previousResources;
 
         //Get a list of new added resources
         var addedResources = self.state.addedResources;
+        var resources = {};
 
+            
         
+        
+        console.log(payLoad);
+
+        var ver_req = superagent.post("/api/uploadFile");
+
+        var files = [];
+        for(var i in addedResources){
+            var resource = (addedResources[i]);
 
 
+            console.log(resource);
+            console.log(self.state.files);
+            if(resource.type == "file"){
+                var obj = {};
+                console.log(resource.info.resourceData);
+                files.push({
+                    "fileName": resource.info.resourceData.name,
+                    "file": resource.info.resourceData
+                });
+
+                //obj[resource.info.resourceData.name] = resource.info.resourceData;
+                //files.push(obj);
+                resource.info.resourceData = resource.info.resourceData.name;
+                addedResources[i] = resource; 
+                //ver_req.attach(resource.info.resourceData, 
+            }
+            console.log(addedResources);
+            console.log(files);
+        }
+
+        resources.previousResources = previousResources;
+        resources.addedResources = addedResources;
+        //var resources = previousResources.concat(addedResources);
+        resources.doi = self.state.doi;
+
+        var payLoad = resources;
+        console.log(payLoad);
+        ver_req.field("resources", JSON.stringify(payLoad));
+        //ver_req.field("addedResources", JSON.stringify(addedResources));
+        //ver_req.field("previousResources", JSON.stringify(previousResources));
+
+        for(var i in files){
+            var file = files[i];
+            ver_req.attach(file.fileName, file.file);
+        }
+
+        ver_req.end(function(){
+            console.log("Done uploaded files");
+        }).on("progress", function(e){
+            console.log(e.percent);
+        }); 
+        /*
+        jQuery.ajax({
+            type: "POST", 
+            url: "/api/createVersion", 
+            data: payLoad,
+            success: function(res){
+                console.log(res);
+                /*
+                var returnedResources = res.resources;
+                var files = [];
+                for(var rr in addedResources){
+                    var returnedResource = addedResources[rr];
+                    console.log(returnedResource);
+                    //console.log(returnedResource[0]);
+                    if(returnedResource.type == "file"){
+                        //upload file
+                        files.push(returnedResource);
+                       
+
+                    }
+                }
+                
+                console.log(files);
+                async.each(files, function(file, callback){
+                    console.log("Post: ");
+                    console.log(file);
+                    console.log(self.state.files);   
+                    var f = file.info.resourceData;
+                    console.log(f);
+                    console.log("posting file onto server");
+                    var file_req = superagent.post("/api/uploadFile");
+                    console.log(f.name);
+                    file_req.attach(f.name, f);
+                    file_req.end(function(){
+                        console.log("upload complete");
+                        callback();
+                    }).on("progress", function(e){
+                        console.log("sending file");
+                    });
+                  
+                }, function(err){
+                    console.log("Done!");
+                });
+                //console.log("SENT!");
+     
+            },
+            dataType: "json"
+        });
+        */
+        //dfasdf
+
+    },
+    componentDidMount: function(){
+        var url = window.location.href;
+        var doi = getParameterByName("doi", url);
+        this.setState({doi: doi});        
     },
     render: function() {
         var self = this;
@@ -375,15 +557,17 @@ var App = React.createClass({
                 <img src="images/tcia_logo_dark_sml.png"/>
             </div>
             <div className="container col-md-6 col-offset-3" id="main">
-                <h3 id="headline"> Create Version</h3>
+                <div className="row" style={{"paddingLeft": "20px"}}>
+                    <a href="/" >Dashboard</a>
+                </div>
+                <h3 id="headline"> Add Resources</h3>
 				{
 
 				}
                 <div className="panel panel-default">
                     <div className="panel-body">
-                        <h4> Data </h4>
-						
-                        <OldResources />
+                       						
+                        <OldResources sendResourcesToParent={self.getOldResources}/>
                         <AddResourcePanel sendResourcesToParent={self.getResources}/>
                     </div>
                 </div>

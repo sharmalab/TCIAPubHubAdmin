@@ -1,8 +1,10 @@
 module.exports = {
     entry: {
-        all: "./public/javascripts/src/App.jsx",
+        index: "./public/javascripts/src/Index.jsx",
+        create: "./public/javascripts/src/Create.jsx",
         one: "./public/javascripts/src/One.jsx",
-        version: "./public/javascripts/src/Version.jsx"
+        version: "./public/javascripts/src/Version.jsx",
+        edit: "./public/javascripts/src/Edit.jsx"
     },
     output: {
         filename: "./public/javascripts/browserify/[name].entry.js"

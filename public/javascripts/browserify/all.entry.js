@@ -84,13 +84,16 @@
 	        //
 	        jQuery.ajax({
 	            type: "POST",
-	            url: "/submitDOI",
+	            url: "/api/createDOI",
 	            data: JSON.stringify(postData),
-	            success: function success(err, res) {
-	                console.log(err);
+	            success: function success(res) {
+	                //console.log(err);
 	                console.log(res);
 	                console.log("Submitted!");
-	                window.location.href = 'http://localhost:3000';
+
+	                var redir_doi = res.doi;
+	                console.log(redir_doi);
+	                window.location.href = 'http://localhost:3000/createResources?doi=' + redir_doi;
 	            },
 	            dataType: "json",
 	            contentType: "application/json"
@@ -135,7 +138,7 @@
 	                            null,
 	                            "Description"
 	                        ),
-	                        React.createElement("textarea", { name: "description", className: "form-control" })
+	                        React.createElement("textarea", { name: "description", className: "form-control", placeholder: "Description(Markdown supported)" })
 	                    ),
 	                    React.createElement(
 	                        "div",
@@ -145,25 +148,7 @@
 	                            null,
 	                            "Authors"
 	                        ),
-	                        React.createElement(
-	                            "div",
-	                            { className: "input-group" },
-	                            React.createElement(
-	                                "div",
-	                                null,
-	                                Authors
-	                            ),
-	                            React.createElement("br", null),
-	                            React.createElement(
-	                                "div",
-	                                { className: "input-group-btn" },
-	                                React.createElement(
-	                                    "button",
-	                                    { className: "btn btn-primary", onClick: self.addAuthors },
-	                                    "+"
-	                                )
-	                            )
-	                        )
+	                        React.createElement("input", { type: "text", placeholder: "Authors(semicolon seperated)", name: "authors", className: "form-control" })
 	                    ),
 	                    React.createElement(
 	                        "div",
@@ -193,7 +178,7 @@
 	                            null,
 	                            "References: "
 	                        ),
-	                        React.createElement("textarea", { name: "references", className: "form-control" })
+	                        React.createElement("textarea", { name: "references", className: "form-control", placeholder: "References(Markdown supported)" })
 	                    )
 	                )
 	            ),

@@ -34,13 +34,16 @@ var Form = React.createClass({
         //
         jQuery.ajax({
             type: "POST",
-            url: "/submitDOI",
+            url: "/api/createDOI",
             data: JSON.stringify(postData),
-            success: function(err, res) {
-                console.log(err);
+            success: function(res) {
+                //console.log(err);
                 console.log(res);
                 console.log("Submitted!");
-                window.location.href='http://localhost:3000';
+                
+                var redir_doi = res.doi;
+                console.log(redir_doi);
+                window.location.href='http://localhost:3000/createResources?doi='+redir_doi;
             },
             dataType: "json",
             contentType: "application/json"
@@ -67,19 +70,11 @@ var Form = React.createClass({
                     </div>
                     <div className="form-group">
                         <label>Description</label>
-                        <textarea name="description" className="form-control"></textarea>
+                        <textarea name="description" className="form-control" placeholder="Description(Markdown supported)"></textarea>
                     </div>
                     <div className="form-group">
                         <label>Authors</label>
-                        <div className="input-group">
-                            <div>
-                                {Authors}
-                            </div>
-                            <br />
-                            <div className="input-group-btn">
-                                <button className="btn btn-primary" onClick={self.addAuthors} >+</button>
-                            </div>
-                        </div>
+                        <input type="text" placeholder="Authors(semicolon seperated)" name="authors" className="form-control" />
                     </div>
                     <div className="form-group">
                         <label>Keywords: </label>
@@ -91,7 +86,7 @@ var Form = React.createClass({
                     </div>
                     <div className="form-group">
                         <label>References: </label>
-                        <textarea name="references" className="form-control"></textarea> 
+                        <textarea name="references" className="form-control" placeholder="References(Markdown supported)"></textarea> 
                     </div>
                 </div>
             </div>
@@ -117,7 +112,11 @@ var App = React.createClass({
             <div id="header">
                 <img src="images/tcia_logo_dark_sml.png"/>
             </div>
-            <div className="container col-md-6 col-offset-3" id="main">
+            <div className="container col-md-8 col-md-offset-2" id="main">
+
+                <div className="row" style={{"paddingLeft": "20px"}}>
+                    <a href="/" >Dashboard</a>
+                </div>
                 <h3 id="headline"> Create DOI</h3>
                 <Form />
             </div>

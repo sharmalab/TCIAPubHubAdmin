@@ -1,0 +1,28 @@
+[
+{
+	"resources": [
+		{
+			"type": "Gene expression data blah blah",
+			"val": "http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE28827"
+		},
+		{
+			"type": "Image Data",
+			"val": "https://wiki.cancerimagingarchive.net/download/attachments/18514298/doiJNLP-ZLXFFeX7-fixed.jnlp?version=3&modificationDate=1450738562598&api=v2"
+		}
+	],
+	"doi": "http://dx.doi.org/10.7937/K9/TCIA.2014.X7ONY6B1"
+},
+{
+	"resources": [
+		{
+			"type": "Gene expression data asdfasdfasdfasdf",
+			"val": "http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE28827"
+		},
+		{
+			"type": "Image Data",
+			"val": "https://wiki.cancerimagingarchive.net/download/attachments/18514298/doiJNLP-ZLXFFeX7-fixed.jnlp?version=3&modificationDate=1450738562598&api=v2"
+		}
+	],
+	"doi": "http://dx.doi.org/10.7937/K9/TCIA.2014.X7ONY6B1"
+}
+]

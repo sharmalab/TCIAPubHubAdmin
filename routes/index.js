@@ -4,16 +4,30 @@ var router = express.Router();
 var https = require("https");
 var http = require("http");
 
+var request = require("request");
+
 var superagent = require("superagent");
-
-var username = "apitest";
-var password = "apitest";
-var bindaas_api_key = "4fbb38a3-1821-436c-a44d-8d3bc5efd33e";
-var bindaas_post_url = "http://localhost:9099/services/test/DataLoaderApiTest/submit/json";
+var uuid = require("uuid");
+var async = require("async");
 
 
-var DOI_NAMESPACE = "10.5072/FK2";
-var URL_PREFIX = "http://localhost:3003/doi?doi=";
+var config = require("../config.js");
+
+var username = config.ezid_username;
+var password = config.ezid_password;
+var bindaas_api_key = config.bindaas_api_key;
+
+var bindaas_getAll = config.bindaas_getAll;
+var bindaas_metadataForDOI = config.bindaas_metadataForDOI;
+var bindaas_getByDoi = config.bindaas_getByDoi;
+var bindaas_deleteByDOI = config.bindaas_deleteByDOI;
+
+var bindaas_postDOIMetadata = config.bindaas_postDOIMetadata;
+
+var DOI_NAMESPACE = config.DOI_NAMESPACE
+var URL_PREFIX = config.URL_PREFIX;
+
+console.log(config);
 
 
 
@@ -21,7 +35,7 @@ var URL_PREFIX = "http://localhost:3003/doi?doi=";
 
 var makeID = function(length) {
     var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
     for(var i=0; i< length; i++){
         text += possible.charAt(Math.floor(Math.random()*possible.length));
     }
@@ -29,35 +43,72 @@ var makeID = function(length) {
 };
 
 
-router.get("/createDOIVersion", function(req, res, next){
-    res.render("version");
-});
-
 router.get("/", function(req, res, next){
-    res.json({"hello": "creator"});
+    res.render("index");
+   
 });
 
 /* GET home page. */
 router.get("/createDOI", function(req, res, next) {
 
-    res.render("index", { title: "Express" });
+    res.render("create", { title: "Express" });
 });
 
-router.get("/api/getResourcesForDOI", function(req, res, next) {
-    var doi = req.query.doi;
-    var url = "http://dragon.cci.emory.edu:9099/services/test/TCIA_DOI_RESOURCES/query/getByDoi?api_key=4fbb38a3-1821-436c-a44d-8d3bc5efd33e&doi="+doi;
-    console.log(url);
-    http.get(url, function(rres){
-        var resources = ""
-        rres.on("data", function(d){
-            resources+=d;
-        });
-        rres.on("end", function(){
-            res.json({"doi": JSON.parse(resources)});
-           
-        });
-    });
+router.get("/editDOI", function(req, res, next) {
+
+    res.render("edit", { title: "Express" });
 });
+
+
+router.get("/api/getAllDoi", function(req, res){
+    var url = bindaas_getAll + "?api_key=" + bindaas_api_key;
+    console.log(url);
+    var request = http.get(url, function(res_){
+        //res.send(res_)
+        //console.log(res_);
+
+        console.log(res_.statusCode);
+        var DOIs = "";
+        res_.on("data", function(data){
+            //console.log(data);
+            DOIs+=data;
+        });
+        console.log("...");
+        res.on("error", function(err){
+            console.log("error");
+            res.json(JSON.parse({error: err})); 
+        });
+        res_.on("end", function(){
+            //var response = JSON.parse(DOIs);
+            //console.log(data);
+            var response = DOIs;
+            console.log("....");
+            console.log(response);
+
+            
+
+            res.json(JSON.parse(response));
+        });
+
+    }).on("error", function(error){
+        console.log("error");
+        console.log(error);
+        res.status(500).send("Couldnt connect to Bindaas" + error);
+    });
+
+});
+
+var getMetadataForDOI = function(doi, callback){
+    var api_key="4fbb38a3-1821-436c-a44d-8d3bc5efd33e"; 
+    var url = bindaas_metadataForDOI + "?api_key=" + api_key + "&doi=" + doi;
+    
+    superagent.get(url)
+        .end(function(err, res){
+            metadata = JSON.parse(res.text);
+            console.log(res.text);
+            callback(metadata);
+        });
+}
 
 function getFormData(serializedArray){
     var unindexed_array = serializedArray;
@@ -68,27 +119,88 @@ function getFormData(serializedArray){
     return indexed_array;
 }
 
-router.post("/submitDOI", function(req, res) {
+
+router.get("/api/editDOI", function(req, res) {
+    //Get metadata for DOI
+    //
+
+    var doi = req.query.doi;
+    if(!doi){
+        return res.status(404).send("Required parameter 'doi' not found");
+    }
+    //var url = createUrl("/getByDoi?api_key=4fbb38a3-1821-436c-a44d-8d3bc5efd33e&doi="+doi);
+    var api_key="4fbb38a3-1821-436c-a44d-8d3bc5efd33e"; 
+    var url = bindaas_getByDoi + "?api_key=" + api_key + "&doi=" + doi;
+    console.log(url);
+    http.get(url, function(res_){
+        var DOI = "";
+        console.log(res_.statusCode);
+        res_.on("data", function(data){
+            DOI+=data;
+        });
+        res_.on("end", function(){
+            var response = DOI;
+            console.log(response);
+            return res.json(JSON.parse(response));
+        });
+    });
+}); 
+
+
+
+router.post("/api/editDOI", function(req, res) {
+    console.log("----Editing----");
+
+    //console.log(req); 
+    var metadata = req.body;
+    var api_key="4fbb38a3-1821-436c-a44d-8d3bc5efd33e"; 
+    var doi = metadata.doi;
+    var url = metadata.url
+
+    console.log(metadata);
+    console.log("....");
+    console.log(doi);
+    console.log(bindaas_deleteByDOI);
+    var del_url = bindaas_deleteByDOI + "?api_key=" + api_key+ "&doi="+doi;
+    console.log(".......");
+    
+    console.log(del_url);
+    superagent.del(del_url)
+    .end(function(err, res){
+            console.log(err);
+            console.log(res);
+            console.log("deleted metadata");
+            superagent.post(bindaas_postDOIMetadata+"?api_key="+bindaas_api_key)
+                .send(metadata)
+                .end(function(p_err, p_res){
+                    console.log("done");
+                    return res.json({"status": "done"});
+            });
+    });
+
+});
+
+
+
+
+router.post("/api/createDOI", function(req, res) {
     //console.log(req); 
     console.log("submit"); 
     var form_data = req.body.formData;
-    
     //    //console.log(form_data.authors);
     var resources = req.body.resources;
     resources = {"resources": resources}; 
     form_data = getFormData(form_data);
-    form_data.authors = form_data.authors.split(",");
-
+    form_data.authors = form_data.authors.split(";");
     console.log(form_data);
     console.log(resources);
     //createDOI
     var RAND = makeID(8); 
-    var DOI = DOI_NAMESPACE + form_data.year + RAND;
+    var DOI = "http://dx.doi.org/"+ DOI_NAMESPACE + "." + form_data.year + "."+ RAND;
     var URL = URL_PREFIX + DOI;
-
     if(1){
         form_data.url = URL;
-        form_data.doi = "http://dx.doi.org/"+DOI;
+        form_data.doi = DOI;
         
         resources.doi = form_data.doi;
         var metadata = "";
@@ -100,41 +212,30 @@ router.post("/submitDOI", function(req, res) {
         metadata += "_target: "+ URL;
         console.log(metadata);
         //Post to Bindaas
-        superagent.post("http://dragon.cci.emory.edu/services/test/TCIA_DOI_RESOURCES/submit/json?api_key="+bindaas_api_key)
-        .send(resources)
-        .end(function(resource_err, resource_res){
-        
-            if(resource_err.statusCode || ! resource_err){ 
-                superagent.post("http://dragon.cci.emory.edu/services/test/TCIA_DOI_APP/submit/json?api_key="+bindaas_api_key)
-                .send(form_data)
-                .end(function(form_err, form_res){
 
-                        if(form_err.statusCode || !form_err){
-                                
-                                //Post to EZID
-                                superagent.put("https://ezid.cdlib.org/id/doi:"+DOI)
-                                    .auth(username, password)
-                                    .set("Content-Type", "text/plain")
-                                    .send(metadata)
-                                    .end(function(err, ezid_res){
-                                        console.log(err);
-                                        console.log(ezid_res.statusCode);
-                                        return res.json({"woot": "woot"});
-                                    });
-               
-                        }
-                        else {
-                            return res.json({"error": form_err});
-                        }
+        superagent.post(bindaas_postDOIMetadata+ "?api_key="+bindaas_api_key)
+        .send(form_data)
+        .end(function(form_err, form_res){
 
-                });
-            } else {
-                return res.json({"error": resource_err});
-            }
+                if(form_err.statusCode || !form_err){
+                        
+                        //Post to EZID
+                        superagent.put("https://ezid.cdlib.org/id/doi:"+DOI)
+                            .auth(username, password)
+                            .set("Content-Type", "text/plain")
+                            .send(metadata)
+                            .end(function(err, ezid_res){
+                                console.log(err);
+                                console.log(ezid_res.statusCode);
+                                return res.json({"doi": DOI});
+                            });
+       
+                }
+                else {
+                    return res.json({"error": form_err});
+                }
+
         });
-
-    } else {
-        return res.json({"error": "Required fields missing"});
     }
 });
 

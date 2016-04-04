@@ -1,0 +1,15 @@
+[{
+  "doi": "http://dx.doi.org/10.7937/K9/TCIA.2015.3BPe5wRq",
+  "description": "This dataset pertains to 74 cases from the GBM dataset on which spatial pattern analysis was performed. Spatial Habitat Features derived from Multiparametric Magnetic Resonance Imaging data are associated with Molecular Subtype and 12-month Survival Status in Glioblastoma Multiforme",
+  "title": "Spatial Habitat Features derived from Multiparametric Magnetic Resonance Imaging data from Glioblastoma Multiforme cases",
+  "references": "hi",
+  "doi_url": "http://localhost:3003/doi?doi=10.7937/K9/TCIA.2015.3BPe5wRq",
+  "authors": ["Joonsang Lee", "Shivali Narang", "Juan Martinez", "Ganesh Rao", "Arvind Rao"]
+}, {
+  "doi": "http://dx.doi.org/10.7937/K9/TCIA.2015.1BUVFJR7",
+  "description": "This dataset (also known as the “moist run” among QIN sites) contains CT images (41 total scans) of non-small cell lung cancer from: the Reference Image Database to Evaluate Therapy Response (RIDER), the Lung Image Database Consortium (LIDC), patients from Stanford University Medical Center and the Moffitt Cancer Center, and the Columbia University/FDA Phantom. In addition, 3 academic institutions (Columbia, Stanford, Moffitt-USF) each ran their own segmentation algorithm on a total of 52 tumor volumes.  Segmentations were performed 3 different times with different initial conditions, resulting in 9 segmentations formatted as DICOM Segmentation Objects (DSOs) for each tumor volume, for a total of 468 segmentations. This collection may be useful for designing and comparing competing segmentation algorithms, for establishing acceptable ranges of variability in volume and segmentation borders, and for developing algorithms for creating cancer biomarkers from features computed from the segmented tumors and their environments.",
+  "title": "QIN multi-site collection of Lung CT data with Nodule Segmentations",
+  "references": "a",
+  "doi_url": "http://localhost:3003/doi?doi=10.7937/K9/TCIA.2015.1BUVFJR7",
+  "authors": ["Jayashree Kalpathy-Cramer", "Sandy Napel", "Dmitry Goldgof", "Binsheng Zhao"]
+}]

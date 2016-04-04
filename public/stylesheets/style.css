@@ -8,6 +8,10 @@ a {
   color: #00B7FF;
 }
 
+textarea{
+    resize: vertical;
+}
+
 .doiSummary{
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -19,7 +23,7 @@ a {
 }
 #headline {
     text-align: center;
-    padding: 30px 20px;
+    padding: 10px 10px;
 }
 #header{
     background: url("/images/grunge-blueall2-tcia.jpg");
@@ -56,7 +60,7 @@ a {
     margin-top: -4px;
 }
 #main{
-    padding: 40px;
+    padding: 10px;
     margin: 0 auto;
     float: none;   
 }
@@ -66,4 +70,13 @@ a {
     padding: 9px;
     margin: 18px 0;
 }
+.previousResources{
+    max-height: 300px;
+    overflow-y: scroll;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;   
+}
 
+.resource_admin_buttons button{
+    margin-right: 10px;
+}

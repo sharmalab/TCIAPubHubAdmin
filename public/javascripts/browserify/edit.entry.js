@@ -48,12 +48,8 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var Dropzone = __webpack_require__(166);
 	var jQuery = __webpack_require__(159);
-	var async = __webpack_require__(168);
 	var superagent = __webpack_require__(160);
-
-	window.jQuery = jQuery;
 
 	function getParameterByName(name, url) {
 	    if (!url) url = window.location.href;
@@ -66,604 +62,243 @@
 	    return decodeURIComponent(results[2].replace(/\+/g, " "));
 	}
 
-	/*
-	var ResourceInfo = React.createClass({
-	    getInitialState: function(){
-	        return ({url: "", name: "", description: "" });
-	    },
-	    handleURL: function(e) {
-	        this.props.resourceInfoToSelector({"resourceData": e.target.value});
-	        this.setState({url: e.target.value});
-	    },
-	    handleFile: function(f) {
-	        var file = f[0]; 
-	        this.props.resourceInfoToSelector({"resourceData": file});
-	        this.setState({file: file});
-	    },
-	    handleName: function(e){
-	        //console.log(e.target.value);
-	        this.props.resourceInfoToSelector({"resourceName": e.target.value});
-	        this.setState({name: e.target.value});
-	    },
-	    handleDescription: function(e){
-	        this.props.resourceInfoToSelector({"resourceDescription": e.target.value});
-	        this.setState({description: e.target.value});
-	    },
-	    render: function() {
-	        var type = this.props.type;
-	        var self = this;
-	        var ResourceSpecificFields = <div />;
-	        //this.setState({type: type});
-	        if(type == ""){
-	            ResourceSpecificFields= <div />;
-	        } else if(type == "url") {
-	            ResourceSpecificFields = (
-	                <div>
-	                    <label>URL: </label>
-	                    <input type="text" value={self.state.url} onChange={self.handleURL} className="form-control"/>
-	                </div>
-	            );
-	        } else if(type == "file") {
-	            ResourceSpecificFields = (
-	            <div>
-	                <Dropzone style={{width: "100%", height: "60px", padding: "10px", border: "1px dashed #333"}} onDrop={this.handleFile}>
-	                    <div> Drop file here </div>
-	                </Dropzone>
-	            </div>
-	            );
-	        }
-
-	        return (
-	            <div>
-	                {self.props.type ?
-	                <div>
-	                    <div className="form-group">
-	                        <label>Resource Name: </label>
-	                        <input type="text" value={self.state.name} onChange={self.handleName} className="form-control" />
-	                    </div>
-	                    <div className="form-group">
-	                        <label>Resource Description: </label>
-	                        <textarea value={self.state.description} onChange={self.handleDescription} className="form-control" >
-	                        </textarea>
-	                    </div>
-	                    {ResourceSpecificFields}
-	                </div>
-	                :
-	                 <div />
-	                }
-	            </div>
-	        );
-	    }
-	});
-
-	var ResourceSelector = React.createClass({
-	    getInitialState: function() {
-	        return {type: "", resourceInfo: {}};
-	    },
-	    handleSelect: function(e) { 
-	        console.log(e);
-	        //var self = this;
-			//console.log(this.state.type);
-	        console.log(e.target.value);	
-	        //this.props.resourceType(e.target.value);
-	        this.setState({type: e.target.value});
-	    },
-	    getResourceInfo: function(info) {
-	        //console.log(info);    
-	        var resourceInfo = this.state.resourceInfo;
-	        //console.log(resourceInfo)
-	        //resourceInfo["info"] = info;
-	        jQuery.extend(resourceInfo, info);
-	        //console.log(resourceInfo);
-	        this.props.getResourceInfo(this.state.type, resourceInfo);
-	        this.setState({resourceInfo: resourceInfo});
-	    },
-	    onURL: function(e){
-	        //console.log(e);
-	       // this.setState({url: e.target.value});
-	    },
-	    render: function(){
-	        var self = this;
-	        //console.log(this.state.type);
-	        return(
-			<div>
-				<div className="form-group">
-	                <label htmlFor="sel1">Select Type:</label>
-	                <select className="form-control" id="sel1" onChange={self.handleSelect} value={self.state.type}>
-	                    <option></option>
-	                    <option value="url" >URL</option>
-	                    <option value="image">Image</option>
-	                    <option value="file" >File</option>
-	                </select>
-				</div>	
-	            <div className="form-group">
-	                <ResourceInfo type={self.state.type} resourceInfoToSelector={self.getResourceInfo}/>
-	            </div>
-			</div>
-	        );
-	    }
-	});
-	*/
-
-	var AddResourcePanel = React.createClass({
-	    displayName: "AddResourcePanel",
+	var Form = React.createClass({
+	    displayName: "Form",
 
 	    getInitialState: function getInitialState() {
-	        return { resources: [], type: "", info: {}, selectType: "", files: {} };
-	    },
-	    showResources: function showResources(e) {
-	        e.preventDefault();
-	    },
-	    getResourceInfo: function getResourceInfo(type, info) {
-	        //console.log("Parent: "+type + val);
-	        //console.log({
-	        //console.log(type, info);
-	        //console.log("getting resources");
-	        //console.log(this.state.resources);
-	        var resources = this.state.resources;
-	        this.setState({ "type": type, "info": info, resources: resources });
-	    },
-	    addResource: function addResource(e) {
-	        e.preventDefault();
-	        //console.log("adding resource");
-	        var resources = this.state.resources.slice();
-	        var type = this.state.selectType;
-	        var info = {
-
-	            resourceData: this.state.resourceData,
-	            resourceName: this.state.resourceName,
-	            resourceDescription: this.state.resourceDescription
+	        return {
+	            authors: ["#"],
+	            metadata: {
+	                "description": "",
+	                "keywords": "",
+	                "references": "",
+	                "year": "",
+	                "title": ""
+	            }
 	        };
-	        var files = this.state.files;
-	        if (type == "file") {
-	            var obj = {};
-	            obj[info.resourceData.name] = info.resourceData;
-	            //files.push(obj);
-	            //info.resourceData = info.resourceData.name;
-	        }
-	        //console.log("still inside addResource");
-	        var new_resource = { "type": type, "info": info };
-	        resources.push(new_resource);
-	        this.props.sendResourcesToParent(resources, files);
-	        this.setState({ resources: resources, files: files, selectType: "", name: "", description: "" });
 	    },
-	    deleteResource: function deleteResource(id) {
-	        var index = id - 1;
-	        //console.log(this.state);
-	        var resources = this.state.resources;
-	        resources.splice(index, 1);
-	        this.setState({ resources: resources });
-	    },
-	    handleSelectResourceType: function handleSelectResourceType(e) {
-	        //console.log(e);
-	        //var self = this;
-	        //console.log(this.state.type);
-	        //console.log(e.target.value);	
-	        //this.props.resourceType(e.target.value);
-	        this.setState({ selectType: e.target.value });
-	    },
-	    handleURL: function handleURL(e) {
-	        //this.props.resourceInfoToSelector({"resourceData": e.target.value});
-	        this.setState({ resourceData: e.target.value });
-	    },
-	    handleFile: function handleFile(f) {
-	        var file = f[0];
-	        //console.log(file);
-	        //this.props.resourceDataToSelector({"resourceData", file
-	        //this.props.resourceInfoToSelector({"resourceData": file});
-	        this.setState({ resourceData: file, fileName: file.fileName });
-	    },
-	    handleName: function handleName(e) {
-	        //console.log(e.target.value);
-	        //this.props.resourceInfoToSelector({"resourceName": e.target.value});
-	        this.setState({ resourceName: e.target.value });
-	    },
-	    handleDescription: function handleDescription(e) {
-	        //this.props.resourceInfoToSelector({"resourceDescription": e.target.value});
-	        this.setState({ resourceDescription: e.target.value });
-	    },
-	    render: function render() {
-	        var self = this;
-	        var resources = self.state.resources;
-	        var selectType = self.state.selectType;
-	        var id = 0;
-	        var ResourceSpecificFields = React.createElement("div", null);
-	        if (selectType == "") {
-	            ResourceSpecificFields = React.createElement("div", null);
-	        } else if (selectType == "url") {
-	            ResourceSpecificFields = React.createElement(
-	                "div",
-	                null,
-	                React.createElement(
-	                    "label",
-	                    null,
-	                    "URL: "
-	                ),
-	                React.createElement("input", { type: "text", value: self.state.url, onChange: self.handleURL, className: "form-control" })
-	            );
-	        } else if (selectType == "file") {
-	            ResourceSpecificFields = React.createElement(
-	                "div",
-	                null,
-	                React.createElement(
-	                    Dropzone,
-	                    { style: { width: "100%", height: "60px", padding: "10px", border: "1px dashed #333" }, onDrop: this.handleFile },
-	                    React.createElement(
-	                        "div",
-	                        null,
-	                        " Drop file here "
-	                    )
-	                )
-	            );
-	        }
 
-	        var ResourceSelector = React.createElement(
-	            "div",
-	            null,
-	            React.createElement(
-	                "div",
-	                { className: "form-group" },
-	                React.createElement(
-	                    "label",
-	                    { htmlFor: "sel1" },
-	                    "Select Type:"
-	                ),
-	                React.createElement(
-	                    "select",
-	                    { className: "form-control", id: "sel1", onChange: self.handleSelectResourceType, value: self.state.selectType },
-	                    React.createElement("option", null),
-	                    React.createElement(
-	                        "option",
-	                        { value: "url" },
-	                        "URL"
-	                    ),
-	                    React.createElement(
-	                        "option",
-	                        { value: "image" },
-	                        "Image"
-	                    ),
-	                    React.createElement(
-	                        "option",
-	                        { value: "file" },
-	                        "File"
-	                    )
-	                )
-	            ),
-	            React.createElement(
-	                "div",
-	                { className: "form-group" },
-	                React.createElement(
-	                    "div",
-	                    null,
-	                    self.state.selectType ? React.createElement(
-	                        "div",
-	                        null,
-	                        React.createElement(
-	                            "div",
-	                            { className: "form-group" },
-	                            React.createElement(
-	                                "label",
-	                                null,
-	                                "Resource Name: "
-	                            ),
-	                            React.createElement("input", { type: "text", value: self.state.name, onChange: self.handleName, className: "form-control" })
-	                        ),
-	                        React.createElement(
-	                            "div",
-	                            { className: "form-group" },
-	                            React.createElement(
-	                                "label",
-	                                null,
-	                                "Resource Description: "
-	                            ),
-	                            React.createElement("textarea", { value: self.state.description, onChange: self.handleDescription, className: "form-control" })
-	                        ),
-	                        ResourceSpecificFields
-	                    ) : React.createElement("div", null)
-	                )
-	            )
-	        );
-
-	        var Resources = resources.map(function (res) {
-	            id++;
-	            return React.createElement(
-	                "li",
-	                { className: "list-group-item", key: id },
-	                React.createElement(
-	                    "h5",
-	                    { className: "list-group-item-heading" },
-	                    res.info.resourceName,
-	                    " "
-	                ),
-	                React.createElement(
-	                    "div",
-	                    { className: "row" },
-	                    React.createElement(
-	                        "p",
-	                        { className: "small", className: "col-md-10" },
-	                        res.info.resourceDescription
-	                    ),
-	                    React.createElement(
-	                        "span",
-	                        { className: "resourceDelete col-md-1", "aria-hidden": "true", onClick: self.deleteResource.bind(self, id), title: "Delete resource" },
-	                        React.createElement("span", { className: "glyphicon glyphicon-remove" })
-	                    )
-	                )
-	            );
-	        });
-	        return React.createElement(
-	            "div",
-	            null,
-	            resources.length ? React.createElement(
-	                "label",
-	                null,
-	                "Added Resources: "
-	            ) : React.createElement("div", null),
-	            React.createElement(
-	                "ul",
-	                { className: "list-group" },
-	                Resources
-	            ),
-	            ResourceSelector,
-	            React.createElement(
-	                "button",
-	                { className: "btn btn-success", onClick: self.addResource },
-	                " Add Resource "
-	            )
-	        );
-	    }
-	});
-
-	function isInArray(value, array) {
-	    return array.indexOf(value) > -1;
-	}
-
-	var OldResources = React.createClass({
-	    displayName: "OldResources",
-
-	    getInitialState: function getInitialState() {
-	        return { resources: [], selectedResources: [] };
-	    },
 	    componentDidMount: function componentDidMount() {
 	        var self = this;
 	        var url = window.location.href;
 	        var doi = getParameterByName("doi", url);
 
-	        //var getRes = "http://localhost:3000/api/getResourcesForDOI?doi="+encodeURI(doi);
-	        //console.log(getRes);
-	        var getURL = "http://localhost:3000/api/getResourcesForDOI?doi=" + doi;
-	        jQuery.get(getURL, function (data) {
-
-	            //console.log(data.doi[0]);
-	            var resources = data;
+	        var url = "/api/editDOI" + "?doi=" + doi;
+	        console.log(url);
+	        superagent.get(url).end(function (err, data) {
+	            console.log("Data...");
+	            console.log(JSON.parse(data.text));
+	            var data = JSON.parse(data.text)[0];
 	            console.log(data);
-	            console.log(resources);
-	            //console.log(resources);
-	            self.setState({ resources: resources });
+	            self.setState({ metadata: data });
 	        });
 	    },
-	    handleCheck: function handleCheck(e) {
-	        var resourceID = e.target.value;
-	        var resources = this.state.selectedResources;
-	        var pos = resources.indexOf(resourceID);
+	    getResources: function getResources(resources) {
+	        console.log("main form");
+	        console.log(resources);
+	        this.setState({ resources: resources });
+	    },
+	    addAuthors: function addAuthors(e) {
 
-	        if (pos > -1) {
-	            //Remove if exists
-	            resources.splice(pos, 1);
-	        } else {
-	            //Add if doesnt exists
-	            resources.push(resourceID);
-	        }
-	        //console.log(resources);
-	        this.props.sendResourcesToParent(resources);
-	        this.setState({ selectedResources: resources });
-	        //console.log(e.target.value);
+	        e.preventDefault();
+	        var authors = this.state.authors;
+	        authors.push("");
+	        this.setState({ authors: authors });
+	    },
+	    onSubmit: function onSubmit(e) {
+	        e.preventDefault();
+	        var formData = jQuery("#createForm").serializeArray();
+	        var resources = this.state.resources;
+	        console.log("----------");
+	        console.log(formData);
+	        console.log(resources);
+	        console.log("----------");
+	        var self = this;
+	        var postData = self.state.metadata;
+	        //var postData = formData.push(resources);
+	        //
+	        jQuery.ajax({
+	            type: "POST",
+	            url: "/api/editDOI",
+	            data: JSON.stringify(postData),
+	            success: function success(res) {
+	                //console.log(err);
+	                console.log(res);
+	                console.log("Submitted!");
+
+	                var redir_doi = res.doi;
+	                console.log(redir_doi);
+	                //window.location.href='http://localhost:3000/createResources?doi='+redir_doi;
+	            },
+	            dataType: "json",
+	            contentType: "application/json"
+	        });
+	        console.log(postData);
+
+	        //var fileData =
+	    },
+	    handleTitle: function handleTitle(e) {
+	        var self = this;
+	        var metaData = self.state.metadata;
+	        metaData.title = e.target.value;
+	        this.setState({ metadata: metaData });
+	    },
+	    handleDescription: function handleDescription(e) {
+	        var self = this;
+	        console.log("adf");
+	        var metaData = self.state.metadata;
+	        metaData.description = e.target.value;
+	        this.setState({ metadata: metaData });
+	    },
+
+	    handleAuthors: function handleAuthors(e) {
+	        var self = this;
+	        var metaData = self.state.metadata;
+	        metaData.authors = e.target.value.split("; ");
+	        console.log("handling authors");
+	        console.log(metaData.authors);
+	        this.setState({ metadata: metaData });
+	    },
+	    handleReferences: function handleReferences(e) {
+	        var self = this;
+	        var metaData = self.state.metadata;
+	        metaData.references = e.target.value;
+	        this.setState({ metadata: metaData });
+	    },
+	    handleKeywords: function handleKeywords(e) {
+	        var self = this;
+	        var metaData = self.state.metadata;
+	        metaData.keywords = e.target.value;
+	        this.setState({ metadata: metaData });
+	    },
+	    handleYear: function handleYear(e) {
+	        var self = this;
+	        var metaData = self.state.metadata;
+	        metaData.year = e.target.value;
+	        this.setState({ metadata: metaData });
 	    },
 	    render: function render() {
 	        var self = this;
-	        var ResourceList = React.createElement("div", null);
-
-	        //console.log(self.state.resources);
-	        if (self.state.resources) {
-	            var id = 0;
-	            ResourceList = self.state.resources.map(function (resource) {
-	                id++;
-	                //console.log(resource);
-	                if (resource.resourceID) {
-	                    // console.log(resource.resourceID);
-
-	                    return React.createElement(
-	                        "li",
-	                        { className: "list-group-item", key: id },
-	                        React.createElement(
-	                            "div",
-	                            { className: "checkbox" },
-	                            React.createElement(
-	                                "label",
-	                                null,
-	                                React.createElement("input", { type: "checkbox", id: "cbox1", onClick: self.handleCheck, value: resource.resourceID }),
-	                                React.createElement(
-	                                    "h5",
-	                                    { className: "list-group-item-heading" },
-	                                    resource.info.resourceName
-	                                ),
-	                                React.createElement(
-	                                    "p",
-	                                    { className: "list-group-item-text small" },
-	                                    resource.info.resourceDescription
-	                                )
-	                            )
-	                        )
-	                    );
-	                } else return React.createElement("div", { key: id });
-	            });
+	        var authors = this.state.authors;
+	        var id = 0;
+	        var Authors = authors.map(function (author) {
+	            id++;
+	            return React.createElement("input", { type: "text", name: "authors", className: "form-control", key: id });
+	        });
+	        console.log("Authors");
+	        if (self.state.metadata.authors) {
+	            var authors_str = self.state.metadata.authors.join(";");
+	            console.log(authors_str);
 	        }
-	        if (self.state.resources.length) {
 
-	            console.log(self.state.resources.length);
-	            console.log(self.state.resources);
-	            return React.createElement(
+	        return React.createElement(
+	            "form",
+	            { action: "/submitDOI", method: "POST", encType: "application/x-www-form-urlencoded", id: "createForm" },
+	            React.createElement(
 	                "div",
-	                null,
-	                React.createElement(
-	                    "h5",
-	                    null,
-	                    "Older resources "
-	                ),
+	                { className: "panel panel-default" },
 	                React.createElement(
 	                    "div",
-	                    { className: "previousResources" },
+	                    { className: "panel-body" },
 	                    React.createElement(
 	                        "div",
-	                        { className: "list-group" },
-	                        ResourceList
-	                    )
+	                        { className: "form-group" },
+	                        React.createElement(
+	                            "label",
+	                            null,
+	                            "Title"
+	                        ),
+	                        React.createElement("input", { type: "text", placeholder: "Title", className: "form-control", name: "title", value: self.state.metadata.title, onChange: self.handleTitle })
+	                    ),
+	                    React.createElement(
+	                        "div",
+	                        { className: "form-group" },
+	                        React.createElement(
+	                            "label",
+	                            null,
+	                            "Description"
+	                        ),
+	                        React.createElement("textarea", { name: "description", className: "form-control", placeholder: "Description(Markdown supported)", value: self.state.metadata.description, onChange: self.handleDescription })
+	                    ),
+	                    React.createElement(
+	                        "div",
+	                        { className: "form-group" },
+	                        React.createElement(
+	                            "label",
+	                            null,
+	                            "Authors"
+	                        ),
+	                        React.createElement("input", { type: "text",
+	                            placeholder: "Authors(semicolon seperated)",
+	                            name: "authors",
+	                            className: "form-control",
+	                            value: authors_str,
+	                            onChange: self.handleAuthors })
+	                    ),
+	                    React.createElement(
+	                        "div",
+	                        { className: "form-group" },
+	                        React.createElement(
+	                            "label",
+	                            null,
+	                            "Keywords: "
+	                        ),
+	                        React.createElement("input", {
+	                            type: "text",
+	                            placeholder: "Keywords(comma seperated)",
+	                            name: "keywords",
+	                            className: "form-control",
+	                            value: self.state.metadata.keywords,
+	                            onChange: self.handleKeywords })
+	                    ),
+	                    React.createElement(
+	                        "div",
+	                        { className: "form-group" },
+	                        React.createElement(
+	                            "label",
+	                            null,
+	                            "Publisher Year"
+	                        ),
+	                        React.createElement("input", { type: "text",
+	                            placeholder: "Publisher year",
+	                            name: "year",
+	                            className: "form-control",
+	                            value: self.state.metadata.year })
+	                    ),
+	                    React.createElement(
+	                        "div",
+	                        { className: "form-group" },
+	                        React.createElement(
+	                            "label",
+	                            null,
+	                            "References: "
+	                        ),
+	                        React.createElement("textarea", {
+	                            name: "references",
+	                            className: "form-control",
+	                            placeholder: "References(Markdown supported)",
+	                            value: self.state.metadata.references,
+	                            onChange: self.handleReferences })
+	                    ),
+	                    React.createElement("input", { type: "hidden", value: self.state.doi, name: "doi" }),
+	                    React.createElement("input", { type: "hidden", value: self.state.url, name: "url" })
 	                )
-	            );
-	        } else {
-	            return React.createElement("div", null);
-	        }
+	            ),
+	            React.createElement(
+	                "div",
+	                { className: "form-group" },
+	                React.createElement("input", { type: "submit", className: "btn btn-primary", onClick: self.onSubmit })
+	            )
+	        );
 	    }
-
 	});
 
 	var App = React.createClass({
 	    displayName: "App",
 
-	    getInitialState: function getInitialState() {
-	        return {
-	            "previousResources": [],
-	            "addedResources": [],
-	            "files": []
-	        };
-	    },
-	    getResources: function getResources(resources, files) {
-	        var self = this;
-	        //console.log("in App");
-	        //console.log(resources);
-	        self.setState({ "addedResources": resources, "files": files });
-	    },
-	    getOldResources: function getOldResources(resources) {
-	        var self = this;
-	        //console.log("in App");
-	        //console.log(resources);
-	        self.setState({ "previousResources": resources });
-	    },
-	    onSubmit: function onSubmit(e) {
-	        var self = this;
-	        //Get a list of all the resources that were selected from previous version
-	        //
-	        var previousResources = self.state.previousResources;
 
-	        //Get a list of new added resources
-	        var addedResources = self.state.addedResources;
-	        var resources = {};
-
-	        console.log(payLoad);
-
-	        var ver_req = superagent.post("/api/uploadFile");
-
-	        var files = [];
-	        for (var i in addedResources) {
-	            var resource = addedResources[i];
-
-	            console.log(resource);
-	            console.log(self.state.files);
-	            if (resource.type == "file") {
-	                var obj = {};
-	                console.log(resource.info.resourceData);
-	                files.push({
-	                    "fileName": resource.info.resourceData.name,
-	                    "file": resource.info.resourceData
-	                });
-
-	                //obj[resource.info.resourceData.name] = resource.info.resourceData;
-	                //files.push(obj);
-	                resource.info.resourceData = resource.info.resourceData.name;
-	                addedResources[i] = resource;
-	                //ver_req.attach(resource.info.resourceData,
-	            }
-	            console.log(addedResources);
-	            console.log(files);
-	        }
-
-	        resources.previousResources = previousResources;
-	        resources.addedResources = addedResources;
-	        //var resources = previousResources.concat(addedResources);
-	        resources.doi = self.state.doi;
-
-	        var payLoad = resources;
-	        console.log(payLoad);
-	        ver_req.field("resources", JSON.stringify(payLoad));
-	        //ver_req.field("addedResources", JSON.stringify(addedResources));
-	        //ver_req.field("previousResources", JSON.stringify(previousResources));
-
-	        for (var i in files) {
-	            var file = files[i];
-	            ver_req.attach(file.fileName, file.file);
-	        }
-
-	        ver_req.end(function () {
-	            console.log("Done uploaded files");
-	        }).on("progress", function (e) {
-	            console.log(e.percent);
-	        });
-	        /*
-	        jQuery.ajax({
-	            type: "POST", 
-	            url: "/api/createVersion", 
-	            data: payLoad,
-	            success: function(res){
-	                console.log(res);
-	                /*
-	                var returnedResources = res.resources;
-	                var files = [];
-	                for(var rr in addedResources){
-	                    var returnedResource = addedResources[rr];
-	                    console.log(returnedResource);
-	                    //console.log(returnedResource[0]);
-	                    if(returnedResource.type == "file"){
-	                        //upload file
-	                        files.push(returnedResource);
-	                       
-	                     }
-	                }
-	                
-	                console.log(files);
-	                async.each(files, function(file, callback){
-	                    console.log("Post: ");
-	                    console.log(file);
-	                    console.log(self.state.files);   
-	                    var f = file.info.resourceData;
-	                    console.log(f);
-	                    console.log("posting file onto server");
-	                    var file_req = superagent.post("/api/uploadFile");
-	                    console.log(f.name);
-	                    file_req.attach(f.name, f);
-	                    file_req.end(function(){
-	                        console.log("upload complete");
-	                        callback();
-	                    }).on("progress", function(e){
-	                        console.log("sending file");
-	                    });
-	                  
-	                }, function(err){
-	                    console.log("Done!");
-	                });
-	                //console.log("SENT!");
-	                  },
-	            dataType: "json"
-	        });
-	        */
-	        //dfasdf
-	    },
-	    componentDidMount: function componentDidMount() {
-	        var url = window.location.href;
-	        var doi = getParameterByName("doi", url);
-	        this.setState({ doi: doi });
-	    },
 	    render: function render() {
-	        var self = this;
+
 	        return React.createElement(
 	            "div",
 	            null,
@@ -674,7 +309,7 @@
 	            ),
 	            React.createElement(
 	                "div",
-	                { className: "container col-md-6 col-offset-3", id: "main" },
+	                { className: "container col-md-8 col-md-offset-2", id: "main" },
 	                React.createElement(
 	                    "div",
 	                    { className: "row", style: { "paddingLeft": "20px" } },
@@ -687,27 +322,12 @@
 	                React.createElement(
 	                    "h3",
 	                    { id: "headline" },
-	                    " Add Resources"
+	                    " Edit DOI Metadata"
 	                ),
-	                React.createElement(
-	                    "div",
-	                    { className: "panel panel-default" },
-	                    React.createElement(
-	                        "div",
-	                        { className: "panel-body" },
-	                        React.createElement(OldResources, { sendResourcesToParent: self.getOldResources }),
-	                        React.createElement(AddResourcePanel, { sendResourcesToParent: self.getResources })
-	                    )
-	                ),
-	                React.createElement(
-	                    "div",
-	                    { className: "form-group" },
-	                    React.createElement("input", { type: "submit", className: "btn btn-primary", onClick: self.onSubmit })
-	                )
+	                React.createElement(Form, null)
 	            )
 	        );
 	    }
-
 	});
 
 	ReactDOM.render(React.createElement(App, null), document.getElementById("app"));
@@ -31668,1651 +31288,6 @@
 
 	module.exports = request;
 
-
-/***/ },
-/* 166 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.__esModule = true;
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _attrAccept = __webpack_require__(167);
-
-	var _attrAccept2 = _interopRequireDefault(_attrAccept);
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var supportMultiple = typeof document !== 'undefined' && document && document.createElement ? 'multiple' in document.createElement('input') : true;
-
-	var Dropzone = (function (_React$Component) {
-	  _inherits(Dropzone, _React$Component);
-
-	  function Dropzone(props, context) {
-	    _classCallCheck(this, Dropzone);
-
-	    _React$Component.call(this, props, context);
-	    this.onClick = this.onClick.bind(this);
-	    this.onDragEnter = this.onDragEnter.bind(this);
-	    this.onDragLeave = this.onDragLeave.bind(this);
-	    this.onDragOver = this.onDragOver.bind(this);
-	    this.onDrop = this.onDrop.bind(this);
-
-	    this.state = {
-	      isDragActive: false
-	    };
-	  }
-
-	  Dropzone.prototype.componentDidMount = function componentDidMount() {
-	    this.enterCounter = 0;
-	  };
-
-	  Dropzone.prototype.onDragEnter = function onDragEnter(e) {
-	    e.preventDefault();
-
-	    // Count the dropzone and any children that are entered.
-	    ++this.enterCounter;
-
-	    // This is tricky. During the drag even the dataTransfer.files is null
-	    // But Chrome implements some drag store, which is accesible via dataTransfer.items
-	    var dataTransferItems = e.dataTransfer && e.dataTransfer.items ? e.dataTransfer.items : [];
-
-	    // Now we need to convert the DataTransferList to Array
-	    var allFilesAccepted = this.allFilesAccepted(Array.prototype.slice.call(dataTransferItems));
-
-	    this.setState({
-	      isDragActive: allFilesAccepted,
-	      isDragReject: !allFilesAccepted
-	    });
-
-	    if (this.props.onDragEnter) {
-	      this.props.onDragEnter.call(this, e);
-	    }
-	  };
-
-	  Dropzone.prototype.onDragOver = function onDragOver(e) {
-	    e.preventDefault();
-	    e.stopPropagation();
-	    return false;
-	  };
-
-	  Dropzone.prototype.onDragLeave = function onDragLeave(e) {
-	    e.preventDefault();
-
-	    // Only deactivate once the dropzone and all children was left.
-	    if (--this.enterCounter > 0) {
-	      return;
-	    }
-
-	    this.setState({
-	      isDragActive: false,
-	      isDragReject: false
-	    });
-
-	    if (this.props.onDragLeave) {
-	      this.props.onDragLeave.call(this, e);
-	    }
-	  };
-
-	  Dropzone.prototype.onDrop = function onDrop(e) {
-	    e.preventDefault();
-
-	    // Reset the counter along with the drag on a drop.
-	    this.enterCounter = 0;
-
-	    this.setState({
-	      isDragActive: false,
-	      isDragReject: false
-	    });
-
-	    var droppedFiles = e.dataTransfer ? e.dataTransfer.files : e.target.files;
-	    var max = this.props.multiple ? droppedFiles.length : 1;
-	    var files = [];
-
-	    for (var i = 0; i < max; i++) {
-	      var file = droppedFiles[i];
-	      // We might want to disable the preview creation to support big files
-	      if (!this.props.disablePreview) {
-	        file.preview = window.URL.createObjectURL(file);
-	      }
-	      files.push(file);
-	    }
-
-	    if (this.props.onDrop) {
-	      this.props.onDrop.call(this, files, e);
-	    }
-
-	    if (this.allFilesAccepted(files)) {
-	      if (this.props.onDropAccepted) {
-	        this.props.onDropAccepted.call(this, files, e);
-	      }
-	    } else {
-	      if (this.props.onDropRejected) {
-	        this.props.onDropRejected.call(this, files, e);
-	      }
-	    }
-	  };
-
-	  Dropzone.prototype.onClick = function onClick() {
-	    if (!this.props.disableClick) {
-	      this.open();
-	    }
-	  };
-
-	  Dropzone.prototype.allFilesAccepted = function allFilesAccepted(files) {
-	    var _this = this;
-
-	    return files.every(function (file) {
-	      return _attrAccept2['default'](file, _this.props.accept);
-	    });
-	  };
-
-	  Dropzone.prototype.open = function open() {
-	    this.fileInputEl.value = null;
-	    this.fileInputEl.click();
-	  };
-
-	  Dropzone.prototype.render = function render() {
-	    var _this2 = this;
-
-	    var _props = this.props;
-	    var accept = _props.accept;
-	    var activeClassName = _props.activeClassName;
-	    var inputProps = _props.inputProps;
-	    var multiple = _props.multiple;
-	    var name = _props.name;
-	    var rejectClassName = _props.rejectClassName;
-
-	    var rest = _objectWithoutProperties(_props, ['accept', 'activeClassName', 'inputProps', 'multiple', 'name', 'rejectClassName']);
-
-	    var activeStyle = // eslint-disable-line prefer-const
-	    rest.activeStyle;
-	    var className = rest.className;
-	    var rejectStyle = rest.rejectStyle;
-	    var style = rest.style;
-
-	    var props = _objectWithoutProperties(rest, ['activeStyle', 'className', 'rejectStyle', 'style']);
-
-	    var _state = this.state;
-	    var isDragActive = _state.isDragActive;
-	    var isDragReject = _state.isDragReject;
-
-	    className = className || '';
-
-	    if (isDragActive && activeClassName) {
-	      className += ' ' + activeClassName;
-	    }
-	    if (isDragReject && rejectClassName) {
-	      className += ' ' + rejectClassName;
-	    }
-
-	    if (!className && !style && !activeStyle && !rejectStyle) {
-	      style = {
-	        width: 200,
-	        height: 200,
-	        borderWidth: 2,
-	        borderColor: '#666',
-	        borderStyle: 'dashed',
-	        borderRadius: 5
-	      };
-	      activeStyle = {
-	        borderStyle: 'solid',
-	        backgroundColor: '#eee'
-	      };
-	      rejectStyle = {
-	        borderStyle: 'solid',
-	        backgroundColor: '#ffdddd'
-	      };
-	    }
-
-	    var appliedStyle = undefined;
-	    if (activeStyle && isDragActive) {
-	      appliedStyle = _extends({}, style, activeStyle);
-	    } else if (rejectStyle && isDragReject) {
-	      appliedStyle = _extends({}, style, rejectStyle);
-	    } else {
-	      appliedStyle = _extends({}, style);
-	    }
-
-	    var inputAttributes = {
-	      accept: accept,
-	      type: 'file',
-	      style: { display: 'none' },
-	      multiple: supportMultiple && multiple,
-	      ref: function ref(el) {
-	        return _this2.fileInputEl = el;
-	      },
-	      onChange: this.onDrop
-	    };
-
-	    if (name && name.length) {
-	      inputAttributes.name = name;
-	    }
-
-	    return _react2['default'].createElement(
-	      'div',
-	      _extends({
-	        className: className,
-	        style: appliedStyle
-	      }, props, /* expand user provided props first so event handlers are never overridden */{
-	        onClick: this.onClick,
-	        onDragEnter: this.onDragEnter,
-	        onDragOver: this.onDragOver,
-	        onDragLeave: this.onDragLeave,
-	        onDrop: this.onDrop
-	      }),
-	      this.props.children,
-	      _react2['default'].createElement('input', _extends({}, inputProps, /* expand user provided inputProps first so inputAttributes override them */inputAttributes))
-	    );
-	  };
-
-	  return Dropzone;
-	})(_react2['default'].Component);
-
-	Dropzone.defaultProps = {
-	  disablePreview: false,
-	  disableClick: false,
-	  multiple: true
-	};
-
-	Dropzone.propTypes = {
-	  onDrop: _react2['default'].PropTypes.func,
-	  onDropAccepted: _react2['default'].PropTypes.func,
-	  onDropRejected: _react2['default'].PropTypes.func,
-	  onDragEnter: _react2['default'].PropTypes.func,
-	  onDragLeave: _react2['default'].PropTypes.func,
-
-	  children: _react2['default'].PropTypes.node,
-	  style: _react2['default'].PropTypes.object,
-	  activeStyle: _react2['default'].PropTypes.object,
-	  rejectStyle: _react2['default'].PropTypes.object,
-	  className: _react2['default'].PropTypes.string,
-	  activeClassName: _react2['default'].PropTypes.string,
-	  rejectClassName: _react2['default'].PropTypes.string,
-
-	  disablePreview: _react2['default'].PropTypes.bool,
-	  disableClick: _react2['default'].PropTypes.bool,
-
-	  inputProps: _react2['default'].PropTypes.object,
-	  multiple: _react2['default'].PropTypes.bool,
-	  accept: _react2['default'].PropTypes.string,
-	  name: _react2['default'].PropTypes.string
-	};
-
-	exports['default'] = Dropzone;
-	module.exports = exports['default'];
-
-/***/ },
-/* 167 */
-/***/ function(module, exports) {
-
-	module.exports=function(t){function n(e){if(r[e])return r[e].exports;var o=r[e]={exports:{},id:e,loaded:!1};return t[e].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var r={};return n.m=t,n.c=r,n.p="",n(0)}([function(t,n,r){"use strict";n.__esModule=!0,r(8),r(9),n["default"]=function(t,n){if(t&&n){var r=function(){var r=n.split(","),e=t.name||"",o=t.type||"",i=o.replace(/\/.*$/,"");return{v:r.some(function(t){var n=t.trim();return"."===n.charAt(0)?e.toLowerCase().endsWith(n.toLowerCase()):/\/\*$/.test(n)?i===n.replace(/\/.*$/,""):o===n})}}();if("object"==typeof r)return r.v}return!0},t.exports=n["default"]},function(t,n){var r=t.exports={version:"1.2.2"};"number"==typeof __e&&(__e=r)},function(t,n){var r=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=r)},function(t,n,r){var e=r(2),o=r(1),i=r(4),u=r(19),c="prototype",f=function(t,n){return function(){return t.apply(n,arguments)}},s=function(t,n,r){var a,p,l,d,y=t&s.G,h=t&s.P,v=y?e:t&s.S?e[n]||(e[n]={}):(e[n]||{})[c],x=y?o:o[n]||(o[n]={});y&&(r=n);for(a in r)p=!(t&s.F)&&v&&a in v,l=(p?v:r)[a],d=t&s.B&&p?f(l,e):h&&"function"==typeof l?f(Function.call,l):l,v&&!p&&u(v,a,l),x[a]!=l&&i(x,a,d),h&&((x[c]||(x[c]={}))[a]=l)};e.core=o,s.F=1,s.G=2,s.S=4,s.P=8,s.B=16,s.W=32,t.exports=s},function(t,n,r){var e=r(5),o=r(18);t.exports=r(22)?function(t,n,r){return e.setDesc(t,n,o(1,r))}:function(t,n,r){return t[n]=r,t}},function(t,n){var r=Object;t.exports={create:r.create,getProto:r.getPrototypeOf,isEnum:{}.propertyIsEnumerable,getDesc:r.getOwnPropertyDescriptor,setDesc:r.defineProperty,setDescs:r.defineProperties,getKeys:r.keys,getNames:r.getOwnPropertyNames,getSymbols:r.getOwnPropertySymbols,each:[].forEach}},function(t,n){var r=0,e=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++r+e).toString(36))}},function(t,n,r){var e=r(20)("wks"),o=r(2).Symbol;t.exports=function(t){return e[t]||(e[t]=o&&o[t]||(o||r(6))("Symbol."+t))}},function(t,n,r){r(26),t.exports=r(1).Array.some},function(t,n,r){r(25),t.exports=r(1).String.endsWith},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){var r={}.toString;t.exports=function(t){return r.call(t).slice(8,-1)}},function(t,n,r){var e=r(10);t.exports=function(t,n,r){if(e(t),void 0===n)return t;switch(r){case 1:return function(r){return t.call(n,r)};case 2:return function(r,e){return t.call(n,r,e)};case 3:return function(r,e,o){return t.call(n,r,e,o)}}return function(){return t.apply(n,arguments)}}},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n,r){t.exports=function(t){var n=/./;try{"/./"[t](n)}catch(e){try{return n[r(7)("match")]=!1,!"/./"[t](n)}catch(o){}}return!0}},function(t,n){t.exports=function(t){try{return!!t()}catch(n){return!0}}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n,r){var e=r(16),o=r(11),i=r(7)("match");t.exports=function(t){var n;return e(t)&&(void 0!==(n=t[i])?!!n:"RegExp"==o(t))}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n,r){var e=r(2),o=r(4),i=r(6)("src"),u="toString",c=Function[u],f=(""+c).split(u);r(1).inspectSource=function(t){return c.call(t)},(t.exports=function(t,n,r,u){"function"==typeof r&&(o(r,i,t[n]?""+t[n]:f.join(String(n))),"name"in r||(r.name=n)),t===e?t[n]=r:(u||delete t[n],o(t,n,r))})(Function.prototype,u,function(){return"function"==typeof this&&this[i]||c.call(this)})},function(t,n,r){var e=r(2),o="__core-js_shared__",i=e[o]||(e[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n,r){var e=r(17),o=r(13);t.exports=function(t,n,r){if(e(n))throw TypeError("String#"+r+" doesn't accept regex!");return String(o(t))}},function(t,n,r){t.exports=!r(15)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n){var r=Math.ceil,e=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?e:r)(t)}},function(t,n,r){var e=r(23),o=Math.min;t.exports=function(t){return t>0?o(e(t),9007199254740991):0}},function(t,n,r){"use strict";var e=r(3),o=r(24),i=r(21),u="endsWith",c=""[u];e(e.P+e.F*r(14)(u),"String",{endsWith:function(t){var n=i(this,t,u),r=arguments,e=r.length>1?r[1]:void 0,f=o(n.length),s=void 0===e?f:Math.min(o(e),f),a=String(t);return c?c.call(n,a,s):n.slice(s-a.length,s)===a}})},function(t,n,r){var e=r(5),o=r(3),i=r(1).Array||Array,u={},c=function(t,n){e.each.call(t.split(","),function(t){void 0==n&&t in i?u[t]=i[t]:t in[]&&(u[t]=r(12)(Function.call,[][t],n))})};c("pop,reverse,shift,keys,values,entries",1),c("indexOf,every,some,forEach,map,filter,find,findIndex,includes",3),c("join,slice,concat,push,splice,unshift,sort,lastIndexOf,reduce,reduceRight,copyWithin,fill"),o(o.S,"Array",u)}]);
-
-/***/ },
-/* 168 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, setImmediate, process) {/*!
-	 * async
-	 * https://github.com/caolan/async
-	 *
-	 * Copyright 2010-2014 Caolan McMahon
-	 * Released under the MIT license
-	 */
-	(function () {
-
-	    var async = {};
-	    function noop() {}
-	    function identity(v) {
-	        return v;
-	    }
-	    function toBool(v) {
-	        return !!v;
-	    }
-	    function notId(v) {
-	        return !v;
-	    }
-
-	    // global on the server, window in the browser
-	    var previous_async;
-
-	    // Establish the root object, `window` (`self`) in the browser, `global`
-	    // on the server, or `this` in some virtual machines. We use `self`
-	    // instead of `window` for `WebWorker` support.
-	    var root = typeof self === 'object' && self.self === self && self ||
-	            typeof global === 'object' && global.global === global && global ||
-	            this;
-
-	    if (root != null) {
-	        previous_async = root.async;
-	    }
-
-	    async.noConflict = function () {
-	        root.async = previous_async;
-	        return async;
-	    };
-
-	    function only_once(fn) {
-	        return function() {
-	            if (fn === null) throw new Error("Callback was already called.");
-	            fn.apply(this, arguments);
-	            fn = null;
-	        };
-	    }
-
-	    function _once(fn) {
-	        return function() {
-	            if (fn === null) return;
-	            fn.apply(this, arguments);
-	            fn = null;
-	        };
-	    }
-
-	    //// cross-browser compatiblity functions ////
-
-	    var _toString = Object.prototype.toString;
-
-	    var _isArray = Array.isArray || function (obj) {
-	        return _toString.call(obj) === '[object Array]';
-	    };
-
-	    // Ported from underscore.js isObject
-	    var _isObject = function(obj) {
-	        var type = typeof obj;
-	        return type === 'function' || type === 'object' && !!obj;
-	    };
-
-	    function _isArrayLike(arr) {
-	        return _isArray(arr) || (
-	            // has a positive integer length property
-	            typeof arr.length === "number" &&
-	            arr.length >= 0 &&
-	            arr.length % 1 === 0
-	        );
-	    }
-
-	    function _arrayEach(arr, iterator) {
-	        var index = -1,
-	            length = arr.length;
-
-	        while (++index < length) {
-	            iterator(arr[index], index, arr);
-	        }
-	    }
-
-	    function _map(arr, iterator) {
-	        var index = -1,
-	            length = arr.length,
-	            result = Array(length);
-
-	        while (++index < length) {
-	            result[index] = iterator(arr[index], index, arr);
-	        }
-	        return result;
-	    }
-
-	    function _range(count) {
-	        return _map(Array(count), function (v, i) { return i; });
-	    }
-
-	    function _reduce(arr, iterator, memo) {
-	        _arrayEach(arr, function (x, i, a) {
-	            memo = iterator(memo, x, i, a);
-	        });
-	        return memo;
-	    }
-
-	    function _forEachOf(object, iterator) {
-	        _arrayEach(_keys(object), function (key) {
-	            iterator(object[key], key);
-	        });
-	    }
-
-	    function _indexOf(arr, item) {
-	        for (var i = 0; i < arr.length; i++) {
-	            if (arr[i] === item) return i;
-	        }
-	        return -1;
-	    }
-
-	    var _keys = Object.keys || function (obj) {
-	        var keys = [];
-	        for (var k in obj) {
-	            if (obj.hasOwnProperty(k)) {
-	                keys.push(k);
-	            }
-	        }
-	        return keys;
-	    };
-
-	    function _keyIterator(coll) {
-	        var i = -1;
-	        var len;
-	        var keys;
-	        if (_isArrayLike(coll)) {
-	            len = coll.length;
-	            return function next() {
-	                i++;
-	                return i < len ? i : null;
-	            };
-	        } else {
-	            keys = _keys(coll);
-	            len = keys.length;
-	            return function next() {
-	                i++;
-	                return i < len ? keys[i] : null;
-	            };
-	        }
-	    }
-
-	    // Similar to ES6's rest param (http://ariya.ofilabs.com/2013/03/es6-and-rest-parameter.html)
-	    // This accumulates the arguments passed into an array, after a given index.
-	    // From underscore.js (https://github.com/jashkenas/underscore/pull/2140).
-	    function _restParam(func, startIndex) {
-	        startIndex = startIndex == null ? func.length - 1 : +startIndex;
-	        return function() {
-	            var length = Math.max(arguments.length - startIndex, 0);
-	            var rest = Array(length);
-	            for (var index = 0; index < length; index++) {
-	                rest[index] = arguments[index + startIndex];
-	            }
-	            switch (startIndex) {
-	                case 0: return func.call(this, rest);
-	                case 1: return func.call(this, arguments[0], rest);
-	            }
-	            // Currently unused but handle cases outside of the switch statement:
-	            // var args = Array(startIndex + 1);
-	            // for (index = 0; index < startIndex; index++) {
-	            //     args[index] = arguments[index];
-	            // }
-	            // args[startIndex] = rest;
-	            // return func.apply(this, args);
-	        };
-	    }
-
-	    function _withoutIndex(iterator) {
-	        return function (value, index, callback) {
-	            return iterator(value, callback);
-	        };
-	    }
-
-	    //// exported async module functions ////
-
-	    //// nextTick implementation with browser-compatible fallback ////
-
-	    // capture the global reference to guard against fakeTimer mocks
-	    var _setImmediate = typeof setImmediate === 'function' && setImmediate;
-
-	    var _delay = _setImmediate ? function(fn) {
-	        // not a direct alias for IE10 compatibility
-	        _setImmediate(fn);
-	    } : function(fn) {
-	        setTimeout(fn, 0);
-	    };
-
-	    if (typeof process === 'object' && typeof process.nextTick === 'function') {
-	        async.nextTick = process.nextTick;
-	    } else {
-	        async.nextTick = _delay;
-	    }
-	    async.setImmediate = _setImmediate ? _delay : async.nextTick;
-
-
-	    async.forEach =
-	    async.each = function (arr, iterator, callback) {
-	        return async.eachOf(arr, _withoutIndex(iterator), callback);
-	    };
-
-	    async.forEachSeries =
-	    async.eachSeries = function (arr, iterator, callback) {
-	        return async.eachOfSeries(arr, _withoutIndex(iterator), callback);
-	    };
-
-
-	    async.forEachLimit =
-	    async.eachLimit = function (arr, limit, iterator, callback) {
-	        return _eachOfLimit(limit)(arr, _withoutIndex(iterator), callback);
-	    };
-
-	    async.forEachOf =
-	    async.eachOf = function (object, iterator, callback) {
-	        callback = _once(callback || noop);
-	        object = object || [];
-
-	        var iter = _keyIterator(object);
-	        var key, completed = 0;
-
-	        while ((key = iter()) != null) {
-	            completed += 1;
-	            iterator(object[key], key, only_once(done));
-	        }
-
-	        if (completed === 0) callback(null);
-
-	        function done(err) {
-	            completed--;
-	            if (err) {
-	                callback(err);
-	            }
-	            // Check key is null in case iterator isn't exhausted
-	            // and done resolved synchronously.
-	            else if (key === null && completed <= 0) {
-	                callback(null);
-	            }
-	        }
-	    };
-
-	    async.forEachOfSeries =
-	    async.eachOfSeries = function (obj, iterator, callback) {
-	        callback = _once(callback || noop);
-	        obj = obj || [];
-	        var nextKey = _keyIterator(obj);
-	        var key = nextKey();
-	        function iterate() {
-	            var sync = true;
-	            if (key === null) {
-	                return callback(null);
-	            }
-	            iterator(obj[key], key, only_once(function (err) {
-	                if (err) {
-	                    callback(err);
-	                }
-	                else {
-	                    key = nextKey();
-	                    if (key === null) {
-	                        return callback(null);
-	                    } else {
-	                        if (sync) {
-	                            async.setImmediate(iterate);
-	                        } else {
-	                            iterate();
-	                        }
-	                    }
-	                }
-	            }));
-	            sync = false;
-	        }
-	        iterate();
-	    };
-
-
-
-	    async.forEachOfLimit =
-	    async.eachOfLimit = function (obj, limit, iterator, callback) {
-	        _eachOfLimit(limit)(obj, iterator, callback);
-	    };
-
-	    function _eachOfLimit(limit) {
-
-	        return function (obj, iterator, callback) {
-	            callback = _once(callback || noop);
-	            obj = obj || [];
-	            var nextKey = _keyIterator(obj);
-	            if (limit <= 0) {
-	                return callback(null);
-	            }
-	            var done = false;
-	            var running = 0;
-	            var errored = false;
-
-	            (function replenish () {
-	                if (done && running <= 0) {
-	                    return callback(null);
-	                }
-
-	                while (running < limit && !errored) {
-	                    var key = nextKey();
-	                    if (key === null) {
-	                        done = true;
-	                        if (running <= 0) {
-	                            callback(null);
-	                        }
-	                        return;
-	                    }
-	                    running += 1;
-	                    iterator(obj[key], key, only_once(function (err) {
-	                        running -= 1;
-	                        if (err) {
-	                            callback(err);
-	                            errored = true;
-	                        }
-	                        else {
-	                            replenish();
-	                        }
-	                    }));
-	                }
-	            })();
-	        };
-	    }
-
-
-	    function doParallel(fn) {
-	        return function (obj, iterator, callback) {
-	            return fn(async.eachOf, obj, iterator, callback);
-	        };
-	    }
-	    function doParallelLimit(fn) {
-	        return function (obj, limit, iterator, callback) {
-	            return fn(_eachOfLimit(limit), obj, iterator, callback);
-	        };
-	    }
-	    function doSeries(fn) {
-	        return function (obj, iterator, callback) {
-	            return fn(async.eachOfSeries, obj, iterator, callback);
-	        };
-	    }
-
-	    function _asyncMap(eachfn, arr, iterator, callback) {
-	        callback = _once(callback || noop);
-	        arr = arr || [];
-	        var results = _isArrayLike(arr) ? [] : {};
-	        eachfn(arr, function (value, index, callback) {
-	            iterator(value, function (err, v) {
-	                results[index] = v;
-	                callback(err);
-	            });
-	        }, function (err) {
-	            callback(err, results);
-	        });
-	    }
-
-	    async.map = doParallel(_asyncMap);
-	    async.mapSeries = doSeries(_asyncMap);
-	    async.mapLimit = doParallelLimit(_asyncMap);
-
-	    // reduce only has a series version, as doing reduce in parallel won't
-	    // work in many situations.
-	    async.inject =
-	    async.foldl =
-	    async.reduce = function (arr, memo, iterator, callback) {
-	        async.eachOfSeries(arr, function (x, i, callback) {
-	            iterator(memo, x, function (err, v) {
-	                memo = v;
-	                callback(err);
-	            });
-	        }, function (err) {
-	            callback(err, memo);
-	        });
-	    };
-
-	    async.foldr =
-	    async.reduceRight = function (arr, memo, iterator, callback) {
-	        var reversed = _map(arr, identity).reverse();
-	        async.reduce(reversed, memo, iterator, callback);
-	    };
-
-	    async.transform = function (arr, memo, iterator, callback) {
-	        if (arguments.length === 3) {
-	            callback = iterator;
-	            iterator = memo;
-	            memo = _isArray(arr) ? [] : {};
-	        }
-
-	        async.eachOf(arr, function(v, k, cb) {
-	            iterator(memo, v, k, cb);
-	        }, function(err) {
-	            callback(err, memo);
-	        });
-	    };
-
-	    function _filter(eachfn, arr, iterator, callback) {
-	        var results = [];
-	        eachfn(arr, function (x, index, callback) {
-	            iterator(x, function (v) {
-	                if (v) {
-	                    results.push({index: index, value: x});
-	                }
-	                callback();
-	            });
-	        }, function () {
-	            callback(_map(results.sort(function (a, b) {
-	                return a.index - b.index;
-	            }), function (x) {
-	                return x.value;
-	            }));
-	        });
-	    }
-
-	    async.select =
-	    async.filter = doParallel(_filter);
-
-	    async.selectLimit =
-	    async.filterLimit = doParallelLimit(_filter);
-
-	    async.selectSeries =
-	    async.filterSeries = doSeries(_filter);
-
-	    function _reject(eachfn, arr, iterator, callback) {
-	        _filter(eachfn, arr, function(value, cb) {
-	            iterator(value, function(v) {
-	                cb(!v);
-	            });
-	        }, callback);
-	    }
-	    async.reject = doParallel(_reject);
-	    async.rejectLimit = doParallelLimit(_reject);
-	    async.rejectSeries = doSeries(_reject);
-
-	    function _createTester(eachfn, check, getResult) {
-	        return function(arr, limit, iterator, cb) {
-	            function done() {
-	                if (cb) cb(getResult(false, void 0));
-	            }
-	            function iteratee(x, _, callback) {
-	                if (!cb) return callback();
-	                iterator(x, function (v) {
-	                    if (cb && check(v)) {
-	                        cb(getResult(true, x));
-	                        cb = iterator = false;
-	                    }
-	                    callback();
-	                });
-	            }
-	            if (arguments.length > 3) {
-	                eachfn(arr, limit, iteratee, done);
-	            } else {
-	                cb = iterator;
-	                iterator = limit;
-	                eachfn(arr, iteratee, done);
-	            }
-	        };
-	    }
-
-	    async.any =
-	    async.some = _createTester(async.eachOf, toBool, identity);
-
-	    async.someLimit = _createTester(async.eachOfLimit, toBool, identity);
-
-	    async.all =
-	    async.every = _createTester(async.eachOf, notId, notId);
-
-	    async.everyLimit = _createTester(async.eachOfLimit, notId, notId);
-
-	    function _findGetResult(v, x) {
-	        return x;
-	    }
-	    async.detect = _createTester(async.eachOf, identity, _findGetResult);
-	    async.detectSeries = _createTester(async.eachOfSeries, identity, _findGetResult);
-	    async.detectLimit = _createTester(async.eachOfLimit, identity, _findGetResult);
-
-	    async.sortBy = function (arr, iterator, callback) {
-	        async.map(arr, function (x, callback) {
-	            iterator(x, function (err, criteria) {
-	                if (err) {
-	                    callback(err);
-	                }
-	                else {
-	                    callback(null, {value: x, criteria: criteria});
-	                }
-	            });
-	        }, function (err, results) {
-	            if (err) {
-	                return callback(err);
-	            }
-	            else {
-	                callback(null, _map(results.sort(comparator), function (x) {
-	                    return x.value;
-	                }));
-	            }
-
-	        });
-
-	        function comparator(left, right) {
-	            var a = left.criteria, b = right.criteria;
-	            return a < b ? -1 : a > b ? 1 : 0;
-	        }
-	    };
-
-	    async.auto = function (tasks, concurrency, callback) {
-	        if (typeof arguments[1] === 'function') {
-	            // concurrency is optional, shift the args.
-	            callback = concurrency;
-	            concurrency = null;
-	        }
-	        callback = _once(callback || noop);
-	        var keys = _keys(tasks);
-	        var remainingTasks = keys.length;
-	        if (!remainingTasks) {
-	            return callback(null);
-	        }
-	        if (!concurrency) {
-	            concurrency = remainingTasks;
-	        }
-
-	        var results = {};
-	        var runningTasks = 0;
-
-	        var hasError = false;
-
-	        var listeners = [];
-	        function addListener(fn) {
-	            listeners.unshift(fn);
-	        }
-	        function removeListener(fn) {
-	            var idx = _indexOf(listeners, fn);
-	            if (idx >= 0) listeners.splice(idx, 1);
-	        }
-	        function taskComplete() {
-	            remainingTasks--;
-	            _arrayEach(listeners.slice(0), function (fn) {
-	                fn();
-	            });
-	        }
-
-	        addListener(function () {
-	            if (!remainingTasks) {
-	                callback(null, results);
-	            }
-	        });
-
-	        _arrayEach(keys, function (k) {
-	            if (hasError) return;
-	            var task = _isArray(tasks[k]) ? tasks[k]: [tasks[k]];
-	            var taskCallback = _restParam(function(err, args) {
-	                runningTasks--;
-	                if (args.length <= 1) {
-	                    args = args[0];
-	                }
-	                if (err) {
-	                    var safeResults = {};
-	                    _forEachOf(results, function(val, rkey) {
-	                        safeResults[rkey] = val;
-	                    });
-	                    safeResults[k] = args;
-	                    hasError = true;
-
-	                    callback(err, safeResults);
-	                }
-	                else {
-	                    results[k] = args;
-	                    async.setImmediate(taskComplete);
-	                }
-	            });
-	            var requires = task.slice(0, task.length - 1);
-	            // prevent dead-locks
-	            var len = requires.length;
-	            var dep;
-	            while (len--) {
-	                if (!(dep = tasks[requires[len]])) {
-	                    throw new Error('Has nonexistent dependency in ' + requires.join(', '));
-	                }
-	                if (_isArray(dep) && _indexOf(dep, k) >= 0) {
-	                    throw new Error('Has cyclic dependencies');
-	                }
-	            }
-	            function ready() {
-	                return runningTasks < concurrency && _reduce(requires, function (a, x) {
-	                    return (a && results.hasOwnProperty(x));
-	                }, true) && !results.hasOwnProperty(k);
-	            }
-	            if (ready()) {
-	                runningTasks++;
-	                task[task.length - 1](taskCallback, results);
-	            }
-	            else {
-	                addListener(listener);
-	            }
-	            function listener() {
-	                if (ready()) {
-	                    runningTasks++;
-	                    removeListener(listener);
-	                    task[task.length - 1](taskCallback, results);
-	                }
-	            }
-	        });
-	    };
-
-
-
-	    async.retry = function(times, task, callback) {
-	        var DEFAULT_TIMES = 5;
-	        var DEFAULT_INTERVAL = 0;
-
-	        var attempts = [];
-
-	        var opts = {
-	            times: DEFAULT_TIMES,
-	            interval: DEFAULT_INTERVAL
-	        };
-
-	        function parseTimes(acc, t){
-	            if(typeof t === 'number'){
-	                acc.times = parseInt(t, 10) || DEFAULT_TIMES;
-	            } else if(typeof t === 'object'){
-	                acc.times = parseInt(t.times, 10) || DEFAULT_TIMES;
-	                acc.interval = parseInt(t.interval, 10) || DEFAULT_INTERVAL;
-	            } else {
-	                throw new Error('Unsupported argument type for \'times\': ' + typeof t);
-	            }
-	        }
-
-	        var length = arguments.length;
-	        if (length < 1 || length > 3) {
-	            throw new Error('Invalid arguments - must be either (task), (task, callback), (times, task) or (times, task, callback)');
-	        } else if (length <= 2 && typeof times === 'function') {
-	            callback = task;
-	            task = times;
-	        }
-	        if (typeof times !== 'function') {
-	            parseTimes(opts, times);
-	        }
-	        opts.callback = callback;
-	        opts.task = task;
-
-	        function wrappedTask(wrappedCallback, wrappedResults) {
-	            function retryAttempt(task, finalAttempt) {
-	                return function(seriesCallback) {
-	                    task(function(err, result){
-	                        seriesCallback(!err || finalAttempt, {err: err, result: result});
-	                    }, wrappedResults);
-	                };
-	            }
-
-	            function retryInterval(interval){
-	                return function(seriesCallback){
-	                    setTimeout(function(){
-	                        seriesCallback(null);
-	                    }, interval);
-	                };
-	            }
-
-	            while (opts.times) {
-
-	                var finalAttempt = !(opts.times-=1);
-	                attempts.push(retryAttempt(opts.task, finalAttempt));
-	                if(!finalAttempt && opts.interval > 0){
-	                    attempts.push(retryInterval(opts.interval));
-	                }
-	            }
-
-	            async.series(attempts, function(done, data){
-	                data = data[data.length - 1];
-	                (wrappedCallback || opts.callback)(data.err, data.result);
-	            });
-	        }
-
-	        // If a callback is passed, run this as a controll flow
-	        return opts.callback ? wrappedTask() : wrappedTask;
-	    };
-
-	    async.waterfall = function (tasks, callback) {
-	        callback = _once(callback || noop);
-	        if (!_isArray(tasks)) {
-	            var err = new Error('First argument to waterfall must be an array of functions');
-	            return callback(err);
-	        }
-	        if (!tasks.length) {
-	            return callback();
-	        }
-	        function wrapIterator(iterator) {
-	            return _restParam(function (err, args) {
-	                if (err) {
-	                    callback.apply(null, [err].concat(args));
-	                }
-	                else {
-	                    var next = iterator.next();
-	                    if (next) {
-	                        args.push(wrapIterator(next));
-	                    }
-	                    else {
-	                        args.push(callback);
-	                    }
-	                    ensureAsync(iterator).apply(null, args);
-	                }
-	            });
-	        }
-	        wrapIterator(async.iterator(tasks))();
-	    };
-
-	    function _parallel(eachfn, tasks, callback) {
-	        callback = callback || noop;
-	        var results = _isArrayLike(tasks) ? [] : {};
-
-	        eachfn(tasks, function (task, key, callback) {
-	            task(_restParam(function (err, args) {
-	                if (args.length <= 1) {
-	                    args = args[0];
-	                }
-	                results[key] = args;
-	                callback(err);
-	            }));
-	        }, function (err) {
-	            callback(err, results);
-	        });
-	    }
-
-	    async.parallel = function (tasks, callback) {
-	        _parallel(async.eachOf, tasks, callback);
-	    };
-
-	    async.parallelLimit = function(tasks, limit, callback) {
-	        _parallel(_eachOfLimit(limit), tasks, callback);
-	    };
-
-	    async.series = function(tasks, callback) {
-	        _parallel(async.eachOfSeries, tasks, callback);
-	    };
-
-	    async.iterator = function (tasks) {
-	        function makeCallback(index) {
-	            function fn() {
-	                if (tasks.length) {
-	                    tasks[index].apply(null, arguments);
-	                }
-	                return fn.next();
-	            }
-	            fn.next = function () {
-	                return (index < tasks.length - 1) ? makeCallback(index + 1): null;
-	            };
-	            return fn;
-	        }
-	        return makeCallback(0);
-	    };
-
-	    async.apply = _restParam(function (fn, args) {
-	        return _restParam(function (callArgs) {
-	            return fn.apply(
-	                null, args.concat(callArgs)
-	            );
-	        });
-	    });
-
-	    function _concat(eachfn, arr, fn, callback) {
-	        var result = [];
-	        eachfn(arr, function (x, index, cb) {
-	            fn(x, function (err, y) {
-	                result = result.concat(y || []);
-	                cb(err);
-	            });
-	        }, function (err) {
-	            callback(err, result);
-	        });
-	    }
-	    async.concat = doParallel(_concat);
-	    async.concatSeries = doSeries(_concat);
-
-	    async.whilst = function (test, iterator, callback) {
-	        callback = callback || noop;
-	        if (test()) {
-	            var next = _restParam(function(err, args) {
-	                if (err) {
-	                    callback(err);
-	                } else if (test.apply(this, args)) {
-	                    iterator(next);
-	                } else {
-	                    callback.apply(null, [null].concat(args));
-	                }
-	            });
-	            iterator(next);
-	        } else {
-	            callback(null);
-	        }
-	    };
-
-	    async.doWhilst = function (iterator, test, callback) {
-	        var calls = 0;
-	        return async.whilst(function() {
-	            return ++calls <= 1 || test.apply(this, arguments);
-	        }, iterator, callback);
-	    };
-
-	    async.until = function (test, iterator, callback) {
-	        return async.whilst(function() {
-	            return !test.apply(this, arguments);
-	        }, iterator, callback);
-	    };
-
-	    async.doUntil = function (iterator, test, callback) {
-	        return async.doWhilst(iterator, function() {
-	            return !test.apply(this, arguments);
-	        }, callback);
-	    };
-
-	    async.during = function (test, iterator, callback) {
-	        callback = callback || noop;
-
-	        var next = _restParam(function(err, args) {
-	            if (err) {
-	                callback(err);
-	            } else {
-	                args.push(check);
-	                test.apply(this, args);
-	            }
-	        });
-
-	        var check = function(err, truth) {
-	            if (err) {
-	                callback(err);
-	            } else if (truth) {
-	                iterator(next);
-	            } else {
-	                callback(null);
-	            }
-	        };
-
-	        test(check);
-	    };
-
-	    async.doDuring = function (iterator, test, callback) {
-	        var calls = 0;
-	        async.during(function(next) {
-	            if (calls++ < 1) {
-	                next(null, true);
-	            } else {
-	                test.apply(this, arguments);
-	            }
-	        }, iterator, callback);
-	    };
-
-	    function _queue(worker, concurrency, payload) {
-	        if (concurrency == null) {
-	            concurrency = 1;
-	        }
-	        else if(concurrency === 0) {
-	            throw new Error('Concurrency must not be zero');
-	        }
-	        function _insert(q, data, pos, callback) {
-	            if (callback != null && typeof callback !== "function") {
-	                throw new Error("task callback must be a function");
-	            }
-	            q.started = true;
-	            if (!_isArray(data)) {
-	                data = [data];
-	            }
-	            if(data.length === 0 && q.idle()) {
-	                // call drain immediately if there are no tasks
-	                return async.setImmediate(function() {
-	                    q.drain();
-	                });
-	            }
-	            _arrayEach(data, function(task) {
-	                var item = {
-	                    data: task,
-	                    callback: callback || noop
-	                };
-
-	                if (pos) {
-	                    q.tasks.unshift(item);
-	                } else {
-	                    q.tasks.push(item);
-	                }
-
-	                if (q.tasks.length === q.concurrency) {
-	                    q.saturated();
-	                }
-	            });
-	            async.setImmediate(q.process);
-	        }
-	        function _next(q, tasks) {
-	            return function(){
-	                workers -= 1;
-
-	                var removed = false;
-	                var args = arguments;
-	                _arrayEach(tasks, function (task) {
-	                    _arrayEach(workersList, function (worker, index) {
-	                        if (worker === task && !removed) {
-	                            workersList.splice(index, 1);
-	                            removed = true;
-	                        }
-	                    });
-
-	                    task.callback.apply(task, args);
-	                });
-	                if (q.tasks.length + workers === 0) {
-	                    q.drain();
-	                }
-	                q.process();
-	            };
-	        }
-
-	        var workers = 0;
-	        var workersList = [];
-	        var q = {
-	            tasks: [],
-	            concurrency: concurrency,
-	            payload: payload,
-	            saturated: noop,
-	            empty: noop,
-	            drain: noop,
-	            started: false,
-	            paused: false,
-	            push: function (data, callback) {
-	                _insert(q, data, false, callback);
-	            },
-	            kill: function () {
-	                q.drain = noop;
-	                q.tasks = [];
-	            },
-	            unshift: function (data, callback) {
-	                _insert(q, data, true, callback);
-	            },
-	            process: function () {
-	                while(!q.paused && workers < q.concurrency && q.tasks.length){
-
-	                    var tasks = q.payload ?
-	                        q.tasks.splice(0, q.payload) :
-	                        q.tasks.splice(0, q.tasks.length);
-
-	                    var data = _map(tasks, function (task) {
-	                        return task.data;
-	                    });
-
-	                    if (q.tasks.length === 0) {
-	                        q.empty();
-	                    }
-	                    workers += 1;
-	                    workersList.push(tasks[0]);
-	                    var cb = only_once(_next(q, tasks));
-	                    worker(data, cb);
-	                }
-	            },
-	            length: function () {
-	                return q.tasks.length;
-	            },
-	            running: function () {
-	                return workers;
-	            },
-	            workersList: function () {
-	                return workersList;
-	            },
-	            idle: function() {
-	                return q.tasks.length + workers === 0;
-	            },
-	            pause: function () {
-	                q.paused = true;
-	            },
-	            resume: function () {
-	                if (q.paused === false) { return; }
-	                q.paused = false;
-	                var resumeCount = Math.min(q.concurrency, q.tasks.length);
-	                // Need to call q.process once per concurrent
-	                // worker to preserve full concurrency after pause
-	                for (var w = 1; w <= resumeCount; w++) {
-	                    async.setImmediate(q.process);
-	                }
-	            }
-	        };
-	        return q;
-	    }
-
-	    async.queue = function (worker, concurrency) {
-	        var q = _queue(function (items, cb) {
-	            worker(items[0], cb);
-	        }, concurrency, 1);
-
-	        return q;
-	    };
-
-	    async.priorityQueue = function (worker, concurrency) {
-
-	        function _compareTasks(a, b){
-	            return a.priority - b.priority;
-	        }
-
-	        function _binarySearch(sequence, item, compare) {
-	            var beg = -1,
-	                end = sequence.length - 1;
-	            while (beg < end) {
-	                var mid = beg + ((end - beg + 1) >>> 1);
-	                if (compare(item, sequence[mid]) >= 0) {
-	                    beg = mid;
-	                } else {
-	                    end = mid - 1;
-	                }
-	            }
-	            return beg;
-	        }
-
-	        function _insert(q, data, priority, callback) {
-	            if (callback != null && typeof callback !== "function") {
-	                throw new Error("task callback must be a function");
-	            }
-	            q.started = true;
-	            if (!_isArray(data)) {
-	                data = [data];
-	            }
-	            if(data.length === 0) {
-	                // call drain immediately if there are no tasks
-	                return async.setImmediate(function() {
-	                    q.drain();
-	                });
-	            }
-	            _arrayEach(data, function(task) {
-	                var item = {
-	                    data: task,
-	                    priority: priority,
-	                    callback: typeof callback === 'function' ? callback : noop
-	                };
-
-	                q.tasks.splice(_binarySearch(q.tasks, item, _compareTasks) + 1, 0, item);
-
-	                if (q.tasks.length === q.concurrency) {
-	                    q.saturated();
-	                }
-	                async.setImmediate(q.process);
-	            });
-	        }
-
-	        // Start with a normal queue
-	        var q = async.queue(worker, concurrency);
-
-	        // Override push to accept second parameter representing priority
-	        q.push = function (data, priority, callback) {
-	            _insert(q, data, priority, callback);
-	        };
-
-	        // Remove unshift function
-	        delete q.unshift;
-
-	        return q;
-	    };
-
-	    async.cargo = function (worker, payload) {
-	        return _queue(worker, 1, payload);
-	    };
-
-	    function _console_fn(name) {
-	        return _restParam(function (fn, args) {
-	            fn.apply(null, args.concat([_restParam(function (err, args) {
-	                if (typeof console === 'object') {
-	                    if (err) {
-	                        if (console.error) {
-	                            console.error(err);
-	                        }
-	                    }
-	                    else if (console[name]) {
-	                        _arrayEach(args, function (x) {
-	                            console[name](x);
-	                        });
-	                    }
-	                }
-	            })]));
-	        });
-	    }
-	    async.log = _console_fn('log');
-	    async.dir = _console_fn('dir');
-	    /*async.info = _console_fn('info');
-	    async.warn = _console_fn('warn');
-	    async.error = _console_fn('error');*/
-
-	    async.memoize = function (fn, hasher) {
-	        var memo = {};
-	        var queues = {};
-	        var has = Object.prototype.hasOwnProperty;
-	        hasher = hasher || identity;
-	        var memoized = _restParam(function memoized(args) {
-	            var callback = args.pop();
-	            var key = hasher.apply(null, args);
-	            if (has.call(memo, key)) {   
-	                async.setImmediate(function () {
-	                    callback.apply(null, memo[key]);
-	                });
-	            }
-	            else if (has.call(queues, key)) {
-	                queues[key].push(callback);
-	            }
-	            else {
-	                queues[key] = [callback];
-	                fn.apply(null, args.concat([_restParam(function (args) {
-	                    memo[key] = args;
-	                    var q = queues[key];
-	                    delete queues[key];
-	                    for (var i = 0, l = q.length; i < l; i++) {
-	                        q[i].apply(null, args);
-	                    }
-	                })]));
-	            }
-	        });
-	        memoized.memo = memo;
-	        memoized.unmemoized = fn;
-	        return memoized;
-	    };
-
-	    async.unmemoize = function (fn) {
-	        return function () {
-	            return (fn.unmemoized || fn).apply(null, arguments);
-	        };
-	    };
-
-	    function _times(mapper) {
-	        return function (count, iterator, callback) {
-	            mapper(_range(count), iterator, callback);
-	        };
-	    }
-
-	    async.times = _times(async.map);
-	    async.timesSeries = _times(async.mapSeries);
-	    async.timesLimit = function (count, limit, iterator, callback) {
-	        return async.mapLimit(_range(count), limit, iterator, callback);
-	    };
-
-	    async.seq = function (/* functions... */) {
-	        var fns = arguments;
-	        return _restParam(function (args) {
-	            var that = this;
-
-	            var callback = args[args.length - 1];
-	            if (typeof callback == 'function') {
-	                args.pop();
-	            } else {
-	                callback = noop;
-	            }
-
-	            async.reduce(fns, args, function (newargs, fn, cb) {
-	                fn.apply(that, newargs.concat([_restParam(function (err, nextargs) {
-	                    cb(err, nextargs);
-	                })]));
-	            },
-	            function (err, results) {
-	                callback.apply(that, [err].concat(results));
-	            });
-	        });
-	    };
-
-	    async.compose = function (/* functions... */) {
-	        return async.seq.apply(null, Array.prototype.reverse.call(arguments));
-	    };
-
-
-	    function _applyEach(eachfn) {
-	        return _restParam(function(fns, args) {
-	            var go = _restParam(function(args) {
-	                var that = this;
-	                var callback = args.pop();
-	                return eachfn(fns, function (fn, _, cb) {
-	                    fn.apply(that, args.concat([cb]));
-	                },
-	                callback);
-	            });
-	            if (args.length) {
-	                return go.apply(this, args);
-	            }
-	            else {
-	                return go;
-	            }
-	        });
-	    }
-
-	    async.applyEach = _applyEach(async.eachOf);
-	    async.applyEachSeries = _applyEach(async.eachOfSeries);
-
-
-	    async.forever = function (fn, callback) {
-	        var done = only_once(callback || noop);
-	        var task = ensureAsync(fn);
-	        function next(err) {
-	            if (err) {
-	                return done(err);
-	            }
-	            task(next);
-	        }
-	        next();
-	    };
-
-	    function ensureAsync(fn) {
-	        return _restParam(function (args) {
-	            var callback = args.pop();
-	            args.push(function () {
-	                var innerArgs = arguments;
-	                if (sync) {
-	                    async.setImmediate(function () {
-	                        callback.apply(null, innerArgs);
-	                    });
-	                } else {
-	                    callback.apply(null, innerArgs);
-	                }
-	            });
-	            var sync = true;
-	            fn.apply(this, args);
-	            sync = false;
-	        });
-	    }
-
-	    async.ensureAsync = ensureAsync;
-
-	    async.constant = _restParam(function(values) {
-	        var args = [null].concat(values);
-	        return function (callback) {
-	            return callback.apply(this, args);
-	        };
-	    });
-
-	    async.wrapSync =
-	    async.asyncify = function asyncify(func) {
-	        return _restParam(function (args) {
-	            var callback = args.pop();
-	            var result;
-	            try {
-	                result = func.apply(this, args);
-	            } catch (e) {
-	                return callback(e);
-	            }
-	            // if result is Promise object
-	            if (_isObject(result) && typeof result.then === "function") {
-	                result.then(function(value) {
-	                    callback(null, value);
-	                })["catch"](function(err) {
-	                    callback(err.message ? err : new Error(err));
-	                });
-	            } else {
-	                callback(null, result);
-	            }
-	        });
-	    };
-
-	    // Node.js
-	    if (typeof module === 'object' && module.exports) {
-	        module.exports = async;
-	    }
-	    // AMD / RequireJS
-	    else if (true) {
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-	            return async;
-	        }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	    }
-	    // included directly via <script> tag
-	    else {
-	        root.async = async;
-	    }
-
-	}());
-
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(169).setImmediate, __webpack_require__(4)))
-
-/***/ },
-/* 169 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(4).nextTick;
-	var apply = Function.prototype.apply;
-	var slice = Array.prototype.slice;
-	var immediateIds = {};
-	var nextImmediateId = 0;
-
-	// DOM APIs, for completeness
-
-	exports.setTimeout = function() {
-	  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
-	};
-	exports.setInterval = function() {
-	  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
-	};
-	exports.clearTimeout =
-	exports.clearInterval = function(timeout) { timeout.close(); };
-
-	function Timeout(id, clearFn) {
-	  this._id = id;
-	  this._clearFn = clearFn;
-	}
-	Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-	Timeout.prototype.close = function() {
-	  this._clearFn.call(window, this._id);
-	};
-
-	// Does not start the time, just sets up the members needed.
-	exports.enroll = function(item, msecs) {
-	  clearTimeout(item._idleTimeoutId);
-	  item._idleTimeout = msecs;
-	};
-
-	exports.unenroll = function(item) {
-	  clearTimeout(item._idleTimeoutId);
-	  item._idleTimeout = -1;
-	};
-
-	exports._unrefActive = exports.active = function(item) {
-	  clearTimeout(item._idleTimeoutId);
-
-	  var msecs = item._idleTimeout;
-	  if (msecs >= 0) {
-	    item._idleTimeoutId = setTimeout(function onTimeout() {
-	      if (item._onTimeout)
-	        item._onTimeout();
-	    }, msecs);
-	  }
-	};
-
-	// That's not how node.js implements it but the exposed api is the same.
-	exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
-	  var id = nextImmediateId++;
-	  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
-
-	  immediateIds[id] = true;
-
-	  nextTick(function onNextTick() {
-	    if (immediateIds[id]) {
-	      // fn.call() is faster so we optimize for the common use-case
-	      // @see http://jsperf.com/call-apply-segu
-	      if (args) {
-	        fn.apply(null, args);
-	      } else {
-	        fn.call(null);
-	      }
-	      // Prevent ids from leaking
-	      exports.clearImmediate(id);
-	    }
-	  });
-
-	  return id;
-	};
-
-	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
-	  delete immediateIds[id];
-	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(169).setImmediate, __webpack_require__(169).clearImmediate))
 
 /***/ }
 /******/ ]);
