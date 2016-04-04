@@ -147,7 +147,7 @@ var Form = React.createClass({
         });
         console.log("Authors");
         if(self.state.metadata.authors){
-        var authors_str = self.state.metadata.authors.join(";");
+        var authors_str = self.state.metadata.authors.join("; ");
         console.log(authors_str);
         }
 
