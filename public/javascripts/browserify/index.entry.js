@@ -109,8 +109,8 @@
 	        }
 	        console.log(data.url);
 	        var doi = data.doi;
-	        var edit = "/editDOI?doi=" + data.doi;
-	        var resources_url = "/createResources?doi=" + data.doi;
+	        var edit = "editDOI?doi=" + data.doi;
+	        var resources_url = "createResources?doi=" + data.doi;
 	        return React.createElement(
 	            "div",
 	            { className: "doiSummary" },
@@ -162,7 +162,8 @@
 	    },
 	    componentDidMount: function componentDidMount() {
 	        var self = this;
-	        superagent.get("/api/getAllDoi").end(function (err, res) {
+	        console.log("getting data");
+	        superagent.get("api/getAllDoi").end(function (err, res) {
 
 	            if (err) {
 	                console.log(err);
@@ -186,7 +187,7 @@
 	            );
 	        }
 	        var count = 0;
-
+	        console.log(this.state.DOIs);
 	        if (this.state.DOIs) {
 	            var DOIs = this.state.DOIs;
 	            console.log(DOIs);
@@ -236,7 +237,7 @@
 	                ),
 	                React.createElement(
 	                    "a",
-	                    { href: "/createDOI" },
+	                    { href: "createDOI" },
 	                    React.createElement(
 	                        "button",
 	                        { type: "button", className: "btn btn-primary" },
@@ -8154,6 +8155,10 @@
 	  }
 	};
 
+	function registerNullComponentID() {
+	  ReactEmptyComponentRegistry.registerNullComponentID(this._rootNodeID);
+	}
+
 	var ReactEmptyComponent = function (instantiate) {
 	  this._currentElement = null;
 	  this._rootNodeID = null;
@@ -8162,7 +8167,7 @@
 	assign(ReactEmptyComponent.prototype, {
 	  construct: function (element) {},
 	  mountComponent: function (rootID, transaction, context) {
-	    ReactEmptyComponentRegistry.registerNullComponentID(rootID);
+	    transaction.getReactMountReady().enqueue(registerNullComponentID, this);
 	    this._rootNodeID = rootID;
 	    return ReactReconciler.mountComponent(this._renderedComponent, rootID, transaction, context);
 	  },
@@ -18885,7 +18890,7 @@
 
 	'use strict';
 
-	module.exports = '0.14.7';
+	module.exports = '0.14.8';
 
 /***/ },
 /* 147 */

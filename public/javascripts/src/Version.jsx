@@ -18,126 +18,6 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-
-/*
-var ResourceInfo = React.createClass({
-    getInitialState: function(){
-        return ({url: "", name: "", description: "" });
-    },
-    handleURL: function(e) {
-        this.props.resourceInfoToSelector({"resourceData": e.target.value});
-        this.setState({url: e.target.value});
-    },
-    handleFile: function(f) {
-        var file = f[0]; 
-        this.props.resourceInfoToSelector({"resourceData": file});
-        this.setState({file: file});
-    },
-    handleName: function(e){
-        //console.log(e.target.value);
-        this.props.resourceInfoToSelector({"resourceName": e.target.value});
-        this.setState({name: e.target.value});
-    },
-    handleDescription: function(e){
-        this.props.resourceInfoToSelector({"resourceDescription": e.target.value});
-        this.setState({description: e.target.value});
-    },
-    render: function() {
-        var type = this.props.type;
-        var self = this;
-        var ResourceSpecificFields = <div />;
-        //this.setState({type: type});
-        if(type == ""){
-            ResourceSpecificFields= <div />;
-        } else if(type == "url") {
-            ResourceSpecificFields = (
-                <div>
-                    <label>URL: </label>
-                    <input type="text" value={self.state.url} onChange={self.handleURL} className="form-control"/>
-                </div>
-            );
-        } else if(type == "file") {
-            ResourceSpecificFields = (
-            <div>
-                <Dropzone style={{width: "100%", height: "60px", padding: "10px", border: "1px dashed #333"}} onDrop={this.handleFile}>
-                    <div> Drop file here </div>
-                </Dropzone>
-            </div>
-            );
-        }
-
-        return (
-            <div>
-                {self.props.type ?
-                <div>
-                    <div className="form-group">
-                        <label>Resource Name: </label>
-                        <input type="text" value={self.state.name} onChange={self.handleName} className="form-control" />
-                    </div>
-                    <div className="form-group">
-                        <label>Resource Description: </label>
-                        <textarea value={self.state.description} onChange={self.handleDescription} className="form-control" >
-                        </textarea>
-                    </div>
-                    {ResourceSpecificFields}
-                </div>
-                :
-                 <div />
-                }
-            </div>
-        );
-    }
-});
-
-var ResourceSelector = React.createClass({
-    getInitialState: function() {
-        return {type: "", resourceInfo: {}};
-    },
-    handleSelect: function(e) { 
-        console.log(e);
-        //var self = this;
-		//console.log(this.state.type);
-        console.log(e.target.value);	
-        //this.props.resourceType(e.target.value);
-        this.setState({type: e.target.value});
-    },
-    getResourceInfo: function(info) {
-        //console.log(info);    
-        var resourceInfo = this.state.resourceInfo;
-        //console.log(resourceInfo)
-        //resourceInfo["info"] = info;
-        jQuery.extend(resourceInfo, info);
-        //console.log(resourceInfo);
-        this.props.getResourceInfo(this.state.type, resourceInfo);
-        this.setState({resourceInfo: resourceInfo});
-    },
-    onURL: function(e){
-        //console.log(e);
-       // this.setState({url: e.target.value});
-    },
-    render: function(){
-        var self = this;
-        //console.log(this.state.type);
-        return(
-		<div>
-			<div className="form-group">
-                <label htmlFor="sel1">Select Type:</label>
-                <select className="form-control" id="sel1" onChange={self.handleSelect} value={self.state.type}>
-                    <option></option>
-                    <option value="url" >URL</option>
-                    <option value="image">Image</option>
-                    <option value="file" >File</option>
-                </select>
-			</div>	
-            <div className="form-group">
-                <ResourceInfo type={self.state.type} resourceInfoToSelector={self.getResourceInfo}/>
-            </div>
-		</div>
-        );
-    }
-});
-*/
-
 var AddResourcePanel = React.createClass({
     getInitialState: function() {
         return {resources :[], type: "", info: {}, selectType:"", files: {}};
@@ -327,7 +207,7 @@ var OldResources = React.createClass({
         
         //var getRes = "http://localhost:3000/api/getResourcesForDOI?doi="+encodeURI(doi);
         //console.log(getRes);
-        var getURL = "http://localhost:3000/api/getResourcesForDOI?doi="+doi;
+        var getURL = "api/getResourcesForDOI?doi="+doi;
         jQuery.get(getURL, function(data){
 
             //console.log(data.doi[0]);
@@ -444,7 +324,7 @@ var App = React.createClass({
         
         console.log(payLoad);
 
-        var ver_req = superagent.post("/api/uploadFile");
+        var ver_req = superagent.post("api/uploadFile");
 
         var files = [];
         for(var i in addedResources){
@@ -489,59 +369,13 @@ var App = React.createClass({
 
         ver_req.end(function(){
             console.log("Done uploaded files");
+            window.location.href='index';
+
+
         }).on("progress", function(e){
             console.log(e.percent);
         }); 
-        /*
-        jQuery.ajax({
-            type: "POST", 
-            url: "/api/createVersion", 
-            data: payLoad,
-            success: function(res){
-                console.log(res);
-                /*
-                var returnedResources = res.resources;
-                var files = [];
-                for(var rr in addedResources){
-                    var returnedResource = addedResources[rr];
-                    console.log(returnedResource);
-                    //console.log(returnedResource[0]);
-                    if(returnedResource.type == "file"){
-                        //upload file
-                        files.push(returnedResource);
-                       
 
-                    }
-                }
-                
-                console.log(files);
-                async.each(files, function(file, callback){
-                    console.log("Post: ");
-                    console.log(file);
-                    console.log(self.state.files);   
-                    var f = file.info.resourceData;
-                    console.log(f);
-                    console.log("posting file onto server");
-                    var file_req = superagent.post("/api/uploadFile");
-                    console.log(f.name);
-                    file_req.attach(f.name, f);
-                    file_req.end(function(){
-                        console.log("upload complete");
-                        callback();
-                    }).on("progress", function(e){
-                        console.log("sending file");
-                    });
-                  
-                }, function(err){
-                    console.log("Done!");
-                });
-                //console.log("SENT!");
-     
-            },
-            dataType: "json"
-        });
-        */
-        //dfasdf
 
     },
     componentDidMount: function(){
@@ -558,7 +392,7 @@ var App = React.createClass({
             </div>
             <div className="container col-md-6 col-offset-3" id="main">
                 <div className="row" style={{"paddingLeft": "20px"}}>
-                    <a href="/" >Dashboard</a>
+                    <a href="index" >Dashboard</a>
                 </div>
                 <h3 id="headline"> Add Resources</h3>
 				{

@@ -13,6 +13,8 @@ var mkdirp = require("mkdirp");
 var fs = require("fs");
 
 
+var config = require("../config.js");
+
 
 var path = require('path');
  
@@ -33,21 +35,21 @@ fs.mkdirParent = function(dirPath, mode, callback) {
 
 
 
-var username = "apitest";
-var password = "apitest";
-var bindaas_api_key = "4fbb38a3-1821-436c-a44d-8d3bc5efd33e";
-var bindaas_post_url = "http://localhost:9099/services/test/DataLoaderApiTest/submit/json";
+
+var username = config.ezid_username;
+var password = config.ezid_password;
+var bindaas_api_key = config.bindaas_api_key;
+
+var DOI_NAMESPACE = config.DOI_NAMESPACE
+var URL_PREFIX = config.URL_PREFIX;
 
 
-var DOI_NAMESPACE = "10.5072/FK2";
-var URL_PREFIX = "http://localhost:3003/doi?doi=";
+var bindaas_addResourceURL = config.bindaas_addResourceURL;
+var bindaas_addVersionURL = config.bindaas_addVersionURL;
 
+var bindaas_getResourcesForDoi = config.bindaas_getResourcesForDoi;
 
-
-var addResourceURL = "http://dragon.cci.emory.edu:9099/services/test/TCIA_DOI_RESOURCES/submit/json";
-var addVersionURL = "http://dragon.cci.emory.edu:9099/services/test/DOI_RESOURCE_VERSIONS/submit/json";
-
-var UPLOAD_PATH = "/Users/ganesh/DOI_RESOURCES";
+var UPLOAD_PATH = config.UPLOAD_PATH;
 
 
 router.get("/createResources", function(req, res, next){
@@ -57,7 +59,8 @@ router.get("/createResources", function(req, res, next){
 
 router.get("/api/getResourcesForDOI", function(req, res) {
     var doi = req.query.doi;
-    var url = "http://dragon.cci.emory.edu:9099/services/test/TCIA_DOI_RESOURCES/query/getByDoi?api_key=4fbb38a3-1821-436c-a44d-8d3bc5efd33e&doi="+doi;
+
+    var url = bindaas_getResourcesForDoi +  "?api_key=" + config.bindaas_api_key+"&doi="+doi;
     console.log(url);
     http.get(url, function(rres){
         var resources = "";
@@ -65,7 +68,13 @@ router.get("/api/getResourcesForDOI", function(req, res) {
             resources+=d;
         });
         rres.on("end", function(){
-            res.json(JSON.parse(resources));
+            try{
+                resources_json = JSON.parse(resources);
+                return res.json(resources_json);
+            } catch(e){
+                return res.status(500).send("Couldn't fetch resources");
+            }   
+
            
         });
     });
@@ -121,7 +130,7 @@ function postResourcesPayload(resource, doi, version, callback){
 	//console.log("each");
 	resourceIDs.push(payload.resourceID);
 	//PUSHED_RESOURCES.push(payload);
-	superagent.post(addResourceURL+"?api_key="+bindaas_api_key)
+	superagent.post(bindaas_addResourceURL+"?api_key="+bindaas_api_key)
 		.send(payload)
 		.end(function(resource_res){
 			//console.log(resource_res);i
@@ -155,7 +164,8 @@ function postResources(addedResources, doi, version, cb){
                     var path = directory + "/" + fileName;				
 
                     resource.info.resourceData = path;
-
+                    resource.filePath = path;
+                    resource.fileName = fileName;
                 }
                 postResourcesPayload(resource, doi, version, callback);
                 
@@ -225,16 +235,20 @@ router.post("/api/uploadFile", function(req, res, next){
                 version_payLoad.timeStamp = Date.now();
                 version_payLoad.doi = doi;
                 version_payLoad.versionID = newVersion;
-
-                superagent.post(addVersionURL+"?api_key="+bindaas_api_key)
+                console.log(bindaas_addVersionURL);
+                superagent.post(bindaas_addVersionURL+"?api_key="+bindaas_api_key)
                     .send(version_payLoad)
                     .end(function(version_res){
+                        if(version_res.statusCode != 200){
+                            console.log("Error")
+                            return res.status(500).send("Error");
+                        }
                         console.log(version_payLoad);
                         console.log("Pushed all resources!!!!! W00t; ");
                         
                         console.log("Done!");
                         //console.log(version_res);
-                        res.json({"resources":resources});
+                        return res.json({"resources":resources});
                     });
 
             });
@@ -244,7 +258,7 @@ router.post("/api/uploadFile", function(req, res, next){
 });
 
 var FILES = [];
-
+/*:
 router.post("/api/createVersion", function(req, res, next){
     var resources = req.body;
     var doi = resources.doi;
@@ -276,7 +290,7 @@ router.post("/api/createVersion", function(req, res, next){
         console.log(resource.info.resourceData);
         console.log("pushing");
         PUSHED_RESOURCES.push(payload);
-        superagent.post(addResourceURL+"?api_key="+bindaas_api_key)
+        superagent.post(bindaas_addResourceURL+"?api_key="+bindaas_api_key)
             .send(payload)
             .end(function(resource_res){
                 //console.log(resource_res);
@@ -326,7 +340,7 @@ router.post("/api/createVersion", function(req, res, next){
                         version_payLoad.doi = doi;
                         version_payLoad.versionID = newVersion;
 
-                        superagent.post(addVersionURL+"?api_key="+bindaas_api_key)
+                        superagent.post(bindaas_addVersionURL+"?api_key="+bindaas_api_key)
                             .send(version_payLoad)
                             .end(function(version_res){
                                 console.log("Pushed all resources!!!!! W00t; ");
@@ -344,5 +358,6 @@ router.post("/api/createVersion", function(req, res, next){
         }
     });
 });
+*/
 
 module.exports = router;

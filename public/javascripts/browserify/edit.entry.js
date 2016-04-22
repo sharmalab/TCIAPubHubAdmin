@@ -83,7 +83,7 @@
 	        var url = window.location.href;
 	        var doi = getParameterByName("doi", url);
 
-	        var url = "/api/editDOI" + "?doi=" + doi;
+	        var url = "api/editDOI" + "?doi=" + doi;
 	        console.log(url);
 	        superagent.get(url).end(function (err, data) {
 	            console.log("Data...");
@@ -117,9 +117,14 @@
 	        var postData = self.state.metadata;
 	        //var postData = formData.push(resources);
 	        //
+	        //
+	        //
+	        console.log("...");
+	        console.log(postData);
+
 	        jQuery.ajax({
 	            type: "POST",
-	            url: "/api/editDOI",
+	            url: "api/editDOI",
 	            data: JSON.stringify(postData),
 	            success: function success(res) {
 	                //console.log(err);
@@ -128,7 +133,7 @@
 
 	                var redir_doi = res.doi;
 	                console.log(redir_doi);
-	                //window.location.href='http://localhost:3000/createResources?doi='+redir_doi;
+	                window.location.href = 'index';
 	            },
 	            dataType: "json",
 	            contentType: "application/json"
@@ -175,6 +180,7 @@
 	        var self = this;
 	        var metaData = self.state.metadata;
 	        metaData.year = e.target.value;
+	        console.log(e.target.value);
 	        this.setState({ metadata: metaData });
 	    },
 	    render: function render() {
@@ -263,6 +269,7 @@
 	                            placeholder: "Publisher year",
 	                            name: "year",
 	                            className: "form-control",
+	                            onChange: self.handleYear,
 	                            value: self.state.metadata.year })
 	                    ),
 	                    React.createElement(
@@ -315,7 +322,7 @@
 	                    { className: "row", style: { "paddingLeft": "20px" } },
 	                    React.createElement(
 	                        "a",
-	                        { href: "/" },
+	                        { href: "index" },
 	                        "Dashboard"
 	                    )
 	                ),
@@ -8231,6 +8238,10 @@
 	  }
 	};
 
+	function registerNullComponentID() {
+	  ReactEmptyComponentRegistry.registerNullComponentID(this._rootNodeID);
+	}
+
 	var ReactEmptyComponent = function (instantiate) {
 	  this._currentElement = null;
 	  this._rootNodeID = null;
@@ -8239,7 +8250,7 @@
 	assign(ReactEmptyComponent.prototype, {
 	  construct: function (element) {},
 	  mountComponent: function (rootID, transaction, context) {
-	    ReactEmptyComponentRegistry.registerNullComponentID(rootID);
+	    transaction.getReactMountReady().enqueue(registerNullComponentID, this);
 	    this._rootNodeID = rootID;
 	    return ReactReconciler.mountComponent(this._renderedComponent, rootID, transaction, context);
 	  },
@@ -18962,7 +18973,7 @@
 
 	'use strict';
 
-	module.exports = '0.14.7';
+	module.exports = '0.14.8';
 
 /***/ },
 /* 147 */

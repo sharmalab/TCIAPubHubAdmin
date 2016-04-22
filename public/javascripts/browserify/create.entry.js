@@ -84,7 +84,7 @@
 	        //
 	        jQuery.ajax({
 	            type: "POST",
-	            url: "/api/createDOI",
+	            url: "api/createDOI",
 	            data: JSON.stringify(postData),
 	            success: function success(res) {
 	                //console.log(err);
@@ -93,7 +93,7 @@
 
 	                var redir_doi = res.doi;
 	                console.log(redir_doi);
-	                window.location.href = 'http://localhost:3000/createResources?doi=' + redir_doi;
+	                window.location.href = 'index';
 	            },
 	            dataType: "json",
 	            contentType: "application/json"
@@ -113,7 +113,7 @@
 
 	        return React.createElement(
 	            "form",
-	            { action: "/submitDOI", method: "POST", encType: "application/x-www-form-urlencoded", id: "createForm" },
+	            { action: "submitDOI", method: "POST", encType: "application/x-www-form-urlencoded", id: "createForm" },
 	            React.createElement(
 	                "div",
 	                { className: "panel panel-default" },
@@ -213,7 +213,7 @@
 	                    { className: "row", style: { "paddingLeft": "20px" } },
 	                    React.createElement(
 	                        "a",
-	                        { href: "/" },
+	                        { href: "index" },
 	                        "Dashboard"
 	                    )
 	                ),
@@ -8129,6 +8129,10 @@
 	  }
 	};
 
+	function registerNullComponentID() {
+	  ReactEmptyComponentRegistry.registerNullComponentID(this._rootNodeID);
+	}
+
 	var ReactEmptyComponent = function (instantiate) {
 	  this._currentElement = null;
 	  this._rootNodeID = null;
@@ -8137,7 +8141,7 @@
 	assign(ReactEmptyComponent.prototype, {
 	  construct: function (element) {},
 	  mountComponent: function (rootID, transaction, context) {
-	    ReactEmptyComponentRegistry.registerNullComponentID(rootID);
+	    transaction.getReactMountReady().enqueue(registerNullComponentID, this);
 	    this._rootNodeID = rootID;
 	    return ReactReconciler.mountComponent(this._renderedComponent, rootID, transaction, context);
 	  },
@@ -18860,7 +18864,7 @@
 
 	'use strict';
 
-	module.exports = '0.14.7';
+	module.exports = '0.14.8';
 
 /***/ },
 /* 147 */

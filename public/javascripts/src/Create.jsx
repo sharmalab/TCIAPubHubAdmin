@@ -34,7 +34,7 @@ var Form = React.createClass({
         //
         jQuery.ajax({
             type: "POST",
-            url: "/api/createDOI",
+            url: "api/createDOI",
             data: JSON.stringify(postData),
             success: function(res) {
                 //console.log(err);
@@ -43,7 +43,7 @@ var Form = React.createClass({
                 
                 var redir_doi = res.doi;
                 console.log(redir_doi);
-                window.location.href='http://localhost:3000/createResources?doi='+redir_doi;
+                window.location.href='index';
             },
             dataType: "json",
             contentType: "application/json"
@@ -61,7 +61,7 @@ var Form = React.createClass({
             return <input type="text" name="authors" className="form-control" key={id}/>;
         });
 
-       return ( <form action="/submitDOI" method="POST" encType="application/x-www-form-urlencoded" id="createForm">
+       return ( <form action="submitDOI" method="POST" encType="application/x-www-form-urlencoded" id="createForm">
             <div className="panel panel-default"> 
                 <div className="panel-body">
                     <div className="form-group">
@@ -115,7 +115,7 @@ var App = React.createClass({
             <div className="container col-md-8 col-md-offset-2" id="main">
 
                 <div className="row" style={{"paddingLeft": "20px"}}>
-                    <a href="/" >Dashboard</a>
+                    <a href="index" >Dashboard</a>
                 </div>
                 <h3 id="headline"> Create DOI</h3>
                 <Form />

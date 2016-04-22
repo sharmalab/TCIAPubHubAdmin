@@ -50,8 +50,8 @@ var DOISmall = React.createClass({
         }
         console.log(data.url);
         var doi = data.doi;
-        var edit = "/editDOI?doi="+data.doi;
-        var resources_url = "/createResources?doi="+data.doi;
+        var edit = "editDOI?doi="+data.doi;
+        var resources_url = "createResources?doi="+data.doi;
         return (     
                 <div className="doiSummary">
                     <div className="doiTitle">
@@ -84,7 +84,8 @@ var AllDOIs = React.createClass({
     },
     componentDidMount: function(){
         var self = this;
-        superagent.get("/api/getAllDoi")
+        console.log("getting data"); 
+        superagent.get("api/getAllDoi")
             .end(function(err, res){
 
                 if(err){
@@ -106,7 +107,7 @@ var AllDOIs = React.createClass({
             return <div> Couldnt fetch data from the server</div>;
         }
         var count=0;
-
+        console.log(this.state.DOIs);
         if(this.state.DOIs){
             var DOIs = this.state.DOIs;
             console.log(DOIs);
@@ -137,7 +138,7 @@ var App = React.createClass({
                 <div className="container col-md-8 col-md-offset-2" id="main">
                     <h3 id="headline"> PubHub Dashboard</h3>
 
-                    <a href="/createDOI"><button type="button" className="btn btn-primary">Create DOI</button></a>
+                    <a href="createDOI"><button type="button" className="btn btn-primary">Create DOI</button></a>
                     <div className="allDOIs">
                         <AllDOIs />
                     </div>

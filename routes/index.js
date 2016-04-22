@@ -42,6 +42,11 @@ var makeID = function(length) {
     return text;
 };
 
+router.get("/index", function(req, res, next){
+    res.render("index");
+   
+});
+
 
 router.get("/", function(req, res, next){
     res.render("index");
@@ -62,7 +67,7 @@ router.get("/editDOI", function(req, res, next) {
 
 router.get("/api/getAllDoi", function(req, res){
     var url = bindaas_getAll + "?api_key=" + bindaas_api_key;
-    console.log(url);
+    
     var request = http.get(url, function(res_){
         //res.send(res_)
         //console.log(res_);
@@ -82,17 +87,13 @@ router.get("/api/getAllDoi", function(req, res){
             //var response = JSON.parse(DOIs);
             //console.log(data);
             var response = DOIs;
-            console.log("....");
-            console.log(response);
-
             
 
             res.json(JSON.parse(response));
         });
 
     }).on("error", function(error){
-        console.log("error");
-        console.log(error);
+
         res.status(500).send("Couldnt connect to Bindaas" + error);
     });
 
@@ -105,7 +106,7 @@ var getMetadataForDOI = function(doi, callback){
     superagent.get(url)
         .end(function(err, res){
             metadata = JSON.parse(res.text);
-            console.log(res.text);
+
             callback(metadata);
         });
 }
@@ -153,7 +154,7 @@ router.post("/api/editDOI", function(req, res) {
 
     //console.log(req); 
     var metadata = req.body;
-    var api_key="4fbb38a3-1821-436c-a44d-8d3bc5efd33e"; 
+    var api_key= bindaas_api_key; 
     var doi = metadata.doi;
     var url = metadata.url
 
@@ -166,9 +167,9 @@ router.post("/api/editDOI", function(req, res) {
     
     console.log(del_url);
     superagent.del(del_url)
-    .end(function(err, res){
-            console.log(err);
-            console.log(res);
+    .end(function(err, dres){
+            //console.log(err);
+            //console.log(res);
             console.log("deleted metadata");
             superagent.post(bindaas_postDOIMetadata+"?api_key="+bindaas_api_key)
                 .send(metadata)
@@ -192,8 +193,7 @@ router.post("/api/createDOI", function(req, res) {
     resources = {"resources": resources}; 
     form_data = getFormData(form_data);
     form_data.authors = form_data.authors.split(";");
-    console.log(form_data);
-    console.log(resources);
+
     //createDOI
     var RAND = makeID(8); 
     var DOI = "http://dx.doi.org/"+ DOI_NAMESPACE + "." + form_data.year + "."+ RAND;

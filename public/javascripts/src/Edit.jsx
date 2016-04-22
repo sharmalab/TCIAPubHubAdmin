@@ -37,7 +37,7 @@ var Form = React.createClass({
         var url = window.location.href;
         var doi = getParameterByName("doi", url);
      
-        var url = "/api/editDOI" + "?doi="+doi;  
+        var url = "api/editDOI" + "?doi="+doi;  
         console.log(url);
         superagent.get(url)
             .end(function(err,data){
@@ -72,9 +72,14 @@ var Form = React.createClass({
         var postData = self.state.metadata;
         //var postData = formData.push(resources);
         //
+        //
+        //
+        console.log("...");
+        console.log(postData);
+
         jQuery.ajax({
             type: "POST",
-            url: "/api/editDOI",
+            url: "api/editDOI",
             data: JSON.stringify(postData),
             success: function(res) {
                 //console.log(err);
@@ -83,7 +88,7 @@ var Form = React.createClass({
                 
                 var redir_doi = res.doi;
                 console.log(redir_doi);
-                //window.location.href='http://localhost:3000/createResources?doi='+redir_doi;
+                window.location.href='index';
             },
             dataType: "json",
             contentType: "application/json"
@@ -133,6 +138,7 @@ var Form = React.createClass({
         var self = this;
         var metaData = self.state.metadata;
         metaData.year = e.target.value;
+        console.log(e.target.value);
         this.setState({metadata: metaData});
 
        
@@ -186,7 +192,8 @@ var Form = React.createClass({
                         <input type="text" 
                             placeholder="Publisher year" 
                             name="year" 
-                            className="form-control" 
+                            className="form-control"
+                            onChange={self.handleYear} 
                             value={self.state.metadata.year}/>
                     </div>
                     <div className="form-group">
@@ -226,7 +233,7 @@ var App = React.createClass({
             </div>
             <div className="container col-md-8 col-md-offset-2" id="main">
                 <div className="row" style={{"paddingLeft": "20px"}}>
-                    <a href="/" >Dashboard</a>
+                    <a href="index" >Dashboard</a>
                 </div>
                 <h3 id="headline"> Edit DOI Metadata</h3>
                 <Form />
