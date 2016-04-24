@@ -9,7 +9,7 @@ var Citation = React.createClass({
     },
     componentDidMount: function(){
         var self = this;
-        var citationUrl = "http://localhost:3003/api/getCitation?style=apa&lang=en-US&doi=";
+        var citationUrl = "api/getCitation?style=apa&lang=en-US&doi=";
         var doi = self.props.doi.slice(18,self.props.doi.length);
         console.log(doi);
         citationUrl+=doi;
