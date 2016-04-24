@@ -18,21 +18,6 @@ var config = require("../config.js");
 
 var path = require('path');
  
-fs.mkdirParent = function(dirPath, mode, callback) {
-  //Call the standard fs.mkdir
-  fs.mkdir(dirPath, mode, function(error) {
-    //When it fail in this way, do the custom steps
-    if (error && error.errno === 34) {
-      //Create all the parents recursively
-      fs.mkdirParent(path.dirname(dirPath), mode, callback);
-      //And then the directory
-      fs.mkdirParent(dirPath, mode, callback);
-    }
-    //Manually run the callback since we used our own callback to do all these
-    callback && callback(error);
-  });
-};
-
 
 
 
@@ -50,6 +35,23 @@ var bindaas_addVersionURL = config.bindaas_addVersionURL;
 var bindaas_getResourcesForDoi = config.bindaas_getResourcesForDoi;
 
 var UPLOAD_PATH = config.UPLOAD_PATH;
+
+
+fs.mkdirParent = function(dirPath, mode, callback) {
+  //Call the standard fs.mkdir
+  fs.mkdir(dirPath, mode, function(error) {
+    //When it fail in this way, do the custom steps
+    if (error && error.errno === 34) {
+      //Create all the parents recursively
+      fs.mkdirParent(path.dirname(dirPath), mode, callback);
+      //And then the directory
+      fs.mkdirParent(dirPath, mode, callback);
+    }
+    //Manually run the callback since we used our own callback to do all these
+    callback && callback(error);
+  });
+};
+
 
 
 router.get("/createResources", function(req, res, next){
@@ -82,9 +84,7 @@ router.get("/api/getResourcesForDOI", function(req, res) {
 
 
 function findLatestVersion(doi, callback){
-
-    //get all versions for this DOI
-    var getVersionsForDoiURL = "http://dragon.cci.emory.edu:9099/services/test/DOI_RESOURCE_VERSIONS/query/getVersionsForDoi";
+    var getVersionsForDoiURL = config.bindaas_getVersionsForDoiURL; 
 
     superagent.get(getVersionsForDoiURL + "?api_key="+bindaas_api_key + "&doi="+doi)
         .end(function(ver_err, ver_res){
@@ -258,106 +258,5 @@ router.post("/api/uploadFile", function(req, res, next){
 });
 
 var FILES = [];
-/*:
-router.post("/api/createVersion", function(req, res, next){
-    var resources = req.body;
-    var doi = resources.doi;
-    var previousResources = resources.previousResources || [];
-    var addedResources = resources.addedResources;
-    console.log(req.body);
-    console.log("###");
-    console.log(resources.addedResources);
-    console.log("####");
-    console.log(doi);
-    console.log(resources);
-    console.log("........"); 
-    var resourceIDs = previousResources;
-    //var FILES = [];
-    var PUSHED_RESOURCES = [];
-
-    console.log(addedResources);
-    async.each(addedResources, function(resource, callback){
-        var payload = resource;
-      
-        payload.resourceID = uuid.v1();
-        payload.doi = doi;
-        console.log("each");
-
-
-        resourceIDs.push(payload.resourceID);
-        console.log("pushed");
-        console.log(resource.type);
-        console.log(resource.info.resourceData);
-        console.log("pushing");
-        PUSHED_RESOURCES.push(payload);
-        superagent.post(bindaas_addResourceURL+"?api_key="+bindaas_api_key)
-            .send(payload)
-            .end(function(resource_res){
-                //console.log(resource_res);
-                callback();
-                    
-            });   
-    }, function(err){
-        if(err){
-            console.log("Error!");
-        } else {
-
-            //get all versions for this DOI
-            var getVersionsForDoiURL = "http://dragon.cci.emory.edu:9099/services/test/DOI_RESOURCE_VERSIONS/query/getVersionsForDoi";
-
-            superagent.get(getVersionsForDoiURL + "?api_key="+bindaas_api_key + "&doi="+doi)
-                .end(function(ver_err, ver_res){
-                    //console.log(ver_err);
-                    //console.log(ver_res);
-                    if(ver_res.ok) {
-                        var versions = ver_res.body;
-                        var fakeVersionID = -999;
-                        var latestVersion = fakeVersionID;
-
-
-                        if(versions.length){
-                            for(v in versions){
-                                var version = versions[v];
-                                if(version.versionID){
-                                    if(version.versionID > latestVersion){
-                                        latestVersion = version.versionID;
-                                    }
-                                }
-
-                            }
-                        }
-                        var newVersion
-                        if(latestVersion == fakeVersionID){
-                            newVersion = 1;
-                        } else {
-                            newVersion = latestVersion+1;
-                        }
-
-                        var version_payLoad = {};
-                        version_payLoad.resourceIDs = resourceIDs;
-                        console.log(resourceIDs);
-                        version_payLoad.timeStamp = Date.now();
-                        version_payLoad.doi = doi;
-                        version_payLoad.versionID = newVersion;
-
-                        superagent.post(bindaas_addVersionURL+"?api_key="+bindaas_api_key)
-                            .send(version_payLoad)
-                            .end(function(version_res){
-                                console.log("Pushed all resources!!!!! W00t; ");
-                                console.log(PUSHED_RESOURCES);
-                                console.log("Done!");
-                                //console.log(version_res);
-                                res.json({"resources":PUSHED_RESOURCES});
-                            });
-
-                    } else {
-                        res.status(500).send("Error couldn't connect to Bindaas");    
-                    }
-                });
-
-        }
-    });
-});
-*/
 
 module.exports = router;

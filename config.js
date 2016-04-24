@@ -49,6 +49,7 @@ exports.bindaas_deleteByDOI = bindaas_deleteByDOI;
 exports.UPLOAD_PATH = UPLOAD_PATH;
 exports.bindaas_getResourcesForDoi = bindaas_getResourcesForDoi;
 
+exports.bindaas_getVersionsForDoiURL = bindaas_getVersionsForDoiURL;
 
 exports.bindaas_addResourceURL = bindaas_addResourceURL;
 exports.bindaas_addVersionURL = bindaas_addVersionURL;
