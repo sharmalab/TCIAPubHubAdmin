@@ -4,6 +4,7 @@ var Dropzone = require("react-dropzone");
 var jQuery = require("jquery");
 var async = require("async");
 var superagent = require("superagent");
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
 window.jQuery = jQuery;
 
@@ -57,7 +58,7 @@ var AddResourcePanel = React.createClass({
         var new_resource = {"type": type, "info": info};
         resources.push(new_resource);
         this.props.sendResourcesToParent(resources, files);
-        this.setState({resources: resources, files: files, selectType: "", name: "", description: ""});
+        this.setState({resources: resources, files: files, selectType: "", resourceName: "", resourceDescription: ""});
     },
     deleteResource: function(id){
         var index = id-1;
@@ -92,6 +93,7 @@ var AddResourcePanel = React.createClass({
     },
     handleDescription: function(e){
         //this.props.resourceInfoToSelector({"resourceDescription": e.target.value});
+        //console.log(e);
         this.setState({resourceDescription: e.target.value});
     },
     render: function(){
@@ -118,11 +120,12 @@ var AddResourcePanel = React.createClass({
             </div>
             );
         }
-
+        
 
         var ResourceSelector = 		
         <div>
 			<div className="form-group">
+                <h4> Add new resources </h4>
                 <label htmlFor="sel1">Select Type:</label>
                 <select className="form-control" id="sel1" onChange={self.handleSelectResourceType} value={self.state.selectType}>
                     <option></option>
@@ -137,11 +140,11 @@ var AddResourcePanel = React.createClass({
                     <div>
                         <div className="form-group">
                             <label>Resource Name: </label>
-                            <input type="text" value={self.state.name} onChange={self.handleName} className="form-control" />
+                            <input type="text" value={self.state.resourceName} onChange={self.handleName} className="form-control" />
                         </div>
                         <div className="form-group">
                             <label>Resource Description: </label>
-                            <textarea value={self.state.description} onChange={self.handleDescription} className="form-control" >
+                            <textarea value={self.state.resourceDescription} onChange={self.handleDescription} className="form-control" >
                             </textarea>
                         </div>
                         {ResourceSpecificFields}
@@ -180,8 +183,14 @@ var AddResourcePanel = React.createClass({
                 : 
                     <div />
             }
-                
-                <ul className="list-group">{Resources}</ul>
+             
+
+                    <ul className="list-group">
+                        <ReactCSSTransitionGroup transitionName="example" transitionEnterTimeout={500} transitionLeaveTimeout={300}>
+                          {Resources}
+                        </ReactCSSTransitionGroup>
+                    </ul>
+       
                 {ResourceSelector}
                 {
                     //<ResourceSelector  getResourceInfo={self.getResourceInfo}/>
@@ -272,7 +281,8 @@ var OldResources = React.createClass({
             console.log(self.state.resources);
             return(
                 <div>
-                    <h5>Older resources </h5>
+                    <h4> Select Older Resources </h4>
+                    <label>Older resources </label>
                     <div className="previousResources">
 
                         <div className="list-group">

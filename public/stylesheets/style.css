@@ -73,10 +73,36 @@ textarea{
 .previousResources{
     max-height: 300px;
     overflow-y: scroll;
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;   
+    //border-top: 1px solid #ccc;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    margin-bottom :10px;
+    //border-bottom: 1px solid #ccc;   
 }
 
 .resource_admin_buttons button{
     margin-right: 10px;
 }
+
+
+
+.example-enter {
+  opacity: 0.01;
+}
+
+.example-enter.example-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.example-leave {
+  opacity: 1;
+}
+
+.example-leave.example-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}
+
+
