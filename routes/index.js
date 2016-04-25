@@ -130,7 +130,8 @@ router.get("/api/editDOI", function(req, res) {
         return res.status(404).send("Required parameter 'doi' not found");
     }
     //var url = createUrl("/getByDoi?api_key=4fbb38a3-1821-436c-a44d-8d3bc5efd33e&doi="+doi);
-    var api_key="4fbb38a3-1821-436c-a44d-8d3bc5efd33e"; 
+    //var api_key="4fbb38a3-1821-436c-a44d-8d3bc5efd33e"; 
+    var api_key = bindaas_api_key;
     var url = bindaas_getByDoi + "?api_key=" + api_key + "&doi=" + doi;
     console.log(url);
     http.get(url, function(res_){
