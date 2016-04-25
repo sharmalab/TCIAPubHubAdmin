@@ -193,6 +193,7 @@ router.post("/api/createDOI", function(req, res) {
     var resources = req.body.resources;
     resources = {"resources": resources}; 
     form_data = getFormData(form_data);
+    authors_str = form_data.authors;
     form_data.authors = form_data.authors.split(";");
 
     //createDOI
@@ -207,11 +208,11 @@ router.post("/api/createDOI", function(req, res) {
         
         resources.doi = form_data.doi;
         var metadata = "";
-        metadata += "datacite.publisher: (:unav)\n";
-        metadata += "datacite.creator: Ganesh\n";
+        metadata += "datacite.publisher: The Cancer Imaging Archive\n";
+        metadata += "datacite.creator:"+ authors_str+ "\n";
         metadata += "datacite.publicationyear: "+ form_data.year + "\n";
         metadata += "datacite.title: "+ form_data.title + "\n";
-        metadata += "datacite.resourcetype: InteractiveResource\n";
+        metadata += "datacite.resourcetype: Image/DICOM \n";
         metadata += "_target: "+ URL;
         console.log(metadata);
         //Post to Bindaas
@@ -229,6 +230,7 @@ router.post("/api/createDOI", function(req, res) {
                             .send(metadata)
                             .end(function(err, ezid_res){
                                 //console.log(err);
+                                console.log(err);
                                 if(err){
                                     return res.status(500);
                                 }
