@@ -84,12 +84,12 @@ var AllDOIs = React.createClass({
     },
     componentDidMount: function(){
         var self = this;
-        console.log("getting data"); 
+        //console.log("getting data"); 
         superagent.get("api/getAllDoi")
             .end(function(err, res){
-
+                console.log(res);
                 if(err){
-                    console.log(err);
+                    //console.log(err);
                     self.setState({error: err});
                 } else {
                     var response = JSON.parse(res.text);
@@ -136,7 +136,7 @@ var App = React.createClass({
                     <img src="images/tcia_logo_dark_sml.png"/>
                 </div>
                 <div className="container col-md-8 col-md-offset-2" id="main">
-                    <h3 id="headline"> PubHub Dashboard</h3>
+                    <h3 id="headline"> PubHub Administration</h3>
 
                     <a href="createDOI"><button type="button" className="btn btn-primary">Create DOI</button></a>
                     <div className="allDOIs">
