@@ -1,3 +1,9 @@
+var webpack = require("webpack");
+
+var uglify = new webpack.optimize.UglifyJsPlugin({});
+
+
+
 module.exports = {
     entry: {
         index: "./public/javascripts/src/Index.jsx",
@@ -17,5 +23,6 @@ module.exports = {
                 loader: "babel?presets[]=react&presets=es2015"
             }
         ]
-    }
+    },
+    plugins: [uglify]
 };
