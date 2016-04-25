@@ -197,8 +197,10 @@ router.post("/api/createDOI", function(req, res) {
 
     //createDOI
     var RAND = makeID(8); 
-    var DOI = "http://dx.doi.org/"+ DOI_NAMESPACE + "." + form_data.year + "."+ RAND;
+    var DOI_STR =  DOI_NAMESPACE + "." + form_data.year + "."+ RAND;
+    var DOI = "http://dx.doi.org/"+DOI_STR;
     var URL = URL_PREFIX + DOI;
+    
     if(1){
         form_data.url = URL;
         form_data.doi = DOI;
@@ -219,14 +221,17 @@ router.post("/api/createDOI", function(req, res) {
         .end(function(form_err, form_res){
 
                 if(form_err.statusCode || !form_err){
-                        
+                        console.log(DOI); 
                         //Post to EZID
-                        superagent.put("https://ezid.cdlib.org/id/doi:"+DOI)
+                        superagent.put("https://ezid.cdlib.org/id/doi:"+DOI_STR)
                             .auth(username, password)
                             .set("Content-Type", "text/plain")
                             .send(metadata)
                             .end(function(err, ezid_res){
-                                console.log(err);
+                                //console.log(err);
+                                if(err){
+                                    return res.status(500);
+                                }
                                 console.log(ezid_res.statusCode);
                                 return res.json({"doi": DOI});
                             });
