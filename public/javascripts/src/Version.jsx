@@ -82,9 +82,11 @@ var AddResourcePanel = React.createClass({
     handleFile: function(f) {
         var file = f[0];
         //console.log(file);
+        //console.log(file);
+        //console.log(file.name);
         //this.props.resourceDataToSelector({"resourceData", file
         //this.props.resourceInfoToSelector({"resourceData": file});
-        this.setState({resourceData: file, fileName: file.fileName});
+        this.setState({resourceData: file, fileName: file.name});
     },
     handleName: function(e){
         //console.log(e.target.value);
@@ -117,6 +119,15 @@ var AddResourcePanel = React.createClass({
                 <Dropzone style={{width: "100%", height: "60px", padding: "10px", border: "1px dashed #333"}} onDrop={this.handleFile}>
                     <div> Drop file here </div>
                 </Dropzone>
+                <div>
+                {
+                    self.state.fileName ?
+
+                    <div> Added <strong>{self.state.fileName}</strong>. Drop a file again to overwrite this. </div>
+                    :
+                    <div />
+                } 
+                </div>
             </div>
             );
         }
