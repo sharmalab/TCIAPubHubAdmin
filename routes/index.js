@@ -132,7 +132,7 @@ router.get("/api/editDOI", function(req, res) {
     //var url = createUrl("/getByDoi?api_key=4fbb38a3-1821-436c-a44d-8d3bc5efd33e&doi="+doi);
     //var api_key="4fbb38a3-1821-436c-a44d-8d3bc5efd33e"; 
     var api_key = bindaas_api_key;
-    var url = bindaas_getByDoi + "?api_key=" + api_key + "&doi=" + doi;
+    var url = bindaas_getByDoi + "?api_key=" + api_key + "&details=" + doi;
     console.log(url);
     http.get(url, function(res_){
         var DOI = "";
@@ -202,49 +202,49 @@ router.post("/api/createDOI", function(req, res) {
     var DOI = "http://dx.doi.org/"+DOI_STR;
     var URL = URL_PREFIX + DOI;
     
-    if(1){
-        form_data.url = URL;
-        form_data.doi = DOI;
-        
-        resources.doi = form_data.doi;
-        var metadata = "";
-        metadata += "datacite.publisher: The Cancer Imaging Archive\n";
-        metadata += "datacite.creator:"+ authors_str+ "\n";
-        metadata += "datacite.publicationyear: "+ form_data.year + "\n";
-        metadata += "datacite.title: "+ form_data.title + "\n";
-        metadata += "datacite.resourcetype: Image/DICOM \n";
-        metadata += "_target: "+ URL;
-        console.log(metadata);
-        //Post to Bindaas
 
-        superagent.post(bindaas_postDOIMetadata+ "?api_key="+bindaas_api_key)
-        .send(form_data)
-        .end(function(form_err, form_res){
+    form_data.url = URL;
+    form_data.doi = DOI;
+    
+    resources.doi = form_data.doi;
+    var metadata = "";
+    metadata += "datacite.publisher: The Cancer Imaging Archive\n";
+    metadata += "datacite.creator:"+ authors_str+ "\n";
+    metadata += "datacite.publicationyear: "+ form_data.year + "\n";
+    metadata += "datacite.title: "+ form_data.title + "\n";
+    metadata += "datacite.resourcetype: Image/DICOM \n";
+    metadata += "_target: "+ URL;
+    console.log(metadata);
+    //Post to Bindaas
 
-                if(form_err.statusCode || !form_err){
-                        console.log(DOI); 
-                        //Post to EZID
-                        superagent.put("https://ezid.cdlib.org/id/doi:"+DOI_STR)
-                            .auth(username, password)
-                            .set("Content-Type", "text/plain")
-                            .send(metadata)
-                            .end(function(err, ezid_res){
-                                //console.log(err);
-                                console.log(err);
-                                if(err){
-                                    return res.status(500);
-                                }
-                                console.log(ezid_res.statusCode);
-                                return res.json({"doi": DOI});
-                            });
-       
-                }
-                else {
-                    return res.json({"error": form_err});
-                }
+    superagent.post(bindaas_postDOIMetadata+ "?api_key="+bindaas_api_key)
+    .send(form_data)
+    .end(function(form_err, form_res){
 
-        });
-    }
+            if(form_err.statusCode || !form_err){
+                    console.log(DOI); 
+                    //Post to EZID
+                    superagent.put("https://ezid.cdlib.org/id/doi:"+DOI_STR)
+                        .auth(username, password)
+                        .set("Content-Type", "text/plain")
+                        .send(metadata)
+                        .end(function(err, ezid_res){
+                            //console.log(err);
+                            console.log(err);
+                            if(err){
+                                return res.status(500);
+                            }
+                            console.log(ezid_res.statusCode);
+                            return res.json({"doi": DOI});
+                        });
+   
+            }
+            else {
+                return res.json({"error": form_err});
+            }
+
+    });
+
 });
 
 
