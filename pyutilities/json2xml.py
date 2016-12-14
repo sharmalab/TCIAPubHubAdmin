@@ -1,8 +1,11 @@
+#!/usr/bin/python
+
 import json, sys, xml.dom.minidom, urllib
+
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, tostring
 from collections import OrderedDict
-from lxml import etree
+from lxml import etree    # lxml is a third-party library: http://lxml.de/
 
 
 def validate(xml_doc, xml_schema_url):
