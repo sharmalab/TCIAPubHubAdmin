@@ -125,7 +125,7 @@ def convert():
     """)
 
     #obj = json.loads(sample_string, object_pairs_hook=OrderedDict)    # Use sample_string as input
-    obj = json.loads(sys.stdin.read(), object_pairs_hook=OrderedDict)    # Read JSON data from standard input into dictionary
+    obj = json.loads(sys.stdin.read().decode('utf-8'), object_pairs_hook=OrderedDict)    # Read JSON data from standard input into dictionary
     root = Element("resource", attrib={"xmlns":"http://datacite.org/schema/kernel-3",
                                        "xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance",
                                        "xsi:schemaLocation":"http://datacite.org/schema/kernel-3" + " " +
@@ -136,7 +136,7 @@ def convert():
     validate(xml_doc, xml_schema_url)    # Validate XML document against XML schema
     parsed = xml.dom.minidom.parseString(xml_doc)
     #ElementTree.ElementTree(root).write(sys.stdout, encoding="utf-8", xml_declaration=True)    # Write XML document containing XML declaration WITH encoding attribute to standard output
-    sys.stdout.write(parsed.toprettyxml())   # Write pretty formatted XML document to standard output
+    sys.stdout.write(parsed.toprettyxml().encode('utf-8'))   # Write pretty formatted XML document to standard output
 
 
 if __name__ == '__main__':
