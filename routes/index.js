@@ -183,30 +183,81 @@ router.post("/api/editDOI", function(req, res) {
 });
 
 
+function createJSON(formdata) {
+    console.log("...");
+    var authors = formdata.authors;
+    
+    var creators = {};
 
+    creators = authors.map(function(author){ 
+      var creator = {};
+      console.log(author);
+      creator["creator"] ={};
+      creator["creator"]["creatorName"] =  author;
+      return creator;
+    });
+    var titles = {};
+    titles["title"] = formdata.title;
+    console.log(creators);
+    console.log(titles);
+    var jsondata = {
+      "identifier": {
+        "VAL": formdata.doi,
+        "ATTR": {"identifierType": "DOI"}
+      },
+      "creators": creators,
+      "titles": titles,
+      "publisher": "The Cancer Imaging Archive",
+      "publicationYear": "2016",
+      "contributors": [
+        {
+          "contributor": {
+            "contributorName": "TCIA Team",
+            "affiliation": "The Cancer Imaging Archive", 
+            "ATTR": {"contributorType": "DataCurator"}
+          }
+        }
+      ],
+      "descriptions": [
+        {
+          "description": {
+            "VAL": formdata.description,
+            "ATTR": {"descriptionType": "Abstract"}
+          }
+        }
+      ]
+    };
+    
+    console.log(jsondata);
+    return jsondata;
+
+
+}
 
 router.post("/api/createDOI", function(req, res) {
     //console.log(req); 
     console.log("submit"); 
     var form_data = req.body.formData;
+    console.log(form_data);
     //    //console.log(form_data.authors);
     var resources = req.body.resources;
     resources = {"resources": resources}; 
     form_data = getFormData(form_data);
-    authors_str = form_data.authors;
-    form_data.authors = form_data.authors.split(";");
-
+    authors_str = form_data.authors.toString();
+    //form_data.authors = form_data.authors.split(";");
+    console.log(form_data);
     //createDOI
     var RAND = makeID(8); 
     var DOI_STR =  DOI_NAMESPACE + "." + form_data.year + "."+ RAND;
     var DOI = "http://dx.doi.org/"+DOI_STR;
     var URL = URL_PREFIX + DOI;
-    
+    console.log("adf");
 
     form_data.url = URL;
     form_data.doi = DOI;
     
     resources.doi = form_data.doi;
+
     var metadata = "";
     metadata += "datacite.publisher: The Cancer Imaging Archive\n";
     metadata += "datacite.creator:"+ authors_str+ "\n";
@@ -215,36 +266,61 @@ router.post("/api/createDOI", function(req, res) {
     metadata += "datacite.resourcetype: Image/DICOM \n";
     metadata += "_target: "+ URL;
     console.log(metadata);
-    //Post to Bindaas
+    
+    var python = require('child_process').spawn(
+      'python',
+      ["pyutilities/json2xml.py"]
+    );
+    var pyjson = createJSON(form_data);
+    console.log(pyjson);
+    python.stdin.write(JSON.stringify(pyjson) + "\n");
+    python.stdin.end();
+    console.log("starting child process");
+    var pyxml = "";
+    python.stdout.on('data', function(chunk) {
+      chunk = chunk.toString('utf-8');
+      pyxml += chunk; 
+      //console.log(chunk);
+      //res.json({});
+    });
+    python.on('close', function(code){
+      console.log(pyxml);
+      console.log(code);
+      res.json({});
+    });
+    
+    //console.log(createJSON(form_data));
 
+    //Post to Bindaas
+    /*
     superagent.post(bindaas_postDOIMetadata+ "?api_key="+bindaas_api_key)
     .send(form_data)
     .end(function(form_err, form_res){
 
-            if(form_err.statusCode || !form_err){
-                    console.log(DOI); 
-                    //Post to EZID
-                    superagent.put("https://ezid.cdlib.org/id/doi:"+DOI_STR)
-                        .auth(username, password)
-                        .set("Content-Type", "text/plain")
-                        .send(metadata)
-                        .end(function(err, ezid_res){
-                            //console.log(err);
-                            console.log(err);
-                            if(err){
-                                return res.status(500);
-                            }
-                            console.log(ezid_res.statusCode);
-                            return res.json({"doi": DOI});
-                        });
-   
-            }
-            else {
-                return res.json({"error": form_err});
-            }
+        if(form_err.statusCode || !form_err){
+                console.log(DOI); 
+                //Post to EZID
+                superagent.put("https://ezid.cdlib.org/id/doi:"+DOI_STR)
+                    .auth(username, password)
+                    .set("Content-Type", "text/plain")
+                    .send(metadata)
+                    .end(function(err, ezid_res){
+                        //console.log(err);
+                        console.log(err);
+                        if(err){
+                            return res.status(500);
+                        }
+                        console.log(ezid_res.statusCode);
+                        return res.json({"doi": DOI});
+                    });
+
+        }
+        else {
+            return res.json({"error": form_err});
+        }
 
     });
-
+    */
 });
 
 
