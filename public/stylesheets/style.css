@@ -89,6 +89,10 @@ textarea{
 
 .example-enter {
   opacity: 0.01;
+
+}
+.example-enter input{
+  background: #FFF5CA;
 }
 
 .example-enter.example-enter-active {
@@ -105,4 +109,12 @@ textarea{
   transition: opacity 300ms ease-in;
 }
 
+.inputAuthor input{
+  display: inline;
+  width: 60%;
+}
 
+.authors-inp button{
+  zoom: 80%;
+  margin: 2px 0 2px 0;
+} 

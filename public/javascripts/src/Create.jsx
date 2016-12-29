@@ -2,6 +2,97 @@ var React = require("react");
 var ReactDOM = require("react-dom");
 var jQuery = require("jquery");
 
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group') // ES5 with npm
+
+
+var AuthorsForm = React.createClass({
+  getInitialState: function() {
+    return {"authors": ["#"], value: []};
+  },
+  add: function(e) {
+    e.preventDefault();
+    var authors = this.state.authors;
+    console.log(this.state.lastAuthor);
+    //authors.unshift(this.state.lastAuthor);
+    authors.push("#");
+    console.log(e);
+    console.log("add author");
+    console.log(authors);
+    //authors.push
+    this.setState({authors: authors});
+  },
+  removeAuthor: function(id){
+    console.log(id);
+    console.log('eerer');
+    var authors = this.state.authors;
+    authors.pop();
+    console.log(authors);
+    this.setState({authors: authors});
+  },
+  lastAuthor: function(e){
+    console.log(e.target.value);
+    var lastAuthor = e.target.value;
+    var authors = this.state.authors;
+    authors[authors.length - 1] = lastAuthor;
+    this.setState({lastAuthor: e.target.value, authors: authors});
+  },
+  remove_item: function(i,e){
+    e.preventDefault(); 
+    //var new_state = this.state.value.concat([]);
+    var value = this.state.value;
+    value.splice(i, 1);
+    console.log(i)
+    console.log(value);
+    //new_state[i] = undefined;
+    this.setState({value: value});
+  },
+  add_more: function(e) {
+    e.preventDefault();
+    var new_val = this.state.value.concat([]);
+    var authors = new_val;
+    new_val.push('');
+    console.log(new_val);
+    this.props.onAddAuthor(authors);
+    this.setState({value: new_val});
+  },
+  handleChange: function(id, e){
+//    console.log(id);
+    var vals = this.state.value;
+    vals[id]  = e.target.value;
+
+//    console.log(e.target.value);
+    this.setState({value: vals});
+  },
+  render: function() {
+    var self  = this;
+    var authors = this.state.authors;
+    var authorIds = -1;
+    var Inputs = this.state.value.map(function(e,i){
+
+      authorIds++;
+      return (
+      <div key={i} className="inputAuthor">
+        <input type="text" placeholder="LastName, FirstName Initial." className="form-control" defaultValue={e} onChange={self.handleChange.bind(this,authorIds)} value={e} />
+        <button onClick = {self.remove_item.bind(null,i)} className="btn btn-danger"><div className="glyphicon glyphicon-remove"> </div>Remove </button>
+      </div>
+      )
+    });
+
+    return (
+      <div className="form-group authors-inp" >
+          <label>Authors</label>
+          <ReactCSSTransitionGroup 
+            transitionName="example"
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={300}>
+          {Inputs}
+          </ReactCSSTransitionGroup>
+          <button onClick={this.add_more} className="btn btn-success"><div className="glyphicon glyphicon-plus"></div> Add Author</button>
+      </div>
+    );
+  }
+});
+
 var Form = React.createClass({
     getInitialState: function(){
         return {authors: ["#"], resources: []};
@@ -11,11 +102,11 @@ var Form = React.createClass({
         console.log(resources);
         this.setState({resources: resources});
     },
-    addAuthors: function(e){
-
-        e.preventDefault();
-        var authors = this.state.authors;
-        authors.push("");
+    addAuthors: function(authors){
+        console.log(authors);
+        //e.preventDefault();
+        //var authors = this.state.authors;
+        //authors.push("");
         this.setState({authors: authors});
     },
     onSubmit: function(e){
@@ -25,13 +116,21 @@ var Form = React.createClass({
         console.log("----------");
         console.log(formData);
         console.log(resources);
+        var auth = {
+          "name": "authors",
+          "value": this.state.authors
+        };
+        formData.push(auth)
+        console.log(this.state.authors);
         console.log("----------");
         var postData = {
             "formData": formData,
             "resources": resources
         };
         //var postData = formData.push(resources);
-        //
+        //i
+
+        
         jQuery.ajax({
             type: "POST",
             url: "api/createDOI",
@@ -48,6 +147,7 @@ var Form = React.createClass({
             dataType: "json",
             contentType: "application/json"
         });
+        
         console.log(postData);
     
         //var fileData = 
@@ -56,33 +156,45 @@ var Form = React.createClass({
         var self = this;
         var authors = this.state.authors;
         var id=0;
+        var year = new Date();
+        year = year.getFullYear();
+        /*
         var Authors = authors.map(function(author){
             id++;
             return <input type="text" name="authors" className="form-control" key={id}/>;
         });
-
-       return ( <form action="submitDOI" method="POST" encType="application/x-www-form-urlencoded" id="createForm">
+        */
+       return ( <form  method="POST" encType="application/x-www-form-urlencoded" id="createForm">
             <div className="panel panel-default"> 
                 <div className="panel-body">
                     <div className="form-group">
                         <label>Title</label>
-                        <input type="text" placeholder="Title" className="form-control" name="title"/>
+                        <input type="text" placeholder="Title" className="form-control" name="title" required/>
                     </div>
                     <div className="form-group">
                         <label>Description</label>
                         <textarea name="description" className="form-control" placeholder="Description(Markdown supported)"></textarea>
                     </div>
                     <div className="form-group">
-                        <label>Authors</label>
-                        <input type="text" placeholder="Authors(semicolon seperated)" name="authors" className="form-control" />
-                    </div>
+                        <label>URL</label>
+                        <input type="text" defaultValue={"http://google.com"} className="form-control" name="url" required/>    
+                    </div>                   
+                    <AuthorsForm onAddAuthor={self.addAuthors}/>
                     <div className="form-group">
                         <label>Keywords: </label>
                         <input type="text" placeholder="Keywords(comma seperated)" name="keywords" className="form-control" />
                     </div>
                     <div className="form-group">
                         <label>Publisher Year</label>
-                        <input type="text" placeholder="Publisher year" name="year" className="form-control"/>
+                        <input type="text" placeholder="Publisher year" name="year" className="form-control" defaultValue={year}/>
+                    </div>
+                    <div className="form-group">
+                        <label>Publisher</label>
+                        <input type="text" value={"The Cancer Imaging Archive"} name="publisher" className="form-control" readonly/>
+                    </div>
+                    <div className="form-group">
+                        <label>Resource Type</label>
+                        <input type="text" value={"DICOM"} name="resource_type" className="form-control" readonly/>
                     </div>
                     <div className="form-group">
                         <label>References: </label>
