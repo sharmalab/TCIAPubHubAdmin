@@ -13,7 +13,8 @@ from lxml import etree    # lxml is a third-party library: http://lxml.de/
 
 
 def validate(xml_doc, xml_schema_url):
-    """Validate XML document against XML schema given by url
+    """Validate XML document against XML schema given by url.
+
     :type xml_doc: str
     :type xml_schema_url: str
     """
@@ -24,8 +25,8 @@ def validate(xml_doc, xml_schema_url):
     xml_schema = etree.XMLSchema(xml_schema_doc)
     xml_doc = etree.XML(xml_doc)
     try:
-        xml_schema.assertValid(xml_doc)    # If validation fails, exception is raised
-    except Exception, e:
+        xml_schema.assertValid(xml_doc)    # Validate
+    except Exception, e:    # If validation fails, exception is forcefully raised
         print("Invalid")
         raise e
     else:
@@ -33,7 +34,8 @@ def validate(xml_doc, xml_schema_url):
 
 
 def build(root, obj):
-    """Build the XML document tree from a Python dictionary recursively
+    """Build the XML document tree from a Python dictionary recursively.
+
     :type root: Element
     :type obj: dict
     """
@@ -59,8 +61,9 @@ def build(root, obj):
 
 
 def convert():
-    """Convert JSON to XML
+    """Convert JSON to XML.
     """
+
     sample_string = ("""
     {
       "identifier": {
@@ -124,19 +127,35 @@ def convert():
     }
     """)
 
-    #obj = json.loads(sample_string, object_pairs_hook=OrderedDict)    # Use sample_string as input
-    obj = json.loads(sys.stdin.read().decode('utf-8'), object_pairs_hook=OrderedDict)    # Read JSON data from standard input into dictionary
+    #  Use sample_string as input
+    #obj = json.loads(sample_string, object_pairs_hook=OrderedDict)
+
+    # Read JSON data from standard input into dictionary
+    obj = json.loads(sys.stdin.read().decode('utf-8'), object_pairs_hook=OrderedDict)
+
+    # Create XML root element. This is constant.
     root = Element("resource", attrib={"xmlns":"http://datacite.org/schema/kernel-3",
                                        "xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance",
                                        "xsi:schemaLocation":"http://datacite.org/schema/kernel-3" + " " +
-                                       "http://schema.datacite.org/meta/kernel-3/metadata.xsd"})    # Create XML root element. This is constant.
-    build(root, obj)    # Build XML document tree from dictionary
+                                       "http://schema.datacite.org/meta/kernel-3/metadata.xsd"})
+
+    # Build XML document tree from dictionary
+    build(root, obj)
     xml_doc = tostring(root)
+
+    # Validate XML document against XML schema
     ignore, xml_schema_url = root.attrib.get("xsi:schemaLocation").split()
-    validate(xml_doc, xml_schema_url)    # Validate XML document against XML schema
-    parsed = xml.dom.minidom.parseString(xml_doc)
-    #ElementTree.ElementTree(root).write(sys.stdout, encoding="utf-8", xml_declaration=True)    # Write XML document containing XML declaration WITH encoding attribute to standard output
-    sys.stdout.write(parsed.toprettyxml().encode('utf-8'))   # Write pretty formatted XML document to standard output
+    validate(xml_doc, xml_schema_url)
+
+    # Write XML document containing XML declaration WITH encoding attribute to standard output
+    ElementTree.ElementTree(root).write(sys.stdout, encoding="utf-8", xml_declaration=True)
+
+    # Write XML document to standard output
+    #sys.stdout.write(xml_doc)
+
+    # Write pretty formatted XML document to standard output
+    #parsed = xml.dom.minidom.parseString(xml_doc)
+    #sys.stdout.write(parsed.toprettyxml().encode('utf-8'))
 
 
 if __name__ == '__main__':
