@@ -72,14 +72,14 @@ var AuthorsForm = React.createClass({
       authorIds++;
       return (
       <div key={i} className="inputAuthor">
-        <input type="text" className="form-control" defaultValue={e} onChange={self.handleChange.bind(this,authorIds)} value={e} />
+        <input type="text" placeholder="LastName, FirstName Initial." className="form-control" defaultValue={e} onChange={self.handleChange.bind(this,authorIds)} value={e} />
         <button onClick = {self.remove_item.bind(null,i)} className="btn btn-danger"><div className="glyphicon glyphicon-remove"> </div>Remove </button>
       </div>
       )
     });
 
     return (
-      <div className="form-group">
+      <div className="form-group authors-inp" >
           <label>Authors</label>
           <ReactCSSTransitionGroup 
             transitionName="example"
@@ -156,6 +156,8 @@ var Form = React.createClass({
         var self = this;
         var authors = this.state.authors;
         var id=0;
+        var year = new Date();
+        year = year.getFullYear();
         /*
         var Authors = authors.map(function(author){
             id++;
@@ -173,6 +175,10 @@ var Form = React.createClass({
                         <label>Description</label>
                         <textarea name="description" className="form-control" placeholder="Description(Markdown supported)"></textarea>
                     </div>
+                    <div className="form-group">
+                        <label>URL</label>
+                        <input type="text" defaultValue={"http://google.com"} className="form-control" name="url" required/>    
+                    </div>                   
                     <AuthorsForm onAddAuthor={self.addAuthors}/>
                     <div className="form-group">
                         <label>Keywords: </label>
@@ -180,7 +186,15 @@ var Form = React.createClass({
                     </div>
                     <div className="form-group">
                         <label>Publisher Year</label>
-                        <input type="text" placeholder="Publisher year" name="year" className="form-control"/>
+                        <input type="text" placeholder="Publisher year" name="year" className="form-control" defaultValue={year}/>
+                    </div>
+                    <div className="form-group">
+                        <label>Publisher</label>
+                        <input type="text" value={"The Cancer Imaging Archive"} name="publisher" className="form-control" readonly/>
+                    </div>
+                    <div className="form-group">
+                        <label>Resource Type</label>
+                        <input type="text" value={"DICOM"} name="resource_type" className="form-control" readonly/>
                     </div>
                     <div className="form-group">
                         <label>References: </label>

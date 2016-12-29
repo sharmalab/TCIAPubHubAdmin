@@ -272,7 +272,7 @@ router.post("/api/createDOI", function(req, res) {
       ["pyutilities/json2xml.py"]
     );
     var pyjson = createJSON(form_data);
-    console.log(pyjson);
+    console.log(JSON.stringify(pyjson));
     python.stdin.write(JSON.stringify(pyjson) + "\n");
     python.stdin.end();
     console.log("starting child process");
