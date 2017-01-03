@@ -17,6 +17,9 @@ def validate(xml_doc, xml_schema_url):
 
     :type xml_doc: str
     :type xml_schema_url: str
+
+    Note that surprisngly, the ordering of XML elements matter.
+    For example, <contributorName> must precede <affiliation>.
     """
 
     u = urllib.urlopen(xml_schema_url)
@@ -25,7 +28,7 @@ def validate(xml_doc, xml_schema_url):
     xml_schema = etree.XMLSchema(xml_schema_doc)
     xml_doc = etree.XML(xml_doc)
     try:
-        xml_schema.assertValid(xml_doc)    # Validate
+        xml_schema.assertValid(xml_doc)
     except Exception, e:    # If validation fails, exception is forcefully raised
         print("Invalid")
         raise e
@@ -141,16 +144,16 @@ def convert():
 
     # Build XML document tree from dictionary
     build(root, obj)
-    xml_doc = tostring(root)
+    xml_doc = tostring(root, encoding="utf-8")
 
     # Validate XML document against XML schema
     ignore, xml_schema_url = root.attrib.get("xsi:schemaLocation").split()
     validate(xml_doc, xml_schema_url)
 
-    # Write XML document containing XML declaration WITH encoding attribute to standard output
+    # Write XML document containing XML declaration to standard output
     ElementTree.ElementTree(root).write(sys.stdout, encoding="utf-8", xml_declaration=True)
 
-    # Write XML document to standard output
+    # Write XML document not containing XML declaration to standard output
     #sys.stdout.write(xml_doc)
 
     # Write pretty formatted XML document to standard output
