@@ -150,7 +150,7 @@ def convert():
     ignore, xml_schema_url = root.attrib.get("xsi:schemaLocation").split()
     validate(xml_doc, xml_schema_url)
 
-    # Write XML document containing XML declaration WITH encoding attribute to standard output
+    # Write XML document containing XML declaration to standard output
     ElementTree.ElementTree(root).write(sys.stdout, encoding="utf-8", xml_declaration=True)
 
     # Write XML document not containing XML declaration to standard output
