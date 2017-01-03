@@ -151,10 +151,10 @@ def convert():
     validate(xml_doc, xml_schema_url)
 
     # Write XML document containing XML declaration to standard output
-    ElementTree.ElementTree(root).write(sys.stdout, encoding="utf-8", xml_declaration=True)
+    #ElementTree.ElementTree(root).write(sys.stdout, encoding="utf-8", xml_declaration=True)
 
     # Write XML document not containing XML declaration to standard output
-    #sys.stdout.write(xml_doc)
+    sys.stdout.write(xml_doc)
 
     # Write pretty formatted XML document to standard output
     #parsed = xml.dom.minidom.parseString(xml_doc)
