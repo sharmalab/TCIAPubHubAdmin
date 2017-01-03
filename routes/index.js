@@ -259,11 +259,13 @@ router.post("/api/createDOI", function(req, res) {
     resources.doi = form_data.doi;
 
     var metadata = "";
+    /*
     metadata += "datacite.publisher: The Cancer Imaging Archive\n";
     metadata += "datacite.creator:"+ authors_str+ "\n";
     metadata += "datacite.publicationyear: "+ form_data.year + "\n";
     metadata += "datacite.title: "+ form_data.title + "\n";
     metadata += "datacite.resourcetype: Image/DICOM \n";
+    */
     metadata += "_target: "+ URL;
     console.log(metadata);
     
@@ -276,7 +278,7 @@ router.post("/api/createDOI", function(req, res) {
     python.stdin.write(JSON.stringify(pyjson) + "\n");
     python.stdin.end();
     console.log("starting child process");
-    var pyxml = "";
+    var pyxml = "<?xml version='1.0'?>";
     python.stdout.on('data', function(chunk) {
       chunk = chunk.toString('utf-8');
       pyxml += chunk; 
@@ -285,10 +287,29 @@ router.post("/api/createDOI", function(req, res) {
     });
     python.on('close', function(code){
       console.log(pyxml);
+      metadata += "datacite: "+pyxml;
       console.log(code);
       res.json({});
     });
+
+    /*
+
+    superagent.put("https://ezid.cdlib.org/id/doi:"+DOI_STR)
+        .auth(username, password)
+        .set("Content-Type", "text/plain")
+        .send(metadata)
+        .end(function(err, ezid_res){
+            //console.log(err);
+            console.log(err);
+            if(err){
+                return res.status(500);
+            }
+            console.log(ezid_res.statusCode);
+            return res.json({"doi": DOI});
+        });
+
     
+    */
     //console.log(createJSON(form_data));
 
     //Post to Bindaas
