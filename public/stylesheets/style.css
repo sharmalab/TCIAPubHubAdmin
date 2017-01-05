@@ -92,7 +92,7 @@ textarea{
 
 }
 .example-enter input{
-  background: #FFF5CA;
+  background: #f3f3f3;
 }
 
 .example-enter.example-enter-active {
@@ -122,4 +122,13 @@ textarea{
   zoom: 100%;
   font-size: 12px;
   margin: 2px 0 2px 0;
+}
+.required-label:after {
+  content:"*";
+  color:red;
+}
+
+.readonly
+{
+    background: #f3f3f3;
 } 

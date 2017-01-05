@@ -7,11 +7,13 @@ var https = require("https");
 var http = require("http");
 
 var request = require("request");
+var child_process = require("child_process");
 
 var superagent = require("superagent");
 var uuid = require("uuid");
 var async = require("async");
 
+var winston = require("winston");
 
 var config = require("../config.js");
 
@@ -29,9 +31,16 @@ var bindaas_postDOIMetadata = config.bindaas_postDOIMetadata;
 var DOI_NAMESPACE = config.DOI_NAMESPACE
 var URL_PREFIX = config.URL_PREFIX;
 
-console.log(config);
 
-
+var logger = new winston.Logger({
+  transports: [
+    // colorize the output to the console
+    new (winston.transports.Console)({ colorize: true })
+  ]
+});
+//console.log(config);
+//winston.level = 'debug';
+logger.log("Server started");
 
 
 
@@ -68,6 +77,7 @@ router.get("/editDOI", function(req, res, next) {
 
 
 router.get("/api/getAllDoi", function(req, res){
+    logger.log("hello");
     var url = bindaas_getAll + "?api_key=" + bindaas_api_key;
     
     var request = http.get(url, function(res_){
@@ -261,11 +271,14 @@ var checkRequiredFields = function(form_data){
 
 
 
-
+winston.log("hello");
 
 router.post("/api/createDOI", function(req, res) {
+    winston.log("POST")
+    winston.info("POST: /api/createDOI");
     //console.log(req); 
     console.log("submit"); 
+    console.log(JSON.stringify(req.body));
     var form_data = req.body.formData;
     var mongo_data = JSON.parse(JSON.stringify(form_data));
     console.log(form_data);
@@ -275,9 +288,8 @@ router.post("/api/createDOI", function(req, res) {
     form_data = getFormData(form_data);
     authors_str = form_data.authors.toString();
 
-    console.log(form_data);
     //createDOI
-    var RAND = makeID(8); 
+    //var RAND = makeID(8); 
     //var DOI_STR =  DOI_NAMESPACE + "." + form_data.year + "."+ RAND;
     //var DOI = "http://dx.doi.org/"+DOI_STR;
     //var DOI = DOI_STR;
@@ -285,77 +297,62 @@ router.post("/api/createDOI", function(req, res) {
     var DOI = form_data.doi;
     var DOI_STR = DOI;
     var URL = form_data.url; 
-    console.log("adf");
 
     form_data.url = URL;
     form_data.doi = DOI;
-
    
     resources.doi = form_data.doi;
-
     if(!checkRequiredFields(form_data)){
       return res.status(400).send("Missing required fields in the form");
     }
 
-    console.log(form_data);
     var metadata = "";
 
     metadata += "_target: "+ URL +"\n";
-    console.log(metadata);
+    var pyjson = JSON.stringify(createJSON(form_data));
     
-    var python = require('child_process').spawn(
-      'python',
-      ["pyutilities/json2xml.py"]
-    );
-    var pyjson = createJSON(form_data);
-    console.log(JSON.stringify(pyjson));
-    python.stdin.write(JSON.stringify(pyjson) + "\n");
-    python.stdin.end();
-    console.log("starting child process");
+    var python = child_process.exec("python pyutilities/json2xml.py");
+
     var xmlManifest = "<?xml version='1.0' encoding='utf-8'?>";
     var pyxml = xmlManifest;
-    python.stdout.on('data', function(chunk) {
-      chunk = chunk.toString('utf-8');
-      pyxml += chunk; 
+    python.stdout.on("data", function(data){
+      console.log(data);console.log('..');
+      pyxml += data.toString('utf-8');
     });
-    if(pyxml == xmlManifest + "Invalid")
-      return res.status(400).send("XML docuemnt generated from the match doesn't match the schema"); 
-
-    console.log("URL: "+URL);
-    python.on('close', function(code){
-      console.log(pyxml);
+    python.stderr.on("data", function(data){
+      console.log("ERROR!");
+      console.log(data.toString());
+    });
+    python.on('exit', function(code){
+      console.log("exited");
+      if(pyxml == xmlManifest + "Invalid")
+        return res.status(400).send("XML document generated from the match doesn't match the schema"); 
       metadata += "datacite: "+pyxml;
-      console.log(code); 
-      console.log("written file");
-
-
       var bindaas_url = bindaas_postDOIMetadata+ "?api_key="+bindaas_api_key;
-      console.log(bindaas_url);
-        
-
-    
       superagent.post(bindaas_url)
       .send(form_data)
-      .end(function(form_err, form_res){
+      .end(function(form_err, form_res){ //posting to bindaas
           if(form_err.statusCode || !form_err){
             superagent.put("https://ezid.cdlib.org/id/doi:"+DOI_STR)
               .auth(username, password)
               .set("Content-Type", "text/plain")
               .send(metadata)
-              .end(function(err, ezid_res){
+              .end(function(err, ezid_res){ //posting to ezid
                   console.log(err);
                   if(err){
-                      return res.status(500);
+                      return res.status(400).send("Error posting to EZID");
                   }
                   console.log(ezid_res.statusCode);
                   return res.json({"doi": DOI});
               }); 
           } else { 
-            return res.status(500);      
+            return res.status(400).send("Error posting to Bindaas");      
           }
       });
     });
-    console.log(URL); 
+
+    python.stdin.write(pyjson);
+    python.stdin.end();
 });
 
 

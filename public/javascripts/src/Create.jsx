@@ -91,7 +91,7 @@ var AuthorsForm = React.createClass({
 
     return (
       <div className="form-group authors-inp" >
-          <label>Authors</label>
+          <label className="required-label">Authors</label>
           <ReactCSSTransitionGroup 
             transitionName="example"
             transitionEnterTimeout={500}
@@ -109,17 +109,12 @@ var Form = React.createClass({
       var d = new Date();
       var year = d.getFullYear();
       console.log(year);
-      return {authors: [], resources: [], url: "", doi: "", year: year};
+      return {authors: [], resources: [], url: "", doi: "", year: year, valid: true, error: false, errorMessage: ""};
     },
     getResources: function(resources) {
         console.log("main form");
         console.log(resources);
         this.setState({resources: resources});
-    },
-    componentDidMount: function(){
-      var self = this;
-      console.log("component did mount");
-      self.generateURL();
     },
     addAuthors: function(authors){
         console.log(authors);
@@ -149,7 +144,7 @@ var Form = React.createClass({
         //var postData = formData.push(resources);
         //i
 
-        
+        var self = this;
         jQuery.ajax({
             type: "POST",
             url: "api/createDOI",
@@ -162,6 +157,14 @@ var Form = React.createClass({
                 var redir_doi = res.doi;
                 console.log(redir_doi);
                 window.location.href='index';
+            },
+            error: function(err){
+              console.log(err);
+              var status = err.status;
+              var message = err.responseText;
+              var statusText = err.statusText;
+              window.scrollTo(0,0);
+              self.setState({error: true, errorMessage:"Error: "+message + " [Status: "+status + " "+statusText+"]"});
             },
             dataType: "json",
             contentType: "application/json"
@@ -188,10 +191,47 @@ var Form = React.createClass({
 
     },
     handleYear: function(e){
+      
       this.setState({year: e.target.value});
+      console.log("handling year");
+      this.generateURL();
+
     },
     handleURL: function(e){
       this.setState({url: e.target.value});
+    },
+    handleTitle: function(e){
+      this.setState({title: e.target.value});
+    },
+    handleDescription: function(e){
+      this.setState({description: e.target.value});  
+    },
+    checkValid: function(){
+
+        var self = this;
+        var year = self.state.year;
+        var url = self.state.url;
+        var doi = self.state.doi;
+        var title = self.state.title;
+        var description = self.state.description;
+        if(year && doi && url && title && description){
+          console.log("valid");
+          //this.setState({valid: true});
+          return true;
+        }
+        else {
+          console.log("invalid");
+          //this.setState({valid: false});
+          return false;
+        }
+
+    },
+    componentDidUpdate: function() {
+
+    },
+    componentDidMount: function(){
+      var self = this;
+      self.generateURL();
     },
     render: function(){
         var self = this;
@@ -200,26 +240,35 @@ var Form = React.createClass({
         var year = self.state.year;
         var url = self.state.url;
         var doi = self.state.doi;
-
+        var title = self.state.title;
+        var description = self.state.description;
+        var valid = this.checkValid();
        //year = year.getFullYear();
-       return ( <form  method="POST" encType="application/x-www-form-urlencoded" id="createForm">
+       return ( 
+            <div>
+              {
+              self.state.error ?
+                <div className="alert alert-danger">{self.state.errorMessage}</div>
+              :
+                <div></div>
+              }
+            <form  method="POST" encType="application/x-www-form-urlencoded" id="createForm">
             <div className="panel panel-default"> 
                 <div className="panel-body create-form">
                     <div className="form-group">
-                        <label>Title</label>
-                        <input type="text" placeholder="Title" className="form-control" name="title" required/>
+                        <label className="required-label">Title</label>
+                        <input type="text" placeholder="Title" onChange={self.handleTitle} className="form-control" name="title" value={self.state.title} required/>
                     </div>
                     <div className="form-group">
-                        <label>Description</label>
-                        <textarea name="description" className="form-control" placeholder="Description(Markdown supported)"></textarea>
+                        <label className="required-label">Description</label>
+                        <textarea name="description" className="form-control" onChange={self.handleDescription} value={self.state.description} placeholder="Description(Markdown supported)"></textarea>
                     </div>
                     <div className="form-group">
-                        <label>DOI</label><br />
-                        <input type="text" value={doi} readonly className="inp-80 form-control" name="doi" required/>    
-
+                        <label className="required-label">DOI</label><br />
+                        <input type="text" value={doi} readonly className="inp-80 form-control readonly" name="doi" required/>    
                     </div>                      
                     <div className="form-group">
-                        <label>URL</label><br />
+                        <label className="required-label">URL</label><br />
                         <input type="text" value={url} onChange={this.handleURL} className="inp-80 form-control" name="url" required/>    
                         <button className="btn btn-warning" onClick={self.generateURL}><div className="glyphicon glyphicon-refresh"></div> Reset</button>
                     </div>                   
@@ -229,16 +278,16 @@ var Form = React.createClass({
                         <input type="text" placeholder="Keywords(comma seperated)" name="keywords" className="form-control" />
                     </div>
                     <div className="form-group">
-                        <label>Publisher Year</label>
+                        <label className="required-label">Publisher Year</label>
                         <input type="text" placeholder="Publisher year" value={year} onChange={self.handleYear} name="year" className="form-control" defaultValue={year}/>
                     </div>
                     <div className="form-group">
-                        <label>Publisher</label>
-                        <input type="text" value={"The Cancer Imaging Archive"} name="publisher" className="form-control" readonly/>
+                        <label className="required-label">Publisher</label>
+                        <input type="text" value={"The Cancer Imaging Archive"} name="publisher" className="form-control readonly" readonly/>
                     </div>
                     <div className="form-group">
-                        <label>Resource Type</label>
-                        <input type="text" value={"DICOM"} name="resource_type" className="form-control" readonly/>
+                        <label className="required-label">Resource Type</label>
+                        <input type="text" value={"DICOM"} name="resource_type" className="form-control readonly" readonly/>
                     </div>
                     <div className="form-group">
                         <label>References: </label>
@@ -246,10 +295,17 @@ var Form = React.createClass({
                     </div>
                 </div>
             </div>
-            <div className="form-group">
-                <input type="submit" className="btn btn-primary"  onClick={self.onSubmit}/>
-            </div>
+            { valid  ?
+              <div className="form-group">
+                  <input type="submit" className="btn btn-primary"  onClick={self.onSubmit} />
+              </div>
+            :
+              <div className="form-group">
+                  <input type="submit" className="btn btn-primary"  onClick={self.onSubmit} title="Fill all required fields" disabled="disabled"/>
+              </div>
+            }
         </form>
+        </div>
         );
     }
 });
