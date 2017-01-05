@@ -4,7 +4,7 @@
 import json
 import sys
 import xml.dom.minidom
-import urllib
+#import urllib
 
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, tostring
@@ -12,7 +12,7 @@ from collections import OrderedDict
 from lxml import etree    # lxml is a third-party library: http://lxml.de/
 
 
-def validate(xml_doc, xml_schema_url):
+def validate(xml_doc, xsd_file_name):
     """Validate XML document against XML schema given by url.
 
     :type xml_doc: str
@@ -22,8 +22,8 @@ def validate(xml_doc, xml_schema_url):
     For example, <contributorName> must precede <affiliation>.
     """
 
-    u = urllib.urlopen(xml_schema_url)
-    xml_schema_data = u.read()
+    with open(xsd_file_name, "r") as xsdf:
+        xml_schema_data = xsdf.read()
     xml_schema_doc = etree.XML(xml_schema_data)
     xml_schema = etree.XMLSchema(xml_schema_doc)
     xml_doc = etree.XML(xml_doc)
@@ -147,8 +147,9 @@ def convert():
     xml_doc = tostring(root, encoding="utf-8")
 
     # Validate XML document against XML schema
-    ignore, xml_schema_url = root.attrib.get("xsi:schemaLocation").split()
-    validate(xml_doc, xml_schema_url)
+    #ignore, xml_schema_url = root.attrib.get("xsi:schemaLocation").split()
+    xsd_file_name = "include/metadata.xsd"
+    validate(xml_doc, xsd_file_name)
 
     # Write XML document containing XML declaration to standard output
     #ElementTree.ElementTree(root).write(sys.stdout, encoding="utf-8", xml_declaration=True)
