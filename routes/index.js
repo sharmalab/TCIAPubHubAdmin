@@ -235,6 +235,33 @@ function createJSON(formdata) {
 
 
 }
+router.get("/api/getDOINamespace", function(req, res){
+  res.json({"doi_namespace": DOI_NAMESPACE, "url_prefix": URL_PREFIX});
+});
+
+var checkRequiredFields = function(form_data){
+  var required_fields = ["title", "description", "url", "authors"];
+
+  for(i in required_fields){
+    var required_field = required_fields[i];
+    if(required_field == "authors"){
+      console.log("here");
+      if(!form_data[required_field].length){
+        return false;
+      }
+    }
+    if(!form_data[required_field]){
+      console.log("form data "+ form_data);
+      console.log(required_field);
+      return false;
+    }
+  }
+  return true;
+}   
+
+
+
+
 
 router.post("/api/createDOI", function(req, res) {
     //console.log(req); 
@@ -251,21 +278,26 @@ router.post("/api/createDOI", function(req, res) {
     console.log(form_data);
     //createDOI
     var RAND = makeID(8); 
-    var DOI_STR =  DOI_NAMESPACE + "." + form_data.year + "."+ RAND;
+    //var DOI_STR =  DOI_NAMESPACE + "." + form_data.year + "."+ RAND;
     //var DOI = "http://dx.doi.org/"+DOI_STR;
-    var DOI = DOI_STR;
+    //var DOI = DOI_STR;
     //var URL = URL_PREFIX + DOI;
-    var URL = "http://google.com";
+    var DOI = form_data.doi;
+    var DOI_STR = DOI;
+    var URL = form_data.url; 
     console.log("adf");
 
     form_data.url = URL;
     form_data.doi = DOI;
 
-    mongo_data.url = URL;
-    mongo_data.doi = DOI;
-    
+   
     resources.doi = form_data.doi;
 
+    if(!checkRequiredFields(form_data)){
+      return res.status(400).send("Missing required fields in the form");
+    }
+
+    console.log(form_data);
     var metadata = "";
 
     metadata += "_target: "+ URL +"\n";
@@ -280,52 +312,50 @@ router.post("/api/createDOI", function(req, res) {
     python.stdin.write(JSON.stringify(pyjson) + "\n");
     python.stdin.end();
     console.log("starting child process");
-    var pyxml = "<?xml version='1.0' encoding='utf-8'?>";
+    var xmlManifest = "<?xml version='1.0' encoding='utf-8'?>";
+    var pyxml = xmlManifest;
     python.stdout.on('data', function(chunk) {
       chunk = chunk.toString('utf-8');
       pyxml += chunk; 
-      //console.log(chunk);
-      //res.json({});
     });
+    if(pyxml == xmlManifest + "Invalid")
+      return res.status(400).send("XML docuemnt generated from the match doesn't match the schema"); 
+
     console.log("URL: "+URL);
     python.on('close', function(code){
       console.log(pyxml);
       metadata += "datacite: "+pyxml;
       console.log(code); 
       console.log("written file");
-      console.log("mongo data");
-      console.log(mongo_data);
+
+
       var bindaas_url = bindaas_postDOIMetadata+ "?api_key="+bindaas_api_key;
       console.log(bindaas_url);
         
-      console.log(mongo_data);
+
     
       superagent.post(bindaas_url)
       .send(form_data)
       .end(function(form_err, form_res){
           if(form_err.statusCode || !form_err){
-      
             superagent.put("https://ezid.cdlib.org/id/doi:"+DOI_STR)
               .auth(username, password)
               .set("Content-Type", "text/plain")
               .send(metadata)
               .end(function(err, ezid_res){
-                  //console.log(err);
                   console.log(err);
                   if(err){
                       return res.status(500);
                   }
                   console.log(ezid_res.statusCode);
                   return res.json({"doi": DOI});
-              });
-           //res.json({});
+              }); 
           } else { 
             return res.status(500);      
           }
       });
     });
-    console.log(URL);
-   
+    console.log(URL); 
 });
 
 

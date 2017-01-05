@@ -5,16 +5,27 @@ var jQuery = require("jquery");
 var ReactCSSTransitionGroup = require('react-addons-css-transition-group') // ES5 with npm
 
 
+
+var makeID = function(length) {
+    var text = "";
+    var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+    for(var i=0; i< length; i++){
+        text += possible.charAt(Math.floor(Math.random()*possible.length));
+    }
+    return text;
+};
+
 var AuthorsForm = React.createClass({
   getInitialState: function() {
-    return {"authors": ["#"], value: []};
+
+    return {"authors": [], value: []};
   },
   add: function(e) {
     e.preventDefault();
     var authors = this.state.authors;
     console.log(this.state.lastAuthor);
     //authors.unshift(this.state.lastAuthor);
-    authors.push("#");
+    //authors.push("#");
     console.log(e);
     console.log("add author");
     console.log(authors);
@@ -95,12 +106,20 @@ var AuthorsForm = React.createClass({
 
 var Form = React.createClass({
     getInitialState: function(){
-        return {authors: ["#"], resources: []};
+      var d = new Date();
+      var year = d.getFullYear();
+      console.log(year);
+      return {authors: [], resources: [], url: "", doi: "", year: year};
     },
     getResources: function(resources) {
         console.log("main form");
         console.log(resources);
         this.setState({resources: resources});
+    },
+    componentDidMount: function(){
+      var self = this;
+      console.log("component did mount");
+      self.generateURL();
     },
     addAuthors: function(authors){
         console.log(authors);
@@ -152,21 +171,40 @@ var Form = React.createClass({
     
         //var fileData = 
     },
+    generateURL: function(e){
+      if(e)
+        e.preventDefault();
+      var self = this;
+      jQuery.get("api/getDOINamespace", function(data){
+        console.log(data.doi_namespace);
+        var year = self.state.year;
+        var doi = data.doi_namespace + "."+year+"." + makeID(8);
+        var url = data.url_prefix + doi;
+        console.log(url);
+
+        self.setState({"url": url, doi: doi});
+        //return data.doi_namespace; 
+      });
+
+    },
+    handleYear: function(e){
+      this.setState({year: e.target.value});
+    },
+    handleURL: function(e){
+      this.setState({url: e.target.value});
+    },
     render: function(){
         var self = this;
         var authors = this.state.authors;
         var id=0;
-        var year = new Date();
-        year = year.getFullYear();
-        /*
-        var Authors = authors.map(function(author){
-            id++;
-            return <input type="text" name="authors" className="form-control" key={id}/>;
-        });
-        */
+        var year = self.state.year;
+        var url = self.state.url;
+        var doi = self.state.doi;
+
+       //year = year.getFullYear();
        return ( <form  method="POST" encType="application/x-www-form-urlencoded" id="createForm">
             <div className="panel panel-default"> 
-                <div className="panel-body">
+                <div className="panel-body create-form">
                     <div className="form-group">
                         <label>Title</label>
                         <input type="text" placeholder="Title" className="form-control" name="title" required/>
@@ -176,8 +214,14 @@ var Form = React.createClass({
                         <textarea name="description" className="form-control" placeholder="Description(Markdown supported)"></textarea>
                     </div>
                     <div className="form-group">
-                        <label>URL</label>
-                        <input type="text" defaultValue={"http://google.com"} className="form-control" name="url" required/>    
+                        <label>DOI</label><br />
+                        <input type="text" value={doi} readonly className="inp-80 form-control" name="doi" required/>    
+
+                    </div>                      
+                    <div className="form-group">
+                        <label>URL</label><br />
+                        <input type="text" value={url} onChange={this.handleURL} className="inp-80 form-control" name="url" required/>    
+                        <button className="btn btn-warning" onClick={self.generateURL}><div className="glyphicon glyphicon-refresh"></div> Reset</button>
                     </div>                   
                     <AuthorsForm onAddAuthor={self.addAuthors}/>
                     <div className="form-group">
@@ -186,7 +230,7 @@ var Form = React.createClass({
                     </div>
                     <div className="form-group">
                         <label>Publisher Year</label>
-                        <input type="text" placeholder="Publisher year" name="year" className="form-control" defaultValue={year}/>
+                        <input type="text" placeholder="Publisher year" value={year} onChange={self.handleYear} name="year" className="form-control" defaultValue={year}/>
                     </div>
                     <div className="form-group">
                         <label>Publisher</label>
@@ -202,12 +246,9 @@ var Form = React.createClass({
                     </div>
                 </div>
             </div>
-
-
             <div className="form-group">
                 <input type="submit" className="btn btn-primary"  onClick={self.onSubmit}/>
             </div>
-            
         </form>
         );
     }
@@ -225,7 +266,6 @@ var App = React.createClass({
                 <img src="images/tcia_logo_dark_sml.png"/>
             </div>
             <div className="container col-md-8 col-md-offset-2" id="main">
-
                 <div className="row" style={{"paddingLeft": "20px"}}>
                     <a href="index" >Dashboard</a>
                 </div>

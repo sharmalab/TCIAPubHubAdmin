@@ -113,8 +113,13 @@ textarea{
   display: inline;
   width: 60%;
 }
+.inp-80 {
+  width: 80%;
+  display: inline-block;
+}
 
-.authors-inp button{
-  zoom: 80%;
+.create-form button{
+  zoom: 100%;
+  font-size: 12px;
   margin: 2px 0 2px 0;
 } 
