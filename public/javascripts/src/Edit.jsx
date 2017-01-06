@@ -168,6 +168,16 @@ var Form = React.createClass({
                         <label>Description</label>
                         <textarea name="description" className="form-control" placeholder="Description(Markdown supported)" value={self.state.metadata.description} onChange={self.handleDescription}></textarea>
                     </div>
+
+                    
+                    <div className="form-group">
+                        <label className="required-label">DOI</label><br />
+                        <input type="text" value={self.state.metadata.doi} readonly className="inp-80 form-control readonly" name="doi"/>    
+                    </div>                      
+                    <div className="form-group">
+                        <label className="required-label">URL</label><br />
+                        <input type="text" value={self.state.metadata.url} readonly className="inp-80 form-control readonly" name="url" />    
+                    </div>                   
                     <div className="form-group">
                         <label>Authors</label>
                         <input type="text" 
@@ -197,6 +207,25 @@ var Form = React.createClass({
                             value={self.state.metadata.year}/>
                     </div>
                     <div className="form-group">
+                        <label>Publisher</label>
+                        <input type="text" 
+                            name="publisher" 
+                            className="form-control"
+                            readonly
+                            value={self.state.metadata.publisher}/>
+                    </div>
+                    <div className="form-group">
+                        <label>Resource Type</label>
+                        <input type="text" 
+                            placeholder="Publisher year" 
+                            name="resource_type" 
+                            className="form-control"
+                            readonly
+                            value={self.state.metadata.resource_type}/>
+                    </div>
+
+
+                    <div className="form-group">
                         <label>References: </label>
                         <textarea 
                             name="references"
@@ -205,8 +234,6 @@ var Form = React.createClass({
                             value={self.state.metadata.references}
                             onChange={self.handleReferences}></textarea> 
                     </div>
-                        <input type="hidden" value={self.state.doi} name="doi" />
-                        <input type="hidden" value={self.state.url} name="url" />
                 </div>
             </div>
 

@@ -139,12 +139,12 @@ router.get("/api/editDOI", function(req, res) {
 
     var doi = req.query.doi;
     if(!doi){
-        return res.status(404).send("Required parameter 'doi' not found");
+        return res.status(400).send("Required parameter 'doi' not found");
     }
     //var url = createUrl("/getByDoi?api_key=4fbb38a3-1821-436c-a44d-8d3bc5efd33e&doi="+doi);
     //var api_key="4fbb38a3-1821-436c-a44d-8d3bc5efd33e"; 
     var api_key = bindaas_api_key;
-    var url = bindaas_getByDoi + "?api_key=" + api_key + "&details=" + doi;
+    var url = bindaas_getByDoi + "?api_key=" + api_key + "&doi=" + doi;
     console.log(url);
     http.get(url, function(res_){
         var DOI = "";
@@ -319,15 +319,18 @@ router.post("/api/createDOI", function(req, res) {
       console.log(data);console.log('..');
       pyxml += data.toString('utf-8');
     });
+    var pyError = false
     python.stderr.on("data", function(data){
       console.log("ERROR!");
       console.log(data.toString());
+      pyError = true;
     });
     python.on('exit', function(code){
       console.log("exited");
-      if(pyxml == xmlManifest + "Invalid")
+      if(pyxml == xmlManifest + "Invalid" || pyError == true)
         return res.status(400).send("XML document generated from the match doesn't match the schema"); 
       metadata += "datacite: "+pyxml;
+      console.log(metadata);
       var bindaas_url = bindaas_postDOIMetadata+ "?api_key="+bindaas_api_key;
       superagent.post(bindaas_url)
       .send(form_data)

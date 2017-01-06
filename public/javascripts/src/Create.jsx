@@ -109,7 +109,7 @@ var Form = React.createClass({
       var d = new Date();
       var year = d.getFullYear();
       console.log(year);
-      return {authors: [], resources: [], url: "", doi: "", year: year, valid: true, error: false, errorMessage: ""};
+      return {authors: [], resources: [], url: "", doi: "", year: year, valid: true, error: false, errorMessage: "", finalSubmit: false, finalSubmitDisable: {}, finalSubmitDisableObj: {}};
     },
     getResources: function(resources) {
         console.log("main form");
@@ -124,6 +124,10 @@ var Form = React.createClass({
         this.setState({authors: authors});
     },
     onSubmit: function(e){
+      e.preventDefault();
+      this.setState({finalSubmit: true});
+    },
+    onFinalSubmit: function(e){
         e.preventDefault();
         var formData = jQuery("#createForm").serializeArray();
         var resources = this.state.resources;
@@ -145,6 +149,7 @@ var Form = React.createClass({
         //i
 
         var self = this;
+    
         jQuery.ajax({
             type: "POST",
             url: "api/createDOI",
@@ -164,11 +169,13 @@ var Form = React.createClass({
               var message = err.responseText;
               var statusText = err.statusText;
               window.scrollTo(0,0);
-              self.setState({error: true, errorMessage:"Error: "+message + " [Status: "+status + " "+statusText+"]"});
+              self.setState({error: true, errorMessage:"Error: "+message + " [Status: "+status + " "+statusText+"]", finalSubmitDisable: "" , finalSubmitDisableObj: {}});
             },
             dataType: "json",
             contentType: "application/json"
         });
+   
+        self.setState({finalSubmitDisable: "disable", finalSubmitDisableObj: {"disabled": "disabled"}});
         
         console.log(postData);
     
@@ -206,6 +213,23 @@ var Form = React.createClass({
     handleDescription: function(e){
       this.setState({description: e.target.value});  
     },
+    checkValidURL: function(str){
+      /* 
+      var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+      console.log(pattern.test(str));
+      return pattern.test(str);
+
+      */
+      if(str.indexOf("http") !==-1 && str.indexOf("://") !== -1)
+        return true;
+      else 
+        return false;
+   },
     checkValid: function(){
 
         var self = this;
@@ -213,17 +237,30 @@ var Form = React.createClass({
         var url = self.state.url;
         var doi = self.state.doi;
         var title = self.state.title;
+        var authors = self.state.authors;
         var description = self.state.description;
-        if(year && doi && url && title && description){
-          console.log("valid");
-          //this.setState({valid: true});
-          return true;
+        var errorMsg = "";
+        var missing=  [];
+        if(!year){
+
+          missing.push("year");
         }
-        else {
-          console.log("invalid");
-          //this.setState({valid: false});
-          return false;
+        if(!url || !self.checkValidURL(url)){
+
+          missing.push("url");
         }
+        if(!title){
+
+          missing.push("title");
+        }
+        if(!authors.length){
+          missing.push("authors");
+        }
+        if(!description){
+
+          missing.push("description");
+        }
+        return missing;
 
     },
     componentDidUpdate: function() {
@@ -242,7 +279,17 @@ var Form = React.createClass({
         var doi = self.state.doi;
         var title = self.state.title;
         var description = self.state.description;
-        var valid = this.checkValid();
+        var finalSubmit = self.state.finalSubmit;
+        var finalSubmitDisable = self.state.finalSubmitDisable;
+        var finalSubmitDisableObj = self.state.finalSubmitDisableObj;
+
+        var valid = this.checkValid().length ? false: true;
+        console.log(valid);
+        var missing = this.checkValid();
+        console.log(missing);
+        var Missing = missing.map(function(m){
+          return(<div>Missing or Invalid: {m}</div>);
+        });
        //year = year.getFullYear();
        return ( 
             <div>
@@ -295,15 +342,33 @@ var Form = React.createClass({
                     </div>
                 </div>
             </div>
-            { valid  ?
-              <div className="form-group">
-                  <input type="submit" className="btn btn-primary"  onClick={self.onSubmit} />
-              </div>
-            :
-              <div className="form-group">
-                  <input type="submit" className="btn btn-primary"  onClick={self.onSubmit} title="Fill all required fields" disabled="disabled"/>
-              </div>
+            {
+              valid ?
+                <div></div>
+              :
+                <div className="alert alert-danger">{Missing}</div>
             }
+
+            {
+              finalSubmit ? 
+              <div className="form-group">
+                  Please review the information and click the button to create DOI: 
+                  <input type="submit" className="btn btn-primary" value="Confirm"  onClick={self.onFinalSubmit} {...finalSubmitDisableObj} />
+              </div>
+              :
+              [
+                valid ?
+                  
+                  <div className="form-group">
+                      <input type="submit" className="btn btn-primary"  onClick={self.onSubmit} />
+                  </div>
+                :
+                 <div className="form-group">
+                    <input type="submit" className="btn btn-primary"  onClick={self.onSubmit} title="Fill all required fields" disabled="disabled"/>
+                </div> 
+              ]
+            }
+            
         </form>
         </div>
         );
@@ -332,6 +397,9 @@ var App = React.createClass({
         )
     }  
 });
+
+module.exports = Form;
+module.exports = AuthorsForm;
 
 ReactDOM.render(<App />, document.getElementById("app"));
 
