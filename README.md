@@ -8,7 +8,7 @@ Admin panel for TCIA Pubhub
 
 * Node.js
 * Bindaas + MongoDB
-* Python
+* Python 2.7
 * Webpack 
 
 ## Installation: 
