@@ -138,49 +138,58 @@ function postResourcesPayload(resource, doi, version, callback){
 		});   
 }
 function postResources(addedResources, doi, version, cb){
-		var doi_path = doi.split(".");
-		var doi_path = doi_path[doi_path.length - 1];
-    	var directory = UPLOAD_PATH + "/"+doi_path + "/"+version;
-
+  var doi_path = doi.split(".");
+  var doi_path = doi_path[doi_path.length - 1];
+  var directory = UPLOAD_PATH + "/"+doi_path + "/"+version;
 		
-		/* Copy all files */
-		async.each(FILES, function(file, callbackF){
-			var fileName= file.name;
-			var fileData = file.data;
+  /* Copy all files */
+  async.each(FILES, function(file, callbackF){
+    var fileName= file.name;
+    var fileData = file.data;
+    var version = 1;
+    mkdirp(directory, function() {
+      var path = directory + "/" + fileName;
+      fs.writeFile(path, fileData, function(){
+      console.log("wrote "+path);
+      callbackF();
+      });	
+    });	
+  }, function(errF){
+    async.each(addedResources, function(resource, callback){
+        if(resource.type == "file"){
+            var fileName = resource.info.resourceData;
+            var path = directory + "/" + fileName;				
 
-			var version = 1;
-					mkdirp(directory, function() {
-                var path = directory + "/" + fileName;
-                fs.writeFile(path, fileData, function(){
-                    console.log("wrote "+path);
-                    callbackF();
-                });	
-			});	
-		}, function(errF){
-     
-            async.each(addedResources, function(resource, callback){
-                if(resource.type == "file"){
-                    var fileName = resource.info.resourceData;
-                    var path = directory + "/" + fileName;				
+            resource.info.resourceData = path;
+            resource.filePath = path;
+            resource.fileName = fileName;
+        }
+        if(resource.type == "shared_list"){
+           superagent.post("http://localhost:3001/api/createJNLP")
+            .send('shared_list_name='+ resource.info.resourceData)
+            .end(function(err, data){
+              console.log("shared list creating jnlp");
+              console.log(data);
+              var jnlp = "https://pubhub-admin.cancerimagingarchive.net/"+data.body.jnlp;
+              console.log("data: "+jnlp);
+              resource.info.sharedListName = resource.info.resourceData;
+              resource.info.resourceData = jnlp;
+              console.log("Resource data: "+resource.info.resourceData);
+              postResourcesPayload(resource, doi, version, callback);
+            });                  
+        } else {
+          postResourcesPayload(resource, doi, version, callback);
 
-                    resource.info.resourceData = path;
-                    resource.filePath = path;
-                    resource.fileName = fileName;
-                }
-                postResourcesPayload(resource, doi, version, callback);
-                
-                
+        }
 
-
-            }, function(err){
-                cb();
-                //res.json({"Status": "success"});
-            });      
-		});
-
-
-		
+    }, function(err){
+        cb();
+        //res.json({"Status": "success"});
+    });      
+  });		
 }
+
+
 
 router.post("/api/uploadFile", function(req, res, next){
     console.log("uploading file");
@@ -224,6 +233,16 @@ router.post("/api/uploadFile", function(req, res, next){
         console.log(addedResources);
         console.log(previousResources);
         resourceIDs = previousResources;
+
+        for(var i in addedResources){
+          var resource = addedResources[i];
+          console.log("Resource: "+resource);
+          if(resource.type == "shared_list"){
+            console.log("creating jnlp");
+
+          }
+        }
+
         findLatestVersion(doi, function(version){
             postResources(addedResources, doi, version, function(){
                 
@@ -231,11 +250,11 @@ router.post("/api/uploadFile", function(req, res, next){
 
                 var version_payLoad = {};
                 version_payLoad.resourceIDs = resourceIDs;
-                console.log(resourceIDs);
+                //console.log(resourceIDs);
                 version_payLoad.timeStamp = Date.now();
                 version_payLoad.doi = doi;
                 version_payLoad.versionID = newVersion;
-                console.log(bindaas_addVersionURL);
+                //console.log(bindaas_addVersionURL);
                 superagent.post(bindaas_addVersionURL+"?api_key="+bindaas_api_key)
                     .send(version_payLoad)
                     .end(function(version_res){
@@ -243,10 +262,10 @@ router.post("/api/uploadFile", function(req, res, next){
                             console.log("Error")
                             return res.status(500).send("Error");
                         }
-                        console.log(version_payLoad);
-                        console.log("Pushed all resources!!!!! W00t; ");
+                        //console.log(version_payLoad);
+                        //console.log("Pushed all resources!");
                         
-                        console.log("Done!");
+                        //console.log("Done!");
                         //console.log(version_res);
                         return res.json({"resources":resources});
                     });

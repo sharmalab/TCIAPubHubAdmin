@@ -273,15 +273,57 @@ var checkRequiredFields = function(form_data){
 
 winston.log("hello");
 
+router.post("/api/createJNLP", function(req, res){ 
+  var shared_list_name = req.body.shared_list_name;
+  if(!shared_list_name){
+    return res.status(400).send("Bad request! Missing shared_list_name");
+  }
+
+  var java = child_process.exec("java -jar javautilities/TciaDoiClientAPP.jar -action dlm -sharedList "+ shared_list_name);
+  var javaout = "";
+  java.stdout.on("data", function(data){
+    //console.log(data);console.log('..');
+    javaout += data.toString('utf-8');
+  });
+  var javaError = false
+  java.stderr.on("data", function(data){
+    console.log("ERROR!");
+    console.log(data.toString());
+    javaError = true;
+  });
+  java.on('exit', function(code){
+    console.log("exited");
+    if(javaError == true)
+      return res.status(400).send("Error creating JNLP" ); 
+    console.log(javaout);
+    var lines = javaout.split('\n');
+    console.log("file loc:");
+    console.log(lines[3].split(" ")[0]);
+    var jnlpfile = lines[3].split(" ")[0];
+    if(!jnlpfile)
+      return res.status(500).send("Couldn't create JNLP file");
+    
+    var jnlpfilename = jnlpfile.split("/")[3];
+
+    fs.createReadStream(jnlpfile).pipe(fs.createWriteStream("public/JNLP/"+jnlpfilename));
+    
+    return res.json({"jnlp": "/JNLP/"+jnlpfilename});
+  });
+
+
+});
+
+
+
 router.post("/api/createDOI", function(req, res) {
     winston.log("POST")
     winston.info("POST: /api/createDOI");
     //console.log(req); 
-    console.log("submit"); 
-    console.log(JSON.stringify(req.body));
+    console.log("POST: /api/createDOI"); 
+    //console.log(JSON.stringify(req.body));
     var form_data = req.body.formData;
     var mongo_data = JSON.parse(JSON.stringify(form_data));
-    console.log(form_data);
+    //console.log(form_data);
 
     var resources = req.body.resources;
     resources = {"resources": resources}; 
@@ -316,7 +358,7 @@ router.post("/api/createDOI", function(req, res) {
     var xmlManifest = "<?xml version='1.0' encoding='utf-8'?>";
     var pyxml = xmlManifest;
     python.stdout.on("data", function(data){
-      console.log(data);console.log('..');
+      //console.log(data);console.log('..');
       pyxml += data.toString('utf-8');
     });
     var pyError = false
@@ -330,7 +372,7 @@ router.post("/api/createDOI", function(req, res) {
       if(pyxml == xmlManifest + "Invalid" || pyError == true)
         return res.status(400).send("XML document generated from the match doesn't match the schema"); 
       metadata += "datacite: "+pyxml;
-      console.log(metadata);
+      //console.log(metadata);
       var bindaas_url = bindaas_postDOIMetadata+ "?api_key="+bindaas_api_key;
       superagent.post(bindaas_url)
       .send(form_data)

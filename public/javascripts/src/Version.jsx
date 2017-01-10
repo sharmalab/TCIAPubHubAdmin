@@ -21,7 +21,7 @@ function getParameterByName(name, url) {
 
 var AddResourcePanel = React.createClass({
     getInitialState: function() {
-        return {resources :[], type: "", info: {}, selectType:"", files: {}};
+        return {resources :[], type: "", info: {}, selectType:"", files: {}, shared_list_name: ""};
     },
     showResources: function(e){
         e.preventDefault();
@@ -88,6 +88,9 @@ var AddResourcePanel = React.createClass({
         //this.props.resourceInfoToSelector({"resourceData": file});
         this.setState({resourceData: file, fileName: file.name});
     },
+    handleSharedList: function(e){
+      this.setState({shared_list_name: e.target.value, resourceData: e.target.value});
+    },
     handleName: function(e){
         //console.log(e.target.value);
         //this.props.resourceInfoToSelector({"resourceName": e.target.value});
@@ -130,6 +133,14 @@ var AddResourcePanel = React.createClass({
                 </div>
             </div>
             );
+        } else if(selectType == "shared_list") {
+            ResourceSpecificFields = (
+                <div>
+                    <label>Shared List Name: </label>
+                    <input type="text" value={self.state.shared_list_name} onChange={self.handleSharedList} className="form-control"/>
+                </div>
+            );
+
         }
         
 
@@ -143,6 +154,7 @@ var AddResourcePanel = React.createClass({
                     <option value="url" >URL</option>
                     <option value="image">Image</option>
                     <option value="file" >File</option>
+                    <option value="shared_list">Shared List</option>
                 </select>
 			</div>	
             <div className="form-group">
