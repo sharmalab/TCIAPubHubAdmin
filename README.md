@@ -7,7 +7,9 @@ Admin panel for TCIA Pubhub
 ## Requirements
 
 * Node.js
-* Bindaas
+* Bindaas + MongoDB
+* Python 2.7 and LibXML(yum install libxslt-devel libxml2-devel)
+* Webpack 
 
 ## Installation: 
 
