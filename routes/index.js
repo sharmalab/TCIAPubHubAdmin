@@ -233,7 +233,7 @@ function createJSON(formdata) {
       "descriptions": [
         {
           "description": {
-            "VAL": formdata.description,
+            "VAL": cleanData(formdata.description),
             "ATTR": {"descriptionType": "Abstract"}
           }
         }
@@ -272,6 +272,12 @@ var checkRequiredFields = function(form_data){
 
 
 winston.log("hello");
+var cleanData = function(data){
+  var data = data;
+  data = data.replace(/(\r\n|\n|\r|\%)/gm,"");
+  return data;
+  //return escape(data);
+}
 
 router.post("/api/createJNLP", function(req, res){ 
   var shared_list_name = req.body.shared_list_name;
@@ -323,6 +329,8 @@ router.post("/api/createDOI", function(req, res) {
     console.log("POST: /api/createDOI"); 
     //console.log(JSON.stringify(req.body));
     var form_data = req.body.formData;
+
+    //form_data = cleanData(form_data);
     var mongo_data = JSON.parse(JSON.stringify(form_data));
     //console.log(form_data);
 
@@ -343,7 +351,7 @@ router.post("/api/createDOI", function(req, res) {
 
     form_data.url = URL;
     form_data.doi = DOI;
-   
+     
     resources.doi = form_data.doi;
     if(!checkRequiredFields(form_data)){
       return res.status(400).send("Missing required fields in the form");
