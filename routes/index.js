@@ -293,8 +293,9 @@ router.post("/api/createJNLP", function(req, res){
   });
   java.on('exit', function(code){
     console.log("exited");
-    if(javaError == true)
+    if(javaError == true){
       return res.status(400).send("Error creating JNLP" ); 
+    }
     console.log(javaout);
     var lines = javaout.split('\n');
     console.log("file loc:");
@@ -303,7 +304,7 @@ router.post("/api/createJNLP", function(req, res){
     if(!jnlpfile)
       return res.status(500).send("Couldn't create JNLP file");
     
-    var jnlpfilename = jnlpfile.split("/")[3];
+    var jnlpfilename = jnlpfile.split("/")[4];
 
     fs.createReadStream(jnlpfile).pipe(fs.createWriteStream("public/JNLP/"+jnlpfilename));
     

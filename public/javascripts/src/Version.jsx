@@ -151,10 +151,11 @@ var AddResourcePanel = React.createClass({
                 <label htmlFor="sel1">Select Type:</label>
                 <select className="form-control" id="sel1" onChange={self.handleSelectResourceType} value={self.state.selectType}>
                     <option></option>
+                    <option value="shared_list">Shared List</option>
                     <option value="url" >URL</option>
                     <option value="image">Image</option>
                     <option value="file" >File</option>
-                    <option value="shared_list">Shared List</option>
+
                 </select>
 			</div>	
             <div className="form-group">
@@ -327,7 +328,8 @@ var App = React.createClass({
         return {
             "previousResources": [],
             "addedResources": [],
-            "files":[]
+            "files":[],
+            "disableSubmit": {}
         };
     },
     getResources: function(resources, files){
@@ -345,6 +347,9 @@ var App = React.createClass({
     onSubmit: function(e){  
         var self = this;
         //Get a list of all the resources that were selected from previous version
+        //
+
+      self.setState({disableSubmit: {"disabled": "disabled"} });
         //
         var previousResources = self.state.previousResources;
 
@@ -400,15 +405,19 @@ var App = React.createClass({
             ver_req.attach(file.fileName, file.file);
         }
 
-        ver_req.end(function(){
+        ver_req.end(function(err, res){
+            if(err){
+              console.log("ERROR!");
+              console.log(err);
+            } else {
             console.log("Done uploaded files");
             window.location.href='index';
 
-
+            }
         }).on("progress", function(e){
             console.log(e.percent);
         }); 
-
+    
 
     },
     componentDidMount: function(){
@@ -418,6 +427,9 @@ var App = React.createClass({
     },
     render: function() {
         var self = this;
+        var disableSubmit = self.state.disableSubmit;
+        console.log("disable submit: ");
+        console.log(disableSubmit);
         return(
         <div>
             <div id="header">
@@ -441,7 +453,13 @@ var App = React.createClass({
 
 
                 <div className="form-group">
-                    <input type="submit" className="btn btn-primary"  onClick={self.onSubmit}/>
+                    {
+                      disableSubmit ?
+                        <input type="submit" className="btn btn-primary"  onClick={self.onSubmit} {...disableSubmit} />
+                      :
+                        <input type="submit" className="btn btn-primary" value="Submitting"  onClick={self.onSubmit} {...disableSubmit} />
+
+                    }
                 </div>
                 </div>
         </div>

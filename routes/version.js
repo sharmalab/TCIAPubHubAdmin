@@ -168,6 +168,9 @@ function postResources(addedResources, doi, version, cb){
            superagent.post("http://localhost:3001/api/createJNLP")
             .send('shared_list_name='+ resource.info.resourceData)
             .end(function(err, data){
+              if(err){
+                //res.status(500).send("Error creating JNLP");
+              }
               console.log("shared list creating jnlp");
               console.log(data);
               var jnlp = "https://pubhub-admin.cancerimagingarchive.net/"+data.body.jnlp;
@@ -209,8 +212,6 @@ router.post("/api/uploadFile", function(req, res, next){
             previousResources = resources.previousResources;
             doi = resources.doi;
         }
-
-        //console.log(val);
     });
     FILES = [];
     req.busboy.on("file", function(fieldname, file, filename, encoding, mimetype) {
@@ -262,11 +263,6 @@ router.post("/api/uploadFile", function(req, res, next){
                             console.log("Error")
                             return res.status(500).send("Error");
                         }
-                        //console.log(version_payLoad);
-                        //console.log("Pushed all resources!");
-                        
-                        //console.log("Done!");
-                        //console.log(version_res);
                         return res.json({"resources":resources});
                     });
 

@@ -56,7 +56,7 @@ var DOISmall = React.createClass({
                 <div className="doiSummary">
                     <div className="doiTitle">
 
-                        <a href={encodeURI(data.url)}><h4>{data.title}</h4></a>
+                        <a href={"https://pubhub.cancerimagingarchive.net/details?doi="+encodeURI(data.doi)}><h4>{data.title}</h4></a>
                     </div>
                     <div className="btn-group resource_admin_buttons"> 
                         <a href={edit}><button type="button" className="btn btn-default">Edit Metadata</button></a>
@@ -136,7 +136,7 @@ var App = React.createClass({
                     <img src="images/tcia_logo_dark_sml.png"/>
                 </div>
                 <div className="container col-md-8 col-md-offset-2" id="main">
-                    <h3 id="headline"> PubHub Administration</h3>
+                    <h3 id="headline"> PubHub Central</h3>
 
                     <a href="createDOI"><button type="button" className="btn btn-primary">Create DOI</button></a>
                     <div className="allDOIs">
