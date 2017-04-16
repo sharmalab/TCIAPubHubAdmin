@@ -32,18 +32,10 @@ var DOI_NAMESPACE = config.DOI_NAMESPACE
 var URL_PREFIX = config.URL_PREFIX;
 
 
-var logger = new winston.Logger({
-  transports: [
-    // colorize the output to the console
-    new (winston.transports.Console)({ colorize: true })
-  ]
-});
-//console.log(config);
-//winston.level = 'debug';
-logger.log("Server started");
+winston.remove(winston.transports.Console);
 
-
-
+winston.add(winston.transports.Console, {'timestamp':true});
+winston.log('info', 'Starting pubhub admin');
 var makeID = function(length) {
     var text = "";
     var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -77,22 +69,20 @@ router.get("/editDOI", function(req, res, next) {
 
 
 router.get("/api/getAllDoi", function(req, res){
-    logger.log("hello");
-    var url = bindaas_getAll + "?api_key=" + bindaas_api_key;
-    
-    var request = http.get(url, function(res_){
-        //res.send(res_)
-        //console.log(res_);
 
-        console.log(res_.statusCode);
+    var url = bindaas_getAll + "?api_key=" + bindaas_api_key;
+    winston.log('info', "Getting: "+url);    
+    var request = http.get(url, function(res_){
+        winston.log('info', "Status code: "+res_.statusCode);
         var DOIs = "";
         res_.on("data", function(data){
-            //console.log(data);
+
             DOIs+=data;
         });
-        console.log("...");
+
         res.on("error", function(err){
-            console.log("error");
+            //console.log("error");
+	    winston.log('error', err);
             res.json(JSON.parse({error: err})); 
         });
         res_.on("end", function(){
@@ -105,7 +95,7 @@ router.get("/api/getAllDoi", function(req, res){
         });
 
     }).on("error", function(error){
-
+	winston.log('error', error);
         res.status(500).send("Couldnt connect to Bindaas" + error);
     });
 
@@ -145,16 +135,16 @@ router.get("/api/editDOI", function(req, res) {
     //var api_key="4fbb38a3-1821-436c-a44d-8d3bc5efd33e"; 
     var api_key = bindaas_api_key;
     var url = bindaas_getByDoi + "?api_key=" + api_key + "&doi=" + doi;
-    console.log(url);
+    winston.log("info", "Getting: "+url);
     http.get(url, function(res_){
         var DOI = "";
-        console.log(res_.statusCode);
+        winston.log("info", "Status: "+res_.statusCode);
         res_.on("data", function(data){
             DOI+=data;
         });
         res_.on("end", function(){
             var response = DOI;
-            console.log(response);
+            winston.log("info", response);
             return res.json(JSON.parse(response));
         });
     });
@@ -163,22 +153,16 @@ router.get("/api/editDOI", function(req, res) {
 
 
 router.post("/api/editDOI", function(req, res) {
-    console.log("----Editing----");
-
     //console.log(req); 
     var metadata = req.body;
     var api_key= bindaas_api_key; 
     var doi = metadata.doi;
     var url = metadata.url
 
-    console.log(metadata);
-    console.log("....");
-    console.log(doi);
-    console.log(bindaas_deleteByDOI);
     var del_url = bindaas_deleteByDOI + "?api_key=" + api_key+ "&doi="+doi;
-    console.log(".......");
+
     
-    console.log(del_url);
+    winston.log("info", "DELETE: "+del_url);
     superagent.del(del_url)
     .end(function(err, dres){
             //console.log(err);
@@ -196,22 +180,21 @@ router.post("/api/editDOI", function(req, res) {
 
 
 function createJSON(formdata) {
-    console.log("...");
+
     var authors = formdata.authors;
     
     var creators = {};
 
     creators = authors.map(function(author){ 
       var creator = {};
-      console.log(author);
+
       creator["creator"] ={};
       creator["creator"]["creatorName"] =  author;
       return creator;
     });
     var titles = {};
     titles["title"] = formdata.title;
-    console.log(creators);
-    console.log(titles);
+
     var jsondata = {
       "identifier": {
         "VAL": formdata.doi,
@@ -240,7 +223,7 @@ function createJSON(formdata) {
       ]
     };
     
-    console.log(jsondata);
+    winston.log("info", "JSON for python converter: "+JSON.stringify(jsondata));
     return jsondata;
 
 
@@ -255,14 +238,13 @@ var checkRequiredFields = function(form_data){
   for(i in required_fields){
     var required_field = required_fields[i];
     if(required_field == "authors"){
-      console.log("here");
+
       if(!form_data[required_field].length){
         return false;
       }
     }
     if(!form_data[required_field]){
-      console.log("form data "+ form_data);
-      console.log(required_field);
+
       return false;
     }
   }
@@ -282,6 +264,7 @@ var cleanData = function(data){
 router.post("/api/createJNLP", function(req, res){ 
   var shared_list_name = req.body.shared_list_name;
   if(!shared_list_name){
+    winston.log("error", "Bad request, missing shared_list_name");
     return res.status(400).send("Bad request! Missing shared_list_name");
   }
 
@@ -293,17 +276,23 @@ router.post("/api/createJNLP", function(req, res){
   });
   var javaError = false
   java.stderr.on("data", function(data){
-    console.log("ERROR!");
-    console.log(data.toString());
+
+    winston.log("error", data.toString());
     javaError = true;
   });
   java.on('exit', function(code){
     console.log("exited");
     if(javaError == true){
+   
       return res.status(400).send("Error creating JNLP" ); 
     }
     console.log(javaout);
     var lines = javaout.split('\n');
+	/*
+    if(lines && lines[3].split(" ")){
+	return res.status(400).send("Error");
+    }
+	*/
     console.log("file loc:");
     console.log(lines[3].split(" ")[0]);
     var jnlpfile = lines[3].split(" ")[0];
@@ -323,28 +312,21 @@ router.post("/api/createJNLP", function(req, res){
 
 
 router.post("/api/createDOI", function(req, res) {
-    winston.log("POST")
+
     winston.info("POST: /api/createDOI");
-    //console.log(req); 
-    console.log("POST: /api/createDOI"); 
-    //console.log(JSON.stringify(req.body));
+
+
     var form_data = req.body.formData;
 
-    //form_data = cleanData(form_data);
+
     var mongo_data = JSON.parse(JSON.stringify(form_data));
-    //console.log(form_data);
+
 
     var resources = req.body.resources;
     resources = {"resources": resources}; 
     form_data = getFormData(form_data);
     authors_str = form_data.authors.toString();
 
-    //createDOI
-    //var RAND = makeID(8); 
-    //var DOI_STR =  DOI_NAMESPACE + "." + form_data.year + "."+ RAND;
-    //var DOI = "http://dx.doi.org/"+DOI_STR;
-    //var DOI = DOI_STR;
-    //var URL = URL_PREFIX + DOI;
     var DOI = form_data.doi;
     var DOI_STR = DOI;
     var URL = form_data.url; 
@@ -372,12 +354,12 @@ router.post("/api/createDOI", function(req, res) {
     });
     var pyError = false
     python.stderr.on("data", function(data){
-      console.log("ERROR!");
-      console.log(data.toString());
+
+      winston.log("error", data.toString());
       pyError = true;
     });
     python.on('exit', function(code){
-      console.log("exited");
+
       if(pyxml == xmlManifest + "Invalid" || pyError == true)
         return res.status(400).send("XML document generated from the match doesn't match the schema"); 
       metadata += "datacite: "+pyxml;
@@ -392,7 +374,7 @@ router.post("/api/createDOI", function(req, res) {
               .set("Content-Type", "text/plain")
               .send(metadata)
               .end(function(err, ezid_res){ //posting to ezid
-                  console.log(err);
+                  winston.log("error", err);
                   if(err){
                       return res.status(400).send("Error posting to EZID");
                   }
@@ -400,6 +382,7 @@ router.post("/api/createDOI", function(req, res) {
                   return res.json({"doi": DOI});
               }); 
           } else { 
+	    winston.log("error", err);
             return res.status(400).send("Error posting to Bindaas");      
           }
       });
