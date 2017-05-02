@@ -441,9 +441,6 @@ var App = React.createClass({
             </div>
             <div className="container col-md-6 col-offset-3" id="main">
                 <div className="row" style={{"paddingLeft": "20px"}}>
-                  <a href="index" >Admin Page</a>
-                  <span id="headlink_spacer"> &nbsp; |&nbsp; </span>
-                  <a href="index" >List of DOIs</a>
                 </div>
                 <h3 id="headline"> Add Resources</h3>
 				{
@@ -464,8 +461,9 @@ var App = React.createClass({
                         <input type="submit" className="btn btn-primary" value="Save" onClick={self.onSubmit} {...disableSubmit} />
                       :
                         <input type="submit" className="btn btn-primary" value="Submitting"  onClick={self.onSubmit} {...disableSubmit} />
-
                     }
+                    <span id="cancel_space">&nbsp;</span>
+                    <a href="index"><button className="btn btn-danger" value="Cancel">Cancel</button></a>
                 </div>
                 </div>
         </div>
