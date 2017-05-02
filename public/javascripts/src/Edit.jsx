@@ -7,7 +7,7 @@ var superagent = require("superagent");
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
-    //url = url.toLowerCase(); // This is just to avoid case sensitiveness  
+    //url = url.toLowerCase(); // This is just to avoid case sensitiveness
     name = name.replace(/[\[\]]/g, "\\$&").toLowerCase();// This is just to avoid case sensitiveness for query parameter name
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
         results = regex.exec(url);
@@ -21,7 +21,7 @@ function getParameterByName(name, url) {
 var Form = React.createClass({
     getInitialState: function(){
         return {
-            authors: ["#"], 
+            authors: ["#"],
             metadata: {
                 "description": "",
                 "keywords": "",
@@ -36,8 +36,8 @@ var Form = React.createClass({
         var self = this;
         var url = window.location.href;
         var doi = getParameterByName("doi", url);
-     
-        var url = "api/editDOI" + "?doi="+doi;  
+
+        var url = "api/editDOI" + "?doi="+doi;
         console.log(url);
         superagent.get(url)
             .end(function(err,data){
@@ -85,7 +85,7 @@ var Form = React.createClass({
                 //console.log(err);
                 console.log(res);
                 console.log("Submitted!");
-                
+
                 var redir_doi = res.doi;
                 console.log(redir_doi);
                 window.location.href='index';
@@ -94,8 +94,8 @@ var Form = React.createClass({
             contentType: "application/json"
         });
         console.log(postData);
-    
-        //var fileData = 
+
+        //var fileData =
     },
     handleTitle: function(e){
         var self = this;
@@ -105,14 +105,14 @@ var Form = React.createClass({
     },
     handleDescription: function(e){
         var self = this;
-        console.log("adf"); 
+        console.log("adf");
         var metaData = self.state.metadata;
         metaData.description = e.target.value;
         this.setState({metadata: metaData});
     },
 
     handleAuthors: function(e){
-        var self = this;       
+        var self = this;
         var metaData = self.state.metadata;
         metaData.authors = e.target.value.split("; ");
         console.log("handling authors");
@@ -127,12 +127,12 @@ var Form = React.createClass({
         this.setState({metadata: metaData});
     },
     handleKeywords: function(e){
-         var self = this;       
+         var self = this;
         var metaData = self.state.metadata;
         metaData.keywords = e.target.value;
         this.setState({metadata: metaData});
 
-       
+
     },
     handleYear: function(e){
         var self = this;
@@ -141,7 +141,7 @@ var Form = React.createClass({
         console.log(e.target.value);
         this.setState({metadata: metaData});
 
-       
+
     },
     render: function(){
         var self = this;
@@ -158,7 +158,7 @@ var Form = React.createClass({
         }
 
        return ( <form action="/submitDOI" method="POST" encType="application/x-www-form-urlencoded" id="createForm">
-            <div className="panel panel-default"> 
+            <div className="panel panel-default">
                 <div className="panel-body">
                     <div className="form-group">
                         <label>Title</label>
@@ -169,56 +169,56 @@ var Form = React.createClass({
                         <textarea name="description" className="form-control" placeholder="Description(Markdown supported)" value={self.state.metadata.description} onChange={self.handleDescription}></textarea>
                     </div>
 
-                    
+
                     <div className="form-group">
                         <label className="required-label">DOI</label><br />
-                        <input type="text" value={self.state.metadata.doi} readonly className="inp-80 form-control readonly" name="doi"/>    
-                    </div>                      
+                        <input type="text" value={self.state.metadata.doi} readonly className="inp-80 form-control readonly" name="doi"/>
+                    </div>
                     <div className="form-group">
                         <label className="required-label">URL</label><br />
-                        <input type="text" value={self.state.metadata.url} readonly className="inp-80 form-control readonly" name="url" />    
-                    </div>                   
+                        <input type="text" value={self.state.metadata.url} readonly className="inp-80 form-control readonly" name="url" />
+                    </div>
                     <div className="form-group">
                         <label>Authors</label>
-                        <input type="text" 
-                            placeholder="Authors(semicolon seperated)" 
-                            name="authors" 
-                            className="form-control" 
-                            value={authors_str} 
+                        <input type="text"
+                            placeholder="Authors(semicolon seperated)"
+                            name="authors"
+                            className="form-control"
+                            value={authors_str}
                             onChange={self.handleAuthors} />
                     </div>
                     <div className="form-group">
                         <label>Keywords: </label>
-                        <input 
+                        <input
                             type="text"
-                            placeholder="Keywords(comma seperated)" 
+                            placeholder="Keywords(comma seperated)"
                             name="keywords"
-                            className="form-control" 
+                            className="form-control"
                             value={self.state.metadata.keywords}
                             onChange ={self.handleKeywords} />
                     </div>
                     <div className="form-group">
                         <label>Publisher Year</label>
-                        <input type="text" 
-                            placeholder="Publisher year" 
-                            name="year" 
+                        <input type="text"
+                            placeholder="Publisher year"
+                            name="year"
                             className="form-control"
-                            onChange={self.handleYear} 
+                            onChange={self.handleYear}
                             value={self.state.metadata.year}/>
                     </div>
                     <div className="form-group">
                         <label>Publisher</label>
-                        <input type="text" 
-                            name="publisher" 
+                        <input type="text"
+                            name="publisher"
                             className="form-control"
                             readonly
                             value={self.state.metadata.publisher}/>
                     </div>
                     <div className="form-group">
                         <label>Resource Type</label>
-                        <input type="text" 
-                            placeholder="Publisher year" 
-                            name="resource_type" 
+                        <input type="text"
+                            placeholder="Publisher year"
+                            name="resource_type"
                             className="form-control"
                             readonly
                             value={self.state.metadata.resource_type}/>
@@ -227,12 +227,12 @@ var Form = React.createClass({
 
                     <div className="form-group">
                         <label>References: </label>
-                        <textarea 
+                        <textarea
                             name="references"
-                            className="form-control" 
+                            className="form-control"
                             placeholder="References(Markdown supported)"
                             value={self.state.metadata.references}
-                            onChange={self.handleReferences}></textarea> 
+                            onChange={self.handleReferences}></textarea>
                     </div>
                 </div>
             </div>
@@ -241,7 +241,7 @@ var Form = React.createClass({
             <div className="form-group">
                 <input type="submit" className="btn btn-primary"  onClick={self.onSubmit}/>
             </div>
-            
+
         </form>
         );
     }
@@ -249,7 +249,7 @@ var Form = React.createClass({
 
 
 var App = React.createClass({
-    
+
 
     render: function(){
 
@@ -260,15 +260,16 @@ var App = React.createClass({
             </div>
             <div className="container col-md-8 col-md-offset-2" id="main">
                 <div className="row" style={{"paddingLeft": "20px"}}>
-                    <a href="index" >Dashboard</a>
+                    <a href="index" >Admin Page</a>
+                    <span id="headlink_spacer"> &nbsp; |&nbsp; </span>
+                    <a href="index" >List of DOIs</a>
                 </div>
                 <h3 id="headline"> Edit DOI Metadata</h3>
                 <Form />
             </div>
         </div>
         )
-    }  
+    }
 });
 
 ReactDOM.render(<App />, document.getElementById("app"));
-
