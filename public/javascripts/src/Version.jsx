@@ -107,8 +107,11 @@ var AddResourcePanel = React.createClass({
         var selectType = self.state.selectType;
         var id = 0;
         var ResourceSpecificFields = <div />;
+
+        var SaveButton =  <button className="btn btn-success" onClick={self.addResource}> Save Resource </button>;
         if(selectType == ""){
             ResourceSpecificFields= <div />;
+            SaveButton = <div />;
         } else if(selectType == "url") {
             ResourceSpecificFields = (
                 <div>
@@ -136,7 +139,7 @@ var AddResourcePanel = React.createClass({
         } else if(selectType == "shared_list") {
             ResourceSpecificFields = (
                 <div>
-                    <label>Shared List Name: </label>
+                    <label>TCIA Shared List: </label>
                     <input type="text" value={self.state.shared_list_name} onChange={self.handleSharedList} className="form-control"/>
                 </div>
             );
@@ -163,15 +166,16 @@ var AddResourcePanel = React.createClass({
                     {self.state.selectType ?
                     <div>
                         <div className="form-group">
+                          {ResourceSpecificFields}
                             <label>Resource Name: </label>
-                            <input type="text" value={self.state.resourceName} onChange={self.handleName} className="form-control" />
+                            <input type="text" value={self.state.resourceName} onChange={self.handleName} className="form-control" defaultValue={"Images(DICOM)"} />
                         </div>
                         <div className="form-group">
                             <label>Resource Description: </label>
                             <textarea value={self.state.resourceDescription} onChange={self.handleDescription} className="form-control" >
                             </textarea>
                         </div>
-                        {ResourceSpecificFields}
+
                     </div>
                     :
                      <div />
@@ -219,7 +223,7 @@ var AddResourcePanel = React.createClass({
                 {
                     //<ResourceSelector  getResourceInfo={self.getResourceInfo}/>
                 }
-                <button className="btn btn-success" onClick={self.addResource}> Add Resource </button>
+            {SaveButton}
 			</div>
         );
     }
@@ -455,7 +459,7 @@ var App = React.createClass({
                 <div className="form-group">
                     {
                       disableSubmit ?
-                        <input type="submit" className="btn btn-primary"  onClick={self.onSubmit} {...disableSubmit} />
+                        <input type="submit" className="btn btn-primary" value="Save" onClick={self.onSubmit} {...disableSubmit} />
                       :
                         <input type="submit" className="btn btn-primary" value="Submitting"  onClick={self.onSubmit} {...disableSubmit} />
 
