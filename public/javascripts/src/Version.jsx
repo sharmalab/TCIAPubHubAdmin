@@ -10,7 +10,7 @@ window.jQuery = jQuery;
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
-    //url = url.toLowerCase(); // This is just to avoid case sensitiveness  
+    //url = url.toLowerCase(); // This is just to avoid case sensitiveness
     name = name.replace(/[\[\]]/g, "\\$&").toLowerCase();// This is just to avoid case sensitiveness for query parameter name
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
         results = regex.exec(url);
@@ -41,7 +41,7 @@ var AddResourcePanel = React.createClass({
         var resources = this.state.resources.slice();
         var type = this.state.selectType;
         var info = {
-            
+
             resourceData: this.state.resourceData,
             resourceName: this.state.resourceName,
             resourceDescription: this.state.resourceDescription
@@ -71,7 +71,7 @@ var AddResourcePanel = React.createClass({
         //console.log(e);
         //var self = this;
 		//console.log(this.state.type);
-        //console.log(e.target.value);	
+        //console.log(e.target.value);
         //this.props.resourceType(e.target.value);
         this.setState({selectType: e.target.value});
     },
@@ -132,7 +132,7 @@ var AddResourcePanel = React.createClass({
                     <div> Added <strong>{self.state.fileName}</strong>. Drop a file again to overwrite this. </div>
                     :
                     <div />
-                } 
+                }
                 </div>
             </div>
             );
@@ -145,9 +145,9 @@ var AddResourcePanel = React.createClass({
             );
 
         }
-        
 
-        var ResourceSelector = 		
+
+        var ResourceSelector =
         <div>
 			<div className="form-group">
                 <h4> Add new resources </h4>
@@ -160,7 +160,7 @@ var AddResourcePanel = React.createClass({
                     <option value="file" >File</option>
 
                 </select>
-			</div>	
+			</div>
             <div className="form-group">
                 <div>
                     {self.state.selectType ?
@@ -188,7 +188,7 @@ var AddResourcePanel = React.createClass({
         var Resources = resources.map(function(res){
             id++;
             return (
-            <li className="list-group-item" key={id}> 
+            <li className="list-group-item" key={id}>
 
                 <h5 className="list-group-item-heading">{res.info.resourceName} </h5>
                 <div className="row">
@@ -208,17 +208,17 @@ var AddResourcePanel = React.createClass({
             {
                 resources.length ?
                     <label>Added Resources: </label>
-                : 
+                :
                     <div />
             }
-             
+
 
                     <ul className="list-group">
                         <ReactCSSTransitionGroup transitionName="example" transitionEnterTimeout={500} transitionLeaveTimeout={300}>
                           {Resources}
                         </ReactCSSTransitionGroup>
                     </ul>
-       
+
                 {ResourceSelector}
                 {
                     //<ResourceSelector  getResourceInfo={self.getResourceInfo}/>
@@ -241,7 +241,7 @@ var OldResources = React.createClass({
         var self = this;
         var url = window.location.href;
         var doi = getParameterByName("doi", url);
-        
+
         //var getRes = "http://localhost:3000/api/getResourcesForDOI?doi="+encodeURI(doi);
         //console.log(getRes);
         var getURL = "api/getResourcesForDOI?doi="+doi;
@@ -259,7 +259,7 @@ var OldResources = React.createClass({
         var resourceID = e.target.value;
         var resources = this.state.selectedResources;
         var pos = resources.indexOf(resourceID);
-        
+
 
         if(pos > -1){
             //Remove if exists
@@ -271,13 +271,13 @@ var OldResources = React.createClass({
         //console.log(resources);
         this.props.sendResourcesToParent(resources);
         this.setState({selectedResources: resources});
-        //console.log(e.target.value); 
+        //console.log(e.target.value);
     },
     render: function(){
         var self = this;
         var ResourceList = <div />;
 
-        
+
         //console.log(self.state.resources);
         if(self.state.resources){
             var id = 0;
@@ -304,7 +304,7 @@ var OldResources = React.createClass({
             });
         }
         if(self.state.resources.length){
-            
+
             console.log(self.state.resources.length);
             console.log(self.state.resources);
             return(
@@ -337,18 +337,18 @@ var App = React.createClass({
         };
     },
     getResources: function(resources, files){
-        var self  = this; 
+        var self  = this;
         //console.log("in App");
         //console.log(resources);
         self.setState({"addedResources": resources, "files" :files});
     },
     getOldResources: function(resources){
-        var self  = this; 
+        var self  = this;
         //console.log("in App");
         //console.log(resources);
         self.setState({"previousResources": resources});
     },
-    onSubmit: function(e){  
+    onSubmit: function(e){
         var self = this;
         //Get a list of all the resources that were selected from previous version
         //
@@ -361,9 +361,9 @@ var App = React.createClass({
         var addedResources = self.state.addedResources;
         var resources = {};
 
-            
-        
-        
+
+
+
         console.log(payLoad);
 
         var ver_req = superagent.post("api/uploadFile");
@@ -386,8 +386,8 @@ var App = React.createClass({
                 //obj[resource.info.resourceData.name] = resource.info.resourceData;
                 //files.push(obj);
                 resource.info.resourceData = resource.info.resourceData.name;
-                addedResources[i] = resource; 
-                //ver_req.attach(resource.info.resourceData, 
+                addedResources[i] = resource;
+                //ver_req.attach(resource.info.resourceData,
             }
             console.log(addedResources);
             console.log(files);
@@ -420,14 +420,14 @@ var App = React.createClass({
             }
         }).on("progress", function(e){
             console.log(e.percent);
-        }); 
-    
+        });
+
 
     },
     componentDidMount: function(){
         var url = window.location.href;
         var doi = getParameterByName("doi", url);
-        this.setState({doi: doi});        
+        this.setState({doi: doi});
     },
     render: function() {
         var self = this;
@@ -441,7 +441,9 @@ var App = React.createClass({
             </div>
             <div className="container col-md-6 col-offset-3" id="main">
                 <div className="row" style={{"paddingLeft": "20px"}}>
-                    <a href="index" >Dashboard</a>
+                  <a href="index" >Admin Page</a>
+                  <span id="headlink_spacer"> &nbsp; |&nbsp; </span>
+                  <a href="index" >List of DOIs</a>
                 </div>
                 <h3 id="headline"> Add Resources</h3>
 				{
@@ -449,7 +451,7 @@ var App = React.createClass({
 				}
                 <div className="panel panel-default">
                     <div className="panel-body">
-                       						
+
                         <OldResources sendResourcesToParent={self.getOldResources}/>
                         <AddResourcePanel sendResourcesToParent={self.getResources}/>
                     </div>
@@ -473,4 +475,3 @@ var App = React.createClass({
 });
 
 ReactDOM.render(<App />, document.getElementById("app"));
-
