@@ -173,7 +173,7 @@ function postResources(addedResources, doi, version, cb){
               }
               console.log("shared list creating jnlp");
               console.log(data);
-              var jnlp = "https://pubhub-admin.cancerimagingarchive.net/"+data.body.jnlp;
+              var jnlp = ""+data.body.jnlp;
               console.log("data: "+jnlp);
               resource.info.sharedListName = resource.info.resourceData;
               resource.info.resourceData = jnlp;
