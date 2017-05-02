@@ -7,16 +7,16 @@ Admin panel for TCIA Pubhub
 * Node.js
 * Bindaas + MongoDB
 * Python 2.7 and LibXML(yum install libxslt-devel libxml2-devel)
-* Webpack 
+* Webpack
 
-## Installation: 
+## Installation:
 
 
 * git clone the repo
 * Copy config.js.example to config.js
   * Set EZID username etc, bindaas api key and other parameters
 
-* Edit `config.js` and set bindaas host etc. 
+* Edit `config.js` and set bindaas host etc.
 
 * `<sudo> npm install`
 * `node bin/www` (Run with nohup etc.)
@@ -24,4 +24,4 @@ Admin panel for TCIA Pubhub
 
 ## Developers:
 
-* `weback --watch` to watch and transpile JSX to js
+* `webpack --watch` to watch and transpile JSX to js
