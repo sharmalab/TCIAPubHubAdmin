@@ -1,5 +1,3 @@
-# README #
-
 # TCIA PubHub Admin
 
 Admin panel for TCIA Pubhub
