@@ -48,7 +48,7 @@ var AuthorsForm = React.createClass({
     this.setState({lastAuthor: e.target.value, authors: authors});
   },
   remove_item: function(i,e){
-    e.preventDefault(); 
+    e.preventDefault();
     //var new_state = this.state.value.concat([]);
     var value = this.state.value;
     value.splice(i, 1);
@@ -92,7 +92,7 @@ var AuthorsForm = React.createClass({
     return (
       <div className="form-group authors-inp" >
           <label className="required-label">Authors</label>
-          <ReactCSSTransitionGroup 
+          <ReactCSSTransitionGroup
             transitionName="example"
             transitionEnterTimeout={500}
             transitionLeaveTimeout={300}>
@@ -149,7 +149,7 @@ var Form = React.createClass({
         //i
 
         var self = this;
-    
+
         jQuery.ajax({
             type: "POST",
             url: "api/createDOI",
@@ -158,7 +158,7 @@ var Form = React.createClass({
                 //console.log(err);
                 console.log(res);
                 console.log("Submitted!");
-                
+
                 var redir_doi = res.doi;
                 console.log(redir_doi);
                 window.location.href='index';
@@ -174,12 +174,12 @@ var Form = React.createClass({
             dataType: "json",
             contentType: "application/json"
         });
-   
+
         self.setState({finalSubmitDisable: "disable", finalSubmitDisableObj: {"disabled": "disabled"}});
-        
+
         console.log(postData);
-    
-        //var fileData = 
+
+        //var fileData =
     },
     generateURL: function(e){
       if(e)
@@ -193,12 +193,12 @@ var Form = React.createClass({
         console.log(url);
 
         self.setState({"url": url, doi: doi});
-        //return data.doi_namespace; 
+        //return data.doi_namespace;
       });
 
     },
     handleYear: function(e){
-      
+
       this.setState({year: e.target.value});
       console.log("handling year");
       this.generateURL();
@@ -211,10 +211,10 @@ var Form = React.createClass({
       this.setState({title: e.target.value});
     },
     handleDescription: function(e){
-      this.setState({description: e.target.value});  
+      this.setState({description: e.target.value});
     },
     checkValidURL: function(str){
-      /* 
+      /*
       var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
       '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
@@ -227,7 +227,7 @@ var Form = React.createClass({
       */
       if(str.indexOf("http") !==-1 && str.indexOf("://") !== -1)
         return true;
-      else 
+      else
         return false;
    },
     checkValid: function(){
@@ -291,7 +291,7 @@ var Form = React.createClass({
           return(<div>Missing or Invalid: {m}</div>);
         });
        //year = year.getFullYear();
-       return ( 
+       return (
             <div>
               {
               self.state.error ?
@@ -300,7 +300,7 @@ var Form = React.createClass({
                 <div></div>
               }
             <form  method="POST" encType="application/x-www-form-urlencoded" id="createForm">
-            <div className="panel panel-default"> 
+            <div className="panel panel-default">
                 <div className="panel-body create-form">
                     <div className="form-group">
                         <label className="required-label">Title</label>
@@ -312,13 +312,13 @@ var Form = React.createClass({
                     </div>
                     <div className="form-group">
                         <label className="required-label">DOI</label><br />
-                        <input type="text" value={doi} readonly className="inp-80 form-control readonly" name="doi" required/>    
-                    </div>                      
+                        <input type="text" value={doi} readonly className="inp-80 form-control readonly" name="doi" required/>
+                    </div>
                     <div className="form-group">
                         <label className="required-label">URL</label><br />
-                        <input type="text" value={url} onChange={this.handleURL} className="inp-80 form-control" name="url" required/>    
+                        <input type="text" value={url} onChange={this.handleURL} className="inp-80 form-control" name="url" required/>
                         <button className="btn btn-warning" onClick={self.generateURL}><div className="glyphicon glyphicon-refresh"></div> Reset</button>
-                    </div>                   
+                    </div>
                     <AuthorsForm onAddAuthor={self.addAuthors}/>
                     <div className="form-group">
                         <label>Keywords: </label>
@@ -338,7 +338,7 @@ var Form = React.createClass({
                     </div>
                     <div className="form-group">
                         <label>References: </label>
-                        <textarea name="references" className="form-control" placeholder="References(Markdown supported)"></textarea> 
+                        <textarea name="references" className="form-control" placeholder="References(Markdown supported)"></textarea>
                     </div>
                 </div>
             </div>
@@ -350,25 +350,25 @@ var Form = React.createClass({
             }
 
             {
-              finalSubmit ? 
+              finalSubmit ?
               <div className="form-group">
-                  Please review the information and click the button to create DOI: 
+                  Please review the information and click the button to create DOI:
                   <input type="submit" className="btn btn-primary" value="Confirm"  onClick={self.onFinalSubmit} {...finalSubmitDisableObj} />
               </div>
               :
               [
                 valid ?
-                  
+
                   <div className="form-group">
                       <input type="submit" className="btn btn-primary"  onClick={self.onSubmit} />
                   </div>
                 :
                  <div className="form-group">
                     <input type="submit" className="btn btn-primary"  onClick={self.onSubmit} title="Fill all required fields" disabled="disabled"/>
-                </div> 
+                </div>
               ]
             }
-            
+
         </form>
         </div>
         );
@@ -377,7 +377,7 @@ var Form = React.createClass({
 
 
 var App = React.createClass({
-    
+
 
     render: function(){
 
@@ -388,18 +388,19 @@ var App = React.createClass({
             </div>
             <div className="container col-md-8 col-md-offset-2" id="main">
                 <div className="row" style={{"paddingLeft": "20px"}}>
-                    <a href="index" >Dashboard</a>
+                <a href="index" >Admin Page</a>
+                <span id="headlink_spacer"> &nbsp; | &nbsp; </span>
+                <a href="index" >List of DOIs</a>
                 </div>
                 <h3 id="headline"> Create DOI</h3>
                 <Form />
             </div>
         </div>
         )
-    }  
+    }
 });
 
 module.exports = Form;
 module.exports = AuthorsForm;
 
 ReactDOM.render(<App />, document.getElementById("app"));
-
