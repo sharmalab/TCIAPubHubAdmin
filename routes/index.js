@@ -30,7 +30,7 @@ var bindaas_postDOIMetadata = config.bindaas_postDOIMetadata;
 
 var DOI_NAMESPACE = config.DOI_NAMESPACE
 var URL_PREFIX = config.URL_PREFIX;
-
+var URL_HOST = config.URL_HOST;
 
 winston.remove(winston.transports.Console);
 
@@ -229,7 +229,7 @@ function createJSON(formdata) {
 
 }
 router.get("/api/getDOINamespace", function(req, res){
-  res.json({"doi_namespace": DOI_NAMESPACE, "url_prefix": URL_PREFIX});
+  res.json({"doi_namespace": DOI_NAMESPACE, "url_prefix": URL_PREFIX, "url_host": URL_HOST});
 });
 
 var checkRequiredFields = function(form_data){

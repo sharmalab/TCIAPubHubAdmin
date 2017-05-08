@@ -27,7 +27,8 @@ var Form = React.createClass({
                 "keywords": "",
                 "references": "",
                 "year": "",
-                "title": ""
+                "title": "",
+                "namespace": {}
             }
         }
     },
@@ -36,17 +37,23 @@ var Form = React.createClass({
         var self = this;
         var url = window.location.href;
         var doi = getParameterByName("doi", url);
-
+        
         var url = "api/editDOI" + "?doi="+doi;
         console.log(url);
-        superagent.get(url)
+        superagent.get("/api/getDOINamespace")
+          .end(function(e, d){
+            superagent.get(url)
             .end(function(err,data){
                 console.log("Data...");
                 console.log(JSON.parse(data.text));
                 var data = JSON.parse(data.text)[0];
                 console.log(data);
-                self.setState({metadata: data});
+                console.log(d);
+                self.props.handleURLHost(d.body);
+                self.setState({metadata: data, namespace: d});
             });
+          });
+
     },
     getResources: function(resources) {
         console.log("main form");
@@ -249,10 +256,18 @@ var Form = React.createClass({
 
 
 var App = React.createClass({
+    getInitialState: function(){ 
+      return {"urlHost": ""};
+    },
+    handleURLHost: function(data){
+      console.log(data.body); 
+      if(data.url_host){
+      this.setState({"urlHost": data.url_host});
+      }
 
-
+    },
     render: function(){
-
+        var self = this;
         return(
         <div>
             <div id="header">
@@ -262,10 +277,10 @@ var App = React.createClass({
                 <div className="row" style={{"paddingLeft": "20px"}}>
                     <a href="index" >Admin Page</a>
                     <span id="headlink_spacer"> &nbsp; |&nbsp; </span>
-                    <a href="index" >List of DOIs</a>
+                    <a href={self.state.urlHost} >List of DOIs</a>
                 </div>
                 <h3 id="headline"> Edit DOI Metadata</h3>
-                <Form />
+                <Form handleURLHost={self.handleURLHost}/>
             </div>
         </div>
         )
