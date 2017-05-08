@@ -333,7 +333,9 @@ var App = React.createClass({
             "previousResources": [],
             "addedResources": [],
             "files":[],
-            "disableSubmit": {}
+            "disableSubmit": {},
+            "error": false,
+            "errorMessage": "Error"
         };
     },
     getResources: function(resources, files){
@@ -413,6 +415,8 @@ var App = React.createClass({
             if(err){
               console.log("ERROR!");
               console.log(err);
+
+              self.setState({"errorMessage": "Error creating one or more resources", "error": true}); 
             } else {
             console.log("Done uploaded files");
             window.location.href='index';
@@ -433,6 +437,7 @@ var App = React.createClass({
         var self = this;
         var disableSubmit = self.state.disableSubmit;
         console.log("disable submit: ");
+        console.log(self.state);
         console.log(disableSubmit);
         return(
         <div>
@@ -440,6 +445,12 @@ var App = React.createClass({
                 <img src="images/tcia_logo_dark_sml.png"/>
             </div>
             <div className="container col-md-6 col-offset-3" id="main">
+              {
+              self.state.error ?
+                <div className="alert alert-danger">{self.state.errorMessage}</div>
+              :
+                <div></div>
+              }
                 <div className="row" style={{"paddingLeft": "20px"}}>
                 </div>
                 <h3 id="headline"> Add Resources</h3>

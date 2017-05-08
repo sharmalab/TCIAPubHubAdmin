@@ -169,16 +169,18 @@ function postResources(addedResources, doi, version, cb){
             .send('shared_list_name='+ resource.info.resourceData)
             .end(function(err, data){
               if(err){
+                callback(err);
                 //res.status(500).send("Error creating JNLP");
+              } else {
+                console.log("shared list creating jnlp");
+                console.log(data);
+                var jnlp = ""+data.body.jnlp;
+                console.log("data: "+jnlp);
+                resource.info.sharedListName = resource.info.resourceData;
+                resource.info.resourceData = jnlp;
+                console.log("Resource data: "+resource.info.resourceData);
+                postResourcesPayload(resource, doi, version, callback);
               }
-              console.log("shared list creating jnlp");
-              console.log(data);
-              var jnlp = ""+data.body.jnlp;
-              console.log("data: "+jnlp);
-              resource.info.sharedListName = resource.info.resourceData;
-              resource.info.resourceData = jnlp;
-              console.log("Resource data: "+resource.info.resourceData);
-              postResourcesPayload(resource, doi, version, callback);
             });                  
         } else {
           postResourcesPayload(resource, doi, version, callback);
@@ -186,7 +188,11 @@ function postResources(addedResources, doi, version, cb){
         }
 
     }, function(err){
-        cb();
+        if(err){
+          cb(err);
+        } else {
+          cb();
+        }
         //res.json({"Status": "success"});
     });      
   });		
@@ -245,8 +251,12 @@ router.post("/api/uploadFile", function(req, res, next){
         }
 
         findLatestVersion(doi, function(version){
-            postResources(addedResources, doi, version, function(){
-                
+            postResources(addedResources, doi, version, function(err){
+                if(err){
+                  console.log("Error posting resources");
+                  console.log(err);
+                  return res.status(500).send("Error");
+                }
                 var newVersion = version;
 
                 var version_payLoad = {};
@@ -262,8 +272,9 @@ router.post("/api/uploadFile", function(req, res, next){
                         if(version_res.statusCode != 200){
                             console.log("Error")
                             return res.status(500).send("Error");
+                        } else {
+                          return res.json({"resources":resources});
                         }
-                        return res.json({"resources":resources});
                     });
 
             });

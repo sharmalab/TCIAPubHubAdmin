@@ -56,7 +56,7 @@ var DOISmall = React.createClass({
                 <div className="doiSummary">
                     <div className="doiTitle">
 
-                        <a href={"http://172.20.6.65:13000/details?doi="+encodeURI(data.doi)}><h4>{data.title}</h4></a>
+                        <a href={"http://dragon.cci.emory.edu:3000/details?doi="+encodeURI(data.doi)}><h4>{data.title}</h4></a>
                     </div>
                     <div className="btn-group resource_admin_buttons"> 
                         <a href={edit}><button type="button" className="btn btn-default">Edit Metadata</button></a>
