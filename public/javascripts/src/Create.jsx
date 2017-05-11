@@ -288,7 +288,7 @@ var Form = React.createClass({
         var missing = this.checkValid();
         console.log(missing);
         var Missing = missing.map(function(m){
-          return(<div>Missing or Invalid: {m}</div>);
+          return(<div className="missing_warning">Missing or Invalid: {m}</div>);
         });
        //year = year.getFullYear();
        return (

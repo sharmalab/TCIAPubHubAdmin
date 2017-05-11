@@ -12,6 +12,10 @@ textarea{
     resize: vertical;
 }
 
+.missing_warning{
+  text-transform: capitalize;
+}
+
 .doiSummary{
     border: 1px solid #ddd;
     border-radius: 4px;
