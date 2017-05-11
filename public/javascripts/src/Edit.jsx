@@ -179,11 +179,11 @@ var Form = React.createClass({
 
                     <div className="form-group">
                         <label>DOI</label><br />
-                        <input type="text" value={self.state.metadata.doi} readonly disabled className="inp-80 form-control readonly" name="doi"/>
+                        <input type="text" value={self.state.metadata.doi} readOnly disabled className="inp-80 form-control readonly" name="doi"/>
                     </div>
                     <div className="form-group">
                         <label>URL</label><br />
-                        <input type="text" value={self.state.metadata.url} readonly disabled className="inp-80 form-control readonly" name="url" />
+                        <input type="text" value={self.state.metadata.url} readOnly disabled className="inp-80 form-control readonly" name="url" />
                     </div>
                     <div className="form-group">
                         <label className="required-label">Authors (Semicolon Seperated)</label>
@@ -219,7 +219,7 @@ var Form = React.createClass({
                         <input type="text"
                             name="publisher"
                             className="form-control"
-                            readonly
+                            readOnly
                             disabled
                             value={self.state.metadata.publisher}/>
                     </div>
@@ -229,7 +229,7 @@ var Form = React.createClass({
                             placeholder="Publisher Year"
                             name="resource_type"
                             className="form-control"
-                            readonly
+                            readOnly
                             disabled
                             value={self.state.metadata.resource_type}/>
                     </div>
@@ -249,7 +249,7 @@ var Form = React.createClass({
 
 
             <div className="form-group">
-                <input type="submit" className="btn btn-primary"  onClick={self.onSubmit}/>
+                <input id="submit_btn" type="submit" className="btn btn-primary"  onClick={self.onSubmit}/>
             </div>
 
         </form>

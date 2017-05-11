@@ -313,7 +313,7 @@ var Form = React.createClass({
                     </div>
                     <div className="form-group">
                         <label>DOI</label><br />
-                        <input type="text" value={doi} readonly disabled className="inp-80 form-control disabled" name="doi" required/>
+                        <input type="text" value={doi} readOnly disabled className="inp-80 form-control disabled" name="doi" required/>
                     </div>
                     <div className="form-group">
                         <label className="required-label">URL</label><br />
@@ -331,11 +331,11 @@ var Form = React.createClass({
                     </div>
                     <div className="form-group">
                         <label>Publisher</label>
-                        <input type="text" value={"The Cancer Imaging Archive"} name="publisher" className="form-control readonly" readonly disabled/>
+                        <input type="text" value={"The Cancer Imaging Archive"} name="publisher" className="form-control readonly" readOnly disabled/>
                     </div>
                     <div className="form-group">
                         <label>Resource Type</label>
-                        <input type="text" value={"DICOM"} name="resource_type" className="form-control readonly disabled" readonly disabled/>
+                        <input type="text" value={"DICOM"} name="resource_type" className="form-control readonly disabled" readOnly disabled/>
                     </div>
                     <div className="form-group">
                         <label>References </label>
