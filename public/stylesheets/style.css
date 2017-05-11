@@ -40,6 +40,10 @@ textarea{
     padding: 10px;
 }
 
+.sublabel{
+  font-weight: normal;
+}
+
 .pagebar{
   font-size: 125%;
 }
