@@ -84,7 +84,7 @@ var AuthorsForm = React.createClass({
       return (
       <div key={i} className="inputAuthor input-append">
         <input type="text" placeholder="LastName, FirstName Initial." className="form-control" defaultValue={e} onChange={self.handleChange.bind(this,authorIds)} value={e} />&nbsp;
-          <button onClick = {self.remove_item.bind(null,i)} className="btn btn-xs btn-danger"><div className="glyphicon glyphicon-remove"> </div></button>
+          <button onClick = {self.remove_item.bind(null,i)} className="btn btn-xs btn-danger"><div className="glyphicon glyphicon-trash"> </div></button>
       </div>
       )
     });
