@@ -308,11 +308,11 @@ var Form = React.createClass({
                     </div>
                     <div className="form-group">
                         <label className="required-label">Description</label>
-                        <textarea name="description" className="form-control" onChange={self.handleDescription} value={self.state.description} placeholder="Description(Markdown supported)"></textarea>
+                        <textarea name="description" className="form-control" onChange={self.handleDescription} value={self.state.description} placeholder="Description (Markdown Supported)"></textarea>
                     </div>
                     <div className="form-group">
-                        <label className="required-label">DOI</label><br />
-                        <input type="text" value={doi} readonly className="inp-80 form-control readonly" name="doi" required/>
+                        <label>DOI</label><br />
+                        <input type="text" value={doi} readonly disabled className="inp-80 form-control disabled" name="doi" required/>
                     </div>
                     <div className="form-group">
                         <label className="required-label">URL</label><br />
@@ -321,24 +321,24 @@ var Form = React.createClass({
                     </div>
                     <AuthorsForm onAddAuthor={self.addAuthors}/>
                     <div className="form-group">
-                        <label>Keywords: </label>
-                        <input type="text" placeholder="Keywords(comma seperated)" name="keywords" className="form-control" />
+                        <label>Keywords (Comma Separated) </label>
+                        <input type="text" placeholder="Keywords" name="keywords" className="form-control" />
                     </div>
                     <div className="form-group">
                         <label className="required-label">Publisher Year</label>
                         <input type="text" placeholder="Publisher year" value={year} onChange={self.handleYear} name="year" className="form-control" defaultValue={year}/>
                     </div>
                     <div className="form-group">
-                        <label className="required-label">Publisher</label>
-                        <input type="text" value={"The Cancer Imaging Archive"} name="publisher" className="form-control readonly" readonly/>
+                        <label>Publisher</label>
+                        <input type="text" value={"The Cancer Imaging Archive"} name="publisher" className="form-control readonly" readonly disabled/>
                     </div>
                     <div className="form-group">
-                        <label className="required-label">Resource Type</label>
-                        <input type="text" value={"DICOM"} name="resource_type" className="form-control readonly" readonly/>
+                        <label>Resource Type</label>
+                        <input type="text" value={"DICOM"} name="resource_type" className="form-control readonly disabled" readonly disabled/>
                     </div>
                     <div className="form-group">
-                        <label>References: </label>
-                        <textarea name="references" className="form-control" placeholder="References(Markdown supported)"></textarea>
+                        <label>References </label>
+                        <textarea name="references" className="form-control" placeholder="References (Markdown Supported)"></textarea>
                     </div>
                 </div>
             </div>

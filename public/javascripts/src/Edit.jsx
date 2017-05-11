@@ -168,50 +168,51 @@ var Form = React.createClass({
             <div className="panel panel-default">
                 <div className="panel-body">
                     <div className="form-group">
-                        <label>Title</label>
-                        <input type="text" placeholder="Title" className="form-control" name="title" value={self.state.metadata.title} onChange={self.handleTitle}/>
+                        <label className="required-label">Title</label>
+                        <input type="text" required placeholder="Title" className="form-control" name="title" value={self.state.metadata.title} onChange={self.handleTitle}/>
                     </div>
                     <div className="form-group">
-                        <label>Description</label>
-                        <textarea name="description" className="form-control" placeholder="Description(Markdown supported)" value={self.state.metadata.description} onChange={self.handleDescription}></textarea>
+                        <label className="required-label">Description</label>
+                        <textarea name="description" required className="form-control" placeholder="Description (Markdown Supported)" value={self.state.metadata.description} onChange={self.handleDescription}></textarea>
                     </div>
 
 
                     <div className="form-group">
-                        <label className="required-label">DOI</label><br />
-                        <input type="text" value={self.state.metadata.doi} readonly className="inp-80 form-control readonly" name="doi"/>
+                        <label>DOI</label><br />
+                        <input type="text" value={self.state.metadata.doi} readonly disabled className="inp-80 form-control readonly" name="doi"/>
                     </div>
                     <div className="form-group">
-                        <label className="required-label">URL</label><br />
-                        <input type="text" value={self.state.metadata.url} readonly className="inp-80 form-control readonly" name="url" />
+                        <label>URL</label><br />
+                        <input type="text" value={self.state.metadata.url} readonly disabled className="inp-80 form-control readonly" name="url" />
                     </div>
                     <div className="form-group">
-                        <label>Authors</label>
+                        <label className="required-label">Authors (Semicolon Seperated)</label>
                         <input type="text"
-                            placeholder="Authors(semicolon seperated)"
+                            placeholder="Authors"
                             name="authors"
                             className="form-control"
                             value={authors_str}
                             onChange={self.handleAuthors} />
                     </div>
                     <div className="form-group">
-                        <label>Keywords: </label>
+                        <label>Keywords (comma seperated)</label>
                         <input
                             type="text"
-                            placeholder="Keywords(comma seperated)"
+                            placeholder="Keywords"
                             name="keywords"
                             className="form-control"
                             value={self.state.metadata.keywords}
                             onChange ={self.handleKeywords} />
                     </div>
                     <div className="form-group">
-                        <label>Publisher Year</label>
+                        <label className="required-label">Publisher Year</label>
                         <input type="text"
                             placeholder="Publisher year"
                             name="year"
                             className="form-control"
                             onChange={self.handleYear}
-                            value={self.state.metadata.year}/>
+                            value={self.state.metadata.year}
+                            required/>
                     </div>
                     <div className="form-group">
                         <label>Publisher</label>
@@ -219,25 +220,27 @@ var Form = React.createClass({
                             name="publisher"
                             className="form-control"
                             readonly
+                            disabled
                             value={self.state.metadata.publisher}/>
                     </div>
                     <div className="form-group">
                         <label>Resource Type</label>
                         <input type="text"
-                            placeholder="Publisher year"
+                            placeholder="Publisher Year"
                             name="resource_type"
                             className="form-control"
                             readonly
+                            disabled
                             value={self.state.metadata.resource_type}/>
                     </div>
 
 
                     <div className="form-group">
-                        <label>References: </label>
+                        <label>References</label>
                         <textarea
                             name="references"
                             className="form-control"
-                            placeholder="References(Markdown supported)"
+                            placeholder="References (Markdown Supported)"
                             value={self.state.metadata.references}
                             onChange={self.handleReferences}></textarea>
                     </div>
