@@ -179,9 +179,7 @@ var Form = React.createClass({
         self.setState({finalSubmitDisable: "disable", finalSubmitDisableObj: {"disabled": "disabled"}});
 
         console.log(postData);
-
-        //var fileData =
-    },
+  },
     generateURL: function(e){
       if(e)
         e.preventDefault();

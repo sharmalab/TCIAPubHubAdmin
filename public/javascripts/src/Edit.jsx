@@ -75,32 +75,43 @@ var Form = React.createClass({
         console.log(formData);
         console.log(resources);
         console.log("----------");
-        var self = this;
-        var postData = self.state.metadata;
-        //var postData = formData.push(resources);
-        //
-        //
-        //
-        console.log("...");
-        console.log(postData);
+        //check that the form being submitted is valid
+        var complete = (this.state.metadata["title"] &&
+          this.state.metadata["description"] &&
+          this.state.metadata["authors"] &&
+          this.state.metadata["year"]);
+        if (complete){
+          var self = this;
+          var postData = self.state.metadata;
+          //var postData = formData.push(resources);
+          //
+          //
+          //
+          console.log("...");
+          console.log(postData);
 
-        jQuery.ajax({
-            type: "POST",
-            url: "api/editDOI",
-            data: JSON.stringify(postData),
-            success: function(res) {
-                //console.log(err);
-                console.log(res);
-                console.log("Submitted!");
+          jQuery.ajax({
+              type: "POST",
+              url: "api/editDOI",
+              data: JSON.stringify(postData),
+              success: function(res) {
+                  //console.log(err);
+                  console.log(res);
+                  console.log("Submitted!");
 
-                var redir_doi = res.doi;
-                console.log(redir_doi);
-                window.location.href='index';
-            },
-            dataType: "json",
-            contentType: "application/json"
-        });
-        console.log(postData);
+                  var redir_doi = res.doi;
+                  console.log(redir_doi);
+                  window.location.href='index';
+              },
+              dataType: "json",
+              contentType: "application/json"
+          });
+          console.log(postData);
+        }
+        else{
+          // do something
+          alert("Missing a Required Field")
+        }
 
         //var fileData =
     },
@@ -218,15 +229,15 @@ var Form = React.createClass({
                         <label>Publisher</label>
                         <input type="text"
                             name="publisher"
-                            className="form-control"
-                            readOnly
+                            className="form-control readonly"
                             disabled
+                            readOnly
                             value={self.state.metadata.publisher}/>
                     </div>
                     <div className="form-group">
                         <label>Resource Type</label>
                         <input type="text"
-                            placeholder="Publisher Year"
+                            placeholder="Resource Type"
                             name="resource_type"
                             className="form-control"
                             readOnly
