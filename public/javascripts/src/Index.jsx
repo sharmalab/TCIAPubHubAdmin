@@ -136,8 +136,8 @@ var App = React.createClass({
           <h3 id="headline"> PubHub Central</h3>
 
           <a href="createDOI">
-            <button type="button" className="btn btn-primary">
-              Create DOI
+            <button type="button" className="btn btn-large btn-primary">
+              <span className="glyphicon glyphicon-plus"></span>&nbsp;Create DOI
             </button>
           </a>
           <div className="allDOIs">
