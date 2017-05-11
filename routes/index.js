@@ -268,7 +268,7 @@ router.post("/api/createJNLP", function(req, res){
     return res.status(400).send("Bad request! Missing shared_list_name");
   }
 
-  var java = child_process.exec("java -jar javautilities/TciaDoiClientAPP.jar -action dlm -sharedList "+ shared_list_name);
+  var java = child_process.exec('java -jar javautilities/TciaDoiClientAPP.jar -action dlm -sharedList "'+ shared_list_name+ '"');
   var javaout = "";
   java.stdout.on("data", function(data){
     //console.log(data);console.log('..');
