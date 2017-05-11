@@ -19,7 +19,7 @@ textarea{
     margin: 14px 2px;
 }
 .doiTitle{
-    
+
 }
 #headline {
     text-align: center;
@@ -34,6 +34,11 @@ textarea{
 .message, .citation{
     padding: 10px;
 }
+
+.pagebar{
+  font-size: 125%;
+}
+
 .message{
     width: 200px;
 }
@@ -62,7 +67,7 @@ textarea{
 #main{
     padding: 10px;
     margin: 0 auto;
-    float: none;   
+    float: none;
 }
 
 #doiBox{
@@ -78,7 +83,7 @@ textarea{
     border: 1px solid #eee;
     border-radius: 10px;
     margin-bottom :10px;
-    //border-bottom: 1px solid #ccc;   
+    //border-bottom: 1px solid #ccc;
 }
 
 .resource_admin_buttons button{
@@ -131,4 +136,4 @@ textarea{
 .readonly
 {
     background: #f3f3f3;
-} 
+}

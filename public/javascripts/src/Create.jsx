@@ -388,9 +388,13 @@ var App = React.createClass({
             </div>
             <div className="container col-md-8 col-md-offset-2" id="main">
                 <div className="row" style={{"paddingLeft": "20px"}}>
-                <a href="index" >Admin Page</a>
-                <span id="headlink_spacer"> &nbsp; | &nbsp; </span>
-                <a href="index" >List of DOIs</a>
+                  <div className="pagebar">
+                    <a href="index">Admin Page</a>
+                    <span id="headlink_spacer"> &nbsp;>&nbsp;</span>
+                    <a href="index">List of DOIs</a>
+                    <span id="headlink_spacer"> &nbsp;>&nbsp;</span>
+                    <a href="/createDOI">Create DOI</a>
+                  </div>
                 </div>
                 <h3 id="headline"> Create DOI</h3>
                 <Form />

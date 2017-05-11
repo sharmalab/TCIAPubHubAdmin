@@ -37,7 +37,7 @@ var Form = React.createClass({
         var self = this;
         var url = window.location.href;
         var doi = getParameterByName("doi", url);
-        
+
         var url = "api/editDOI" + "?doi="+doi;
         console.log(url);
         superagent.get("/api/getDOINamespace")
@@ -256,11 +256,11 @@ var Form = React.createClass({
 
 
 var App = React.createClass({
-    getInitialState: function(){ 
+    getInitialState: function(){
       return {"urlHost": ""};
     },
     handleURLHost: function(data){
-      console.log(data.body); 
+      console.log(data.body);
       if(data.url_host){
       this.setState({"urlHost": data.url_host});
       }
@@ -275,9 +275,13 @@ var App = React.createClass({
             </div>
             <div className="container col-md-8 col-md-offset-2" id="main">
                 <div className="row" style={{"paddingLeft": "20px"}}>
-                    <a href="index" >Admin Page</a>
-                    <span id="headlink_spacer"> &nbsp; |&nbsp; </span>
-                    <a href={self.state.urlHost} >List of DOIs</a>
+                  <div className="pagebar">
+                    <a href="index">Admin Page</a>
+                    <span id="headlink_spacer"> &nbsp;>&nbsp;</span>
+                    <a href="index">List of DOIs</a>
+                    <span id="headlink_spacer"> &nbsp;>&nbsp;</span>
+                    <a href={self.state.urlHost} >Edit DOI</a>
+                  </div>
                 </div>
                 <h3 id="headline"> Edit DOI Metadata</h3>
                 <Form handleURLHost={self.handleURLHost}/>
