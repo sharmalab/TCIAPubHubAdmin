@@ -140,8 +140,8 @@ function postResourcesPayload(resource, doi, version, callback){
 function postResources(addedResources, doi, version, cb){
   var doi_path = doi.split(".");
   var doi_path = doi_path[doi_path.length - 1];
-  var directory = UPLOAD_PATH + "/"+doi_path + "/"+version;
-		
+  //var directory = UPLOAD_PATH + "/"+doi_path + "/"+version;
+  var directory = "public"+"/DOI_Resources/"+doi_path+"/"+version;
   /* Copy all files */
   async.each(FILES, function(file, callbackF){
     var fileName= file.name;
