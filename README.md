@@ -7,6 +7,7 @@ Admin panel for TCIA Pubhub
 * Node.js
 * Bindaas + MongoDB
 * Python 2.7 and LibXML(yum install libxslt-devel libxml2-devel)
+* lxml (pip install lxml)
 * Webpack
 
 ## Installation:
@@ -21,7 +22,7 @@ Admin panel for TCIA Pubhub
 * `<sudo> npm install`
 * you may need to install webpack alone if it fails (``<sudo> npm install webpack`)
 * `node bin/www` (Run with nohup etc.)
-* Runs on `localhost:3001`
+* Runs on `localhost:3001` by default
 
 ## Developers:
 

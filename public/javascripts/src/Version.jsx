@@ -240,7 +240,10 @@ var AddResourcePanel = React.createClass({
       return (
         <li className="list-group-item" key={id}>
 
-          <h5 className="list-group-item-heading">{res.info.resourceName} </h5>
+
+          <h5 className="list-group-item-heading">{res.info.resourceName || (resource.info.resourceData || "Untitled")
+                .split("/")[(res.info.resourceData || "Untitled")
+                .split("/").length - 1]} </h5>
           <div className="row">
             <p className="small" className="col-md-10">
               {res.info.resourceDescription}
@@ -348,7 +351,10 @@ var OldResources = React.createClass({
                     value={resource.resourceID}
                   />
                   <h5 className="list-group-item-heading">
-                    {resource.info.resourceName}
+                    {resource.info.resourceName || (resource.info.resourceData || "Untitled")
+                      .split("/")[(resource.info.resourceData || "Untitled")
+                      .split("/").length - 1]}
+
                   </h5>
                   <p className="list-group-item-text small">
                     {resource.info.resourceDescription}

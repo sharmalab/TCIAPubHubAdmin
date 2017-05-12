@@ -32,6 +32,19 @@ var Citation = React.createClass({
 });
 
 var DOISmall = React.createClass({
+  getInitialState: function() {
+    return { url_prefix: "" };
+  },
+  componentDidMount: function() {
+    var self = this;
+    superagent.get("/api/getDOINamespace").end(function(err, response) {
+      console.log("get doi namespace");
+      if (!err) {
+        self.setState({ url_prefix: response.body.url_prefix });
+        console.log(response.body);
+      }
+    });
+  },
   render: function() {
     var self = this;
     var data = self.props.data;
@@ -51,13 +64,7 @@ var DOISmall = React.createClass({
     return (
       <div className="doiSummary">
         <div className="doiTitle">
-
-          <a
-            href={
-              "http://dragon.cci.emory.edu:3000/details?doi=" +
-                encodeURI(data.doi)
-            }
-          >
+          <a href={self.state.url_prefix + encodeURI(data.doi)}>
             <h4>{data.title}</h4>
           </a>
         </div>
@@ -138,6 +145,7 @@ var App = React.createClass({
           <a href="createDOI">
             <button type="button" className="btn btn-large btn-primary">
               <span className="glyphicon glyphicon-plus"></span>&nbsp;Create DOI
+
             </button>
           </a>
           <div className="allDOIs">

@@ -80,6 +80,7 @@ var AuthorsForm = React.createClass({
       return (
         <div key={i} className="inputAuthor input-append">
           <label className="sublabel">Name:&nbsp; </label>
+
           <input
             type="text"
             placeholder="LastName, FirstName Initial."
@@ -214,8 +215,8 @@ var Form = React.createClass({
       finalSubmitDisable: "disable",
       finalSubmitDisableObj: { disabled: "disabled" }
     });
-
     console.log(postData);
+
   },
   generateURL: function(e) {
     if (e) e.preventDefault();
@@ -312,6 +313,7 @@ var Form = React.createClass({
     var Missing = missing.map(function(m) {
       return <div className="missing_warning">Missing or Invalid: {m}</div>;
     });
+    
     //year = year.getFullYear();
     return (
       <div>
@@ -379,6 +381,7 @@ var Form = React.createClass({
                 <input
                   type="text"
                   placeholder="Keywords"
+
                   name="keywords"
                   className="form-control"
                 />
