@@ -291,7 +291,10 @@ var OldResources = React.createClass({
 							<div className="checkbox">
 							<label>
 							<input type="checkbox" id="cbox1" onClick={self.handleCheck} value={resource.resourceID}/>
-							<h5 className="list-group-item-heading">{resource.info.resourceName}</h5>
+							<h5 className="list-group-item-heading">
+              {resource.info.resourceData.split("/")[resource.info.resourceData.split("/")
+                .length - 1]}
+              </h5>
                             <p className="list-group-item-text small">
                                 {resource.info.resourceDescription}
                             </p>
@@ -309,7 +312,7 @@ var OldResources = React.createClass({
             console.log(self.state.resources);
             return(
                 <div>
-                    <h4> Select Older Resources </h4>
+                    <h4> Select Older Resources to Include </h4>
                     <label>Older resources </label>
                     <div className="previousResources">
 
@@ -416,7 +419,7 @@ var App = React.createClass({
               console.log("ERROR!");
               console.log(err);
 
-              self.setState({"errorMessage": "Error creating one or more resources", "error": true}); 
+              self.setState({"errorMessage": "Error creating one or more resources", "error": true});
             } else {
             console.log("Done uploaded files");
             window.location.href='index';
