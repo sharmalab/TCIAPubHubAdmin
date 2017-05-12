@@ -2,3 +2,4 @@ node_modules/
 *.swp
 config.js
 .DS_STORE
+public/javascripts/browserify/
