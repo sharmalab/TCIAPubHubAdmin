@@ -292,8 +292,8 @@ var OldResources = React.createClass({
 							<label>
 							<input type="checkbox" id="cbox1" onClick={self.handleCheck} value={resource.resourceID}/>
 							<h5 className="list-group-item-heading">
-              {resource.info.resourceData.split("/")[resource.info.resourceData.split("/")
-                .length - 1]}
+              {(resource.info.resourceData || "Untitled")
+                .split("/")[(resource.info.resourceData || "Untitled").split("/").length - 1]}
               </h5>
                             <p className="list-group-item-text small">
                                 {resource.info.resourceDescription}
