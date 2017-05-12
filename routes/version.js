@@ -63,6 +63,7 @@ router.get("/api/getResourcesForDOI", function(req, res) {
     var resources = "";
     rres.on("data", function(d) {
       resources += d;
+
     });
     rres.on("end", function() {
       try {
@@ -129,6 +130,7 @@ function postResourcesPayload(resource, doi, version, callback) {
 function postResources(addedResources, doi, version, cb) {
   var doi_path = doi.split(".");
   var doi_path = doi_path[doi_path.length - 1];
+
   //var directory = UPLOAD_PATH + "/"+doi_path + "/"+version;
   var directory = "public" + "/DOI_Resources/" + doi_path + "/" + version;
   /* Copy all files */
@@ -239,6 +241,7 @@ router.post("/api/uploadFile", function(req, res, next) {
     console.log(previousResources);
     resourceIDs = previousResources;
 
+
     var names = [];
     for (var i = 0; i < addedResources.length; i++) {
       var name = addedResources[i]["info"]["resourceName"];
@@ -250,7 +253,6 @@ router.post("/api/uploadFile", function(req, res, next) {
        }
      }
 
-    
     for (var i in addedResources) {
       var resource = addedResources[i];
       console.log("Resource: " + resource);

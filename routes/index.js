@@ -250,6 +250,7 @@ router.post("/api/createJNLP", function(req, res) {
   }
 
   var java = child_process.exec(
+
     'java -jar javautilities/TciaDoiClientAPP.jar -action dlm -sharedList "' +
       shared_list_name +
       '"'

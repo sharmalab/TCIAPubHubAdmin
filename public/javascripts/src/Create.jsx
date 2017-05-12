@@ -78,7 +78,9 @@ var AuthorsForm = React.createClass({
     var Inputs = this.state.value.map(function(e, i) {
       authorIds++;
       return (
-        <div key={i} className="inputAuthor">
+        <div key={i} className="inputAuthor input-append">
+          <label className="sublabel">Name:&nbsp; </label>
+
           <input
             type="text"
             placeholder="LastName, FirstName Initial."
@@ -86,12 +88,12 @@ var AuthorsForm = React.createClass({
             defaultValue={e}
             onChange={self.handleChange.bind(this, authorIds)}
             value={e}
-          />
+          />&nbsp;
           <button
             onClick={self.remove_item.bind(null, i)}
-            className="btn btn-danger"
+            className="btn btn-xs btn-danger"
           >
-            <div className="glyphicon glyphicon-remove"> </div>Remove{" "}
+            <div className="glyphicon glyphicon-trash"> </div>
           </button>
         </div>
       );
@@ -213,10 +215,8 @@ var Form = React.createClass({
       finalSubmitDisable: "disable",
       finalSubmitDisableObj: { disabled: "disabled" }
     });
-
     console.log(postData);
 
-    //var fileData =
   },
   generateURL: function(e) {
     if (e) e.preventDefault();
@@ -311,8 +311,9 @@ var Form = React.createClass({
     var missing = this.checkValid();
     console.log(missing);
     var Missing = missing.map(function(m) {
-      return <div>Missing or Invalid: {m}</div>;
+      return <div className="missing_warning">Missing or Invalid: {m}</div>;
     });
+    
     //year = year.getFullYear();
     return (
       <div>
@@ -345,16 +346,17 @@ var Form = React.createClass({
                   className="form-control"
                   onChange={self.handleDescription}
                   value={self.state.description}
-                  placeholder="Description(Markdown supported)"
+                  placeholder="Description (Markdown Supported)"
                 />
               </div>
               <div className="form-group">
-                <label className="required-label">DOI</label><br />
+                <label>DOI</label><br />
                 <input
                   type="text"
                   value={doi}
-                  readonly
-                  className="inp-80 form-control readonly"
+                  readOnly
+                  disabled
+                  className="inp-80 form-control disabled"
                   name="doi"
                   required
                 />
@@ -375,10 +377,11 @@ var Form = React.createClass({
               </div>
               <AuthorsForm onAddAuthor={self.addAuthors} />
               <div className="form-group">
-                <label>Keywords: </label>
+                <label>Keywords (Comma Separated) </label>
                 <input
                   type="text"
-                  placeholder="Keywords(comma seperated)"
+                  placeholder="Keywords"
+
                   name="keywords"
                   className="form-control"
                 />
@@ -396,31 +399,33 @@ var Form = React.createClass({
                 />
               </div>
               <div className="form-group">
-                <label className="required-label">Publisher</label>
+                <label>Publisher</label>
                 <input
                   type="text"
                   value={"The Cancer Imaging Archive"}
                   name="publisher"
                   className="form-control readonly"
-                  readonly
+                  readOnly
+                  disabled
                 />
               </div>
               <div className="form-group">
-                <label className="required-label">Resource Type</label>
+                <label>Resource Type</label>
                 <input
                   type="text"
                   value={"DICOM"}
                   name="resource_type"
-                  className="form-control readonly"
-                  readonly
+                  className="form-control readonly disabled"
+                  readOnly
+                  disabled
                 />
               </div>
               <div className="form-group">
-                <label>References: </label>
+                <label>References </label>
                 <textarea
                   name="references"
                   className="form-control"
-                  placeholder="References(Markdown supported)"
+                  placeholder="References (Markdown Supported)"
                 />
               </div>
             </div>
@@ -475,9 +480,13 @@ var App = React.createClass({
         </div>
         <div className="container col-md-8 col-md-offset-2" id="main">
           <div className="row" style={{ paddingLeft: "20px" }}>
-            <a href="index">Admin Page</a>
-            <span id="headlink_spacer"> &nbsp; | &nbsp; </span>
-            <a href="index">List of DOIs</a>
+            <div className="pagebar">
+              <a href="index">Admin Page</a>
+              <span id="headlink_spacer"> &nbsp;&gt;&nbsp;</span>
+              <a href="index">List of DOIs</a>
+              <span id="headlink_spacer"> &nbsp;&gt;&nbsp;</span>
+              <a href="/createDOI">Create DOI</a>
+            </div>
           </div>
           <h3 id="headline"> Create DOI</h3>
           <Form />

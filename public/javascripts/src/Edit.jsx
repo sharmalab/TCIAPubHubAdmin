@@ -67,32 +67,43 @@ var Form = React.createClass({
     console.log(formData);
     console.log(resources);
     console.log("----------");
-    var self = this;
-    var postData = self.state.metadata;
-    //var postData = formData.push(resources);
-    //
-    //
-    //
-    console.log("...");
-    console.log(postData);
+    //check that the form being submitted is valid
+    var complete =
+      this.state.metadata["title"] &&
+      this.state.metadata["description"] &&
+      this.state.metadata["authors"] &&
+      this.state.metadata["year"];
+    if (complete) {
+      var self = this;
+      var postData = self.state.metadata;
+      //var postData = formData.push(resources);
+      //
+      //
+      //
+      console.log("...");
+      console.log(postData);
 
-    jQuery.ajax({
-      type: "POST",
-      url: "api/editDOI",
-      data: JSON.stringify(postData),
-      success: function(res) {
-        //console.log(err);
-        console.log(res);
-        console.log("Submitted!");
+      jQuery.ajax({
+        type: "POST",
+        url: "api/editDOI",
+        data: JSON.stringify(postData),
+        success: function(res) {
+          //console.log(err);
+          console.log(res);
+          console.log("Submitted!");
 
-        var redir_doi = res.doi;
-        console.log(redir_doi);
-        window.location.href = "index";
-      },
-      dataType: "json",
-      contentType: "application/json"
-    });
-    console.log(postData);
+          var redir_doi = res.doi;
+          console.log(redir_doi);
+          window.location.href = "index";
+        },
+        dataType: "json",
+        contentType: "application/json"
+      });
+      console.log(postData);
+    } else {
+      // do something
+      alert("Missing a Required Field");
+    }
 
     //var fileData =
   },
@@ -163,9 +174,10 @@ var Form = React.createClass({
         <div className="panel panel-default">
           <div className="panel-body">
             <div className="form-group">
-              <label>Title</label>
+              <label className="required-label">Title</label>
               <input
                 type="text"
+                required
                 placeholder="Title"
                 className="form-control"
                 name="title"
@@ -174,41 +186,48 @@ var Form = React.createClass({
               />
             </div>
             <div className="form-group">
-              <label>Description</label>
+              <label className="required-label">Description</label>
               <textarea
                 name="description"
+                required
                 className="form-control"
-                placeholder="Description(Markdown supported)"
+                placeholder="Description (Markdown Supported)"
                 value={self.state.metadata.description}
                 onChange={self.handleDescription}
               />
             </div>
 
             <div className="form-group">
-              <label className="required-label">DOI</label><br />
+              <label>DOI</label><br />
               <input
                 type="text"
                 value={self.state.metadata.doi}
-                readonly
+                readOnly
+                disabled
+
                 className="inp-80 form-control readonly"
                 name="doi"
               />
             </div>
             <div className="form-group">
-              <label className="required-label">URL</label><br />
+              <label>URL</label><br />
               <input
                 type="text"
                 value={self.state.metadata.url}
-                readonly
+                readOnly
+                disabled
+
                 className="inp-80 form-control readonly"
                 name="url"
               />
             </div>
             <div className="form-group">
-              <label>Authors</label>
+              <label className="required-label">
+                Authors (Semicolon Seperated)
+              </label>
               <input
                 type="text"
-                placeholder="Authors(semicolon seperated)"
+                placeholder="Authors"
                 name="authors"
                 className="form-control"
                 value={authors_str}
@@ -216,10 +235,10 @@ var Form = React.createClass({
               />
             </div>
             <div className="form-group">
-              <label>Keywords: </label>
+              <label>Keywords (comma seperated)</label>
               <input
                 type="text"
-                placeholder="Keywords(comma seperated)"
+                placeholder="Keywords"
                 name="keywords"
                 className="form-control"
                 value={self.state.metadata.keywords}
@@ -227,7 +246,7 @@ var Form = React.createClass({
               />
             </div>
             <div className="form-group">
-              <label>Publisher Year</label>
+              <label className="required-label">Publisher Year</label>
               <input
                 type="text"
                 placeholder="Publisher year"
@@ -235,6 +254,7 @@ var Form = React.createClass({
                 className="form-control"
                 onChange={self.handleYear}
                 value={self.state.metadata.year}
+                required
               />
             </div>
             <div className="form-group">
@@ -242,8 +262,9 @@ var Form = React.createClass({
               <input
                 type="text"
                 name="publisher"
-                className="form-control"
-                readonly
+                className="form-control readonly"
+                disabled
+                readOnly
                 value={self.state.metadata.publisher}
               />
             </div>
@@ -251,20 +272,21 @@ var Form = React.createClass({
               <label>Resource Type</label>
               <input
                 type="text"
-                placeholder="Publisher year"
+                placeholder="Resource Type"
                 name="resource_type"
                 className="form-control"
-                readonly
+                readOnly
+                disabled
                 value={self.state.metadata.resource_type}
               />
             </div>
 
             <div className="form-group">
-              <label>References: </label>
+              <label>References</label>
               <textarea
                 name="references"
                 className="form-control"
-                placeholder="References(Markdown supported)"
+                placeholder="References (Markdown Supported)"
                 value={self.state.metadata.references}
                 onChange={self.handleReferences}
               />
@@ -274,6 +296,7 @@ var Form = React.createClass({
 
         <div className="form-group">
           <input
+            id="submit_btn"
             type="submit"
             className="btn btn-primary"
             onClick={self.onSubmit}
@@ -304,9 +327,13 @@ var App = React.createClass({
         </div>
         <div className="container col-md-8 col-md-offset-2" id="main">
           <div className="row" style={{ paddingLeft: "20px" }}>
-            <a href="index">Admin Page</a>
-            <span id="headlink_spacer"> &nbsp; |&nbsp; </span>
-            <a href={self.state.urlHost}>List of DOIs</a>
+            <div className="pagebar">
+              <a href="index">Admin Page</a>
+              <span id="headlink_spacer"> &nbsp;&gt;&nbsp;</span>
+              <a href="index">List of DOIs</a>
+              <span id="headlink_spacer"> &nbsp;&gt;&nbsp;</span>
+              <a href={self.state.urlHost}>Edit DOI</a>
+            </div>
           </div>
           <h3 id="headline"> Edit DOI Metadata</h3>
           <Form handleURLHost={self.handleURLHost} />

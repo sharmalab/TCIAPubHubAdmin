@@ -20,6 +20,7 @@ Admin panel for TCIA Pubhub
 * Edit `config.js` and set bindaas host etc.
 
 * `<sudo> npm install`
+* you may need to install webpack alone if it fails (``<sudo> npm install webpack`)
 * `node bin/www` (Run with nohup etc.)
 * Runs on `localhost:3001` by default
 
