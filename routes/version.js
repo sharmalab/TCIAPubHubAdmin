@@ -17,7 +17,7 @@ var config = require("../config.js");
 
 
 var path = require('path');
- 
+
 
 
 
@@ -75,16 +75,16 @@ router.get("/api/getResourcesForDOI", function(req, res) {
                 return res.json(resources_json);
             } catch(e){
                 return res.status(500).send("Couldn't fetch resources");
-            }   
+            }
 
-           
+
         });
     });
 });
 
 
 function findLatestVersion(doi, callback){
-    var getVersionsForDoiURL = config.bindaas_getVersionsForDoiURL; 
+    var getVersionsForDoiURL = config.bindaas_getVersionsForDoiURL;
 
     superagent.get(getVersionsForDoiURL + "?api_key="+bindaas_api_key + "&doi="+doi)
         .end(function(ver_err, ver_res){
@@ -125,7 +125,7 @@ function postResourcesPayload(resource, doi, version, callback){
 	payload.resourceID = uuid.v1();
 	payload.doi = doi;
 
-	
+
 
 	//console.log("each");
 	resourceIDs.push(payload.resourceID);
@@ -135,13 +135,13 @@ function postResourcesPayload(resource, doi, version, callback){
 		.end(function(resource_res){
 			//console.log(resource_res);i
 			callback();
-		});   
+		});
 }
 function postResources(addedResources, doi, version, cb){
   var doi_path = doi.split(".");
   var doi_path = doi_path[doi_path.length - 1];
   var directory = UPLOAD_PATH + "/"+doi_path + "/"+version;
-		
+
   /* Copy all files */
   async.each(FILES, function(file, callbackF){
     var fileName= file.name;
@@ -152,13 +152,13 @@ function postResources(addedResources, doi, version, cb){
       fs.writeFile(path, fileData, function(){
       console.log("wrote "+path);
       callbackF();
-      });	
-    });	
+      });
+    });
   }, function(errF){
     async.each(addedResources, function(resource, callback){
         if(resource.type == "file"){
             var fileName = resource.info.resourceData;
-            var path = directory + "/" + fileName;				
+            var path = directory + "/" + fileName;
 
             resource.info.resourceData = path;
             resource.filePath = path;
@@ -181,7 +181,7 @@ function postResources(addedResources, doi, version, cb){
                 console.log("Resource data: "+resource.info.resourceData);
                 postResourcesPayload(resource, doi, version, callback);
               }
-            });                  
+            });
         } else {
           postResourcesPayload(resource, doi, version, callback);
 
@@ -194,8 +194,8 @@ function postResources(addedResources, doi, version, cb){
           cb();
         }
         //res.json({"Status": "success"});
-    });      
-  });		
+    });
+  });
 }
 
 
@@ -226,7 +226,7 @@ router.post("/api/uploadFile", function(req, res, next){
         file.on("data", function(data){
             fileData += data;
             console.log(data.length);
-            
+
         });
         file.on("end", function(){
             FILES.push({"name": fieldname, "data": fileData});
@@ -238,8 +238,9 @@ router.post("/api/uploadFile", function(req, res, next){
     req.busboy.on("finish", function(){
         console.log("Done! Finish");
         console.log(addedResources);
-        console.log(previousResources);
+        console.log(previousResources));
         resourceIDs = previousResources;
+        // check if the filename is unique
 
         for(var i in addedResources){
           var resource = addedResources[i];
