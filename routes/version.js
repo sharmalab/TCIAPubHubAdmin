@@ -239,6 +239,18 @@ router.post("/api/uploadFile", function(req, res, next) {
     console.log(previousResources);
     resourceIDs = previousResources;
 
+    var names = [];
+    for (var i = 0; i < addedResources.length; i++) {
+      var name = addedResources[i]["info"]["resourceName"];
+      if (names.indexOf(name) !== -1) {
+         //TODO determine how to handle this issue
+          console.log("oh no");
+       } else {
+         names.push(name);
+       }
+     }
+
+    
     for (var i in addedResources) {
       var resource = addedResources[i];
       console.log("Resource: " + resource);
