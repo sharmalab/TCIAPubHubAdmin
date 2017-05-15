@@ -12,6 +12,9 @@ textarea{
     resize: vertical;
 }
 
+h3{
+  margin-top: 0px;
+}
 
 .missing_warning{
   text-transform: capitalize;
@@ -22,6 +25,7 @@ textarea{
     border-radius: 4px;
     padding: 9px;
     margin: 14px 2px;
+    background-color:rgba(192,192,192,0.33);
 }
 .doiTitle{
 

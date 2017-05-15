@@ -64,19 +64,22 @@ var DOISmall = React.createClass({
     return (
       <div className="doiSummary">
         <div className="doiTitle">
-          <a href={self.state.url_prefix + encodeURI(data.doi)}>
-            <h4>{data.title}</h4>
-          </a>
+            <h3>{data.title}</h3>
         </div>
         <div className="btn-group resource_admin_buttons">
           <a href={edit}>
             <button type="button" className="btn btn-default">
-              Edit Metadata
+              Edit Citation
             </button>
           </a>
           <a href={resources_url}>
             <button type="button" className="btn btn-default">
               Add Resources
+            </button>
+          </a>
+          <a href={self.state.url_prefix + encodeURI(data.doi)}>
+            <button type="button" className="btn btn-default">
+              View Citation
             </button>
           </a>
         </div>

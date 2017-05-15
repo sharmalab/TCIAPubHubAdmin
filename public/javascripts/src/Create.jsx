@@ -313,7 +313,7 @@ var Form = React.createClass({
     var Missing = missing.map(function(m) {
       return <div className="missing_warning">Missing or Invalid: {m}</div>;
     });
-    
+
     //year = year.getFullYear();
     return (
       <div>
@@ -481,9 +481,7 @@ var App = React.createClass({
         <div className="container col-md-8 col-md-offset-2" id="main">
           <div className="row" style={{ paddingLeft: "20px" }}>
             <div className="pagebar">
-              <a href="index">Admin Page</a>
-              <span id="headlink_spacer"> &nbsp;&gt;&nbsp;</span>
-              <a href="index">List of DOIs</a>
+              <a href="index">Admin Dashboard</a>
               <span id="headlink_spacer"> &nbsp;&gt;&nbsp;</span>
               <a href="/createDOI">Create DOI</a>
             </div>
