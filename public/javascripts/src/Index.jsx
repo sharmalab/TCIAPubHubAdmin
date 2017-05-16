@@ -137,6 +137,18 @@ var AllDOIs = React.createClass({
 
 var App = React.createClass({
   render: function() {
+    function livesearch(e) {
+      e.preventDefault();
+      var val = document.getElementById("srch-term").value;
+      // display none those that don't match
+      [].forEach.call(document.getElementsByClassName("doiSummary"), function(
+        elem
+      ) {
+        elem.innerHTML.search(new RegExp(val, "i")) == -1 && val
+          ? elem.setAttribute("style", "display:none;")
+          : elem.setAttribute("style", "display:block;");
+      });
+    }
     return (
       <div>
         <div id="header">
@@ -144,6 +156,28 @@ var App = React.createClass({
         </div>
         <div className="container col-md-8 col-md-offset-2" id="main">
           <h3 id="headline"> PubHub Central</h3>
+
+          <form>
+            <div className="input-group add-on">
+              <input
+                className="form-control input-lg"
+                placeholder="Search"
+                name="srch-term"
+                id="srch-term"
+                type="text"
+              />
+              <div className="input-group-btn">
+                <button
+                  onClick={livesearch}
+                  className="btn btn-lg"
+                  type="submit"
+                >
+                  <span className="glyphicon glyphicon-search" />
+                </button>
+              </div>
+            </div>
+          </form>
+          <br/>
 
           <a href="createDOI">
             <button type="button" className="btn btn-large btn-primary">
