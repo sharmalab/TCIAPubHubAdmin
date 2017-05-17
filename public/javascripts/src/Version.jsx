@@ -212,7 +212,6 @@ var AddResourcePanel = React.createClass({
                     <label>Resource Name: </label>
                     <input
                       type="text"
-                      value={self.state.resourceName}
                       onChange={self.handleName}
                       className="form-control"
                       defaultValue={"Images(DICOM)"}

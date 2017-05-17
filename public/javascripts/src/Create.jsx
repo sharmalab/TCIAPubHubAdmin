@@ -324,6 +324,7 @@ var Form = React.createClass({
           method="POST"
           encType="application/x-www-form-urlencoded"
           id="createForm"
+          key={id}
         >
           <div className="panel panel-default">
             <div className="panel-body create-form">
@@ -351,7 +352,7 @@ var Form = React.createClass({
               </div>
               <div className="form-group">
                   <label>DOI</label><br />
-                  <input type="text" value={doi} readonly className="inp-80 form-control readonly" name="doi" required/>
+                  <input type="text" value={doi} readOnly className="inp-80 form-control readonly" name="doi" required/>
               </div>
               <div className="form-group">
                 <label className="required-label">URL</label><br />
@@ -383,7 +384,6 @@ var Form = React.createClass({
                 <input
                   type="text"
                   placeholder="Publisher year"
-                  value={year}
                   onChange={self.handleYear}
                   name="year"
                   className="form-control"
