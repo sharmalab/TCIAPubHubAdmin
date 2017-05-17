@@ -350,16 +350,8 @@ var Form = React.createClass({
                 />
               </div>
               <div className="form-group">
-                <label>DOI</label><br />
-                <input
-                  type="text"
-                  value={doi}
-                  readOnly
-                  disabled
-                  className="inp-80 form-control disabled"
-                  name="doi"
-                  required
-                />
+                  <label>DOI</label><br />
+                  <input type="text" value={doi} readonly className="inp-80 form-control readonly" name="doi" required/>
               </div>
               <div className="form-group">
                 <label className="required-label">URL</label><br />
