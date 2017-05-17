@@ -124,7 +124,7 @@ var AddResourcePanel = React.createClass({
 
     var SaveButton = (
       <button className="btn btn-success" onClick={self.addResource}>
-        {" "}Save Resource{" "}
+        {" "}<span className="glyphicon glyphicon-plus"></span>&nbsp;Add{" "}
       </button>
     );
     if (selectType == "") {
@@ -241,7 +241,7 @@ var AddResourcePanel = React.createClass({
         <li className="list-group-item" key={id}>
 
 
-          <h5 className="list-group-item-heading">{res.info.resourceName || (resource.info.resourceData || "Untitled")
+          <h5 className="list-group-item-heading">{res.info.resourceName || (res.info.resourceData || "Untitled")
                 .split("/")[(res.info.resourceData || "Untitled")
                 .split("/").length - 1]} </h5>
           <div className="row">
@@ -413,6 +413,7 @@ var App = React.createClass({
     self.setState({ previousResources: resources });
   },
   onSubmit: function(e) {
+    document.getElementById("spinner").setAttribute("style", "display:block;");
     var self = this;
     //Get a list of all the resources that were selected from previous version
     //
@@ -520,8 +521,11 @@ var App = React.createClass({
               <AddResourcePanel sendResourcesToParent={self.getResources} />
             </div>
           </div>
-
           <div className="form-group">
+            <div className="spinner" id="spinner" style={{display: "none"}}>
+              <div className="double-bounce1"></div>
+              <div className="double-bounce2"></div>
+            </div>
             {disableSubmit
               ? <input
                   type="submit"

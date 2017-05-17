@@ -67,11 +67,6 @@ var DOISmall = React.createClass({
             <h3>{data.title}</h3>
         </div>
         <div className="btn-group resource_admin_buttons">
-          <a href={edit}>
-            <button type="button" className="btn btn-default">
-              Edit Citation
-            </button>
-          </a>
           <a href={resources_url}>
             <button type="button" className="btn btn-default">
               Add Resources
