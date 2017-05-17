@@ -58,10 +58,6 @@ router.get("/createDOI", function(req, res, next) {
   res.render("create", { title: "Express" });
 });
 
-router.get("/editDOI", function(req, res, next) {
-  res.render("edit", { title: "Express" });
-});
-
 router.get("/api/getAllDoi", function(req, res) {
   var url = bindaas_getAll + "?api_key=" + bindaas_api_key;
   winston.log("info", "Getting: " + url);
