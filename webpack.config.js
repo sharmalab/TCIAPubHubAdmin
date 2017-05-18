@@ -10,7 +10,8 @@ module.exports = {
         create: "./public/javascripts/src/Create.jsx",
         one: "./public/javascripts/src/One.jsx",
         version: "./public/javascripts/src/Version.jsx",
-        edit: "./public/javascripts/src/Edit.jsx"
+        edit: "./public/javascripts/src/Edit.jsx",
+        one: "./public/javascripts/src/One.jsx"
     },
     output: {
         filename: "./public/javascripts/browserify/[name].entry.js"
