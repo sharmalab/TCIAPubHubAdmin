@@ -224,7 +224,7 @@ var Form = React.createClass({
       console.log(data.doi_namespace);
       var year = self.state.year;
       var doi = data.doi_namespace + "." + year + "." + makeID(8);
-      var url = data.url_prefix + doi;
+      var url = data.url_prefix_public + doi;
       console.log(url);
 
       self.setState({ url: url, doi: doi });

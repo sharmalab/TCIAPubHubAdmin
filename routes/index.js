@@ -45,6 +45,7 @@ var citeproc_url = config.citeproc_server;
 
 var DOI_NAMESPACE = config.DOI_NAMESPACE;
 var URL_PREFIX = config.URL_PREFIX;
+var URL_PREFIX_PUBLIC = config.URL_PREFIX_PUBLIC;
 var URL_HOST = config.URL_HOST;
 
 var createUrl = function(endpoint) {
@@ -251,6 +252,7 @@ function createJSON(formdata) {
 router.get("/api/getDOINamespace", function(req, res) {
   res.json({
     doi_namespace: DOI_NAMESPACE,
+    url_prefix_public: URL_PREFIX_PUBLIC,
     url_prefix: URL_PREFIX,
     url_host: URL_HOST
   });
