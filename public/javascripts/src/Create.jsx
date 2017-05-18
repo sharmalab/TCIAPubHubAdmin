@@ -216,7 +216,6 @@ var Form = React.createClass({
       finalSubmitDisableObj: { disabled: "disabled" }
     });
     console.log(postData);
-
   },
   generateURL: function(e) {
     if (e) e.preventDefault();
@@ -351,8 +350,15 @@ var Form = React.createClass({
                 />
               </div>
               <div className="form-group">
-                  <label>DOI</label><br />
-                  <input type="text" value={doi} readOnly className="inp-80 form-control readonly" name="doi" required/>
+                <label>DOI</label><br />
+                <input
+                  type="text"
+                  value={doi}
+                  readOnly
+                  className="inp-80 form-control readonly"
+                  name="doi"
+                  required
+                />
               </div>
               <div className="form-group">
                 <label className="required-label">URL</label><br />
@@ -374,7 +380,6 @@ var Form = React.createClass({
                 <input
                   type="text"
                   placeholder="Keywords"
-
                   name="keywords"
                   className="form-control"
                 />

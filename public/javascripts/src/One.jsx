@@ -291,12 +291,16 @@ var App = React.createClass({
                   <div className="row pagebar" style={{ paddingLeft: "20px" }}>
                     <a href="/index">Admin Dashboard</a>
                     <span id="headlink_spacer"> &nbsp;&gt;&nbsp;</span>
-                    <a href={self.state.data.url}>  {self.state.data.title}</a>
+                    <a href={self.state.data.url}> {self.state.data.title}</a>
                   </div>
                   <h2>{self.state.data.title}</h2>
                   <div><Citation doi={self.state.data.doi} /></div>
                   <div id="citationDisclaimer">
-                    If you use these data, please add this citation to your scholarly resources. <a href="https://wiki.cancerimagingarchive.net/display/Public/Data+Usage+Policies+and+Restrictions">Learn about Data Citation Standards.</a>
+                    If you use these data, please add this citation to your scholarly resources.
+                    {" "}
+                    <a href="https://wiki.cancerimagingarchive.net/display/Public/Data+Usage+Policies+and+Restrictions">
+                      Learn about Data Citation Standards.
+                    </a>
                   </div>
                   <div id="doiBox">
 
@@ -377,6 +381,7 @@ var App = React.createClass({
                           </div>
                         </div>
                       : <div />}
+                    {/*
                     <div className="row doiRow">
                       <div className="col-md-3 doiSide">
                         Share
@@ -391,6 +396,7 @@ var App = React.createClass({
                         </div>
                       </div>
                     </div>
+                    */}
 
                   </div>
 

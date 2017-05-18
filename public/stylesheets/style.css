@@ -1,203 +1,176 @@
 body {
-  padding: 0px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  margin: 0;
+    padding: 0px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    margin: 0;
 }
-
 a {
-  color: #00B7FF;
+    color: #00B7FF;
 }
-
-textarea{
+textarea {
     resize: vertical;
 }
-
-h3{
-  margin-top: 0px;
+h3 {
+    margin-top: 0px;
 }
-
-.missing_warning{
-  text-transform: capitalize;
+.missing_warning {
+    text-transform: capitalize;
 }
-
-.doiSummary{
+.doiSummary {
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 9px;
     margin: 14px 2px;
-    background-color:rgba(192,192,192,0.33);
+    background-color: rgba(192, 192, 192, 0.33);
 }
-.doiTitle{
-
-}
-#headline {
+.doiTitle {} #headline {
     text-align: center;
     padding: 10px 10px;
 }
-#header{
+#header {
     background: url("../images/grunge-blueall2-tcia.jpg");
     width: 100%;
     height: 100px;
     padding: 20px;
 }
-.message, .citation{
+.message,
+.citation {
     padding: 10px;
 }
-
-.sublabel{
-  font-weight: normal;
+.sublabel {
+    font-weight: normal;
 }
-
-.pagebar{
-  font-size: 125%;
+.pagebar {
+    font-size: 125%;
 }
-
-.message{
+.message {
     width: 200px;
 }
-
 .sideBarSection {
     margin-top: 20px;
 }
 .sideBarSection ul {
     list-style: none;
     padding: 0;
-
 }
 .resource {
     border: 1px dashed #333;
     padding: 8px;
-
 }
-.resourceType{
+.resourceType {
     font-weight: bold;
     text-transform: uppercase;
 }
-.resourceDelete{
+.resourceDelete {
     float: right;
     margin-top: -4px;
 }
-#main{
+#main {
     padding: 10px;
     margin: 0 auto;
     float: none;
 }
-
-#doiBox{
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 9px;
-  margin: 18px 0;
+#doiBox {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 9px;
+    margin: 18px 0;
 }
-
 #citationDisclaimer {
-  font-size: 10px;
-  padding: 4px;
-  background: #eee;
+    font-size: 10px;
+    padding: 4px;
+    background: #eee;
 }
-
-.previousResources{
+.doiSide {
+    font-weight: bold;
+}
+.previousResources {
     max-height: 300px;
     overflow-y: scroll;
     //border-top: 1px solid #ccc;
     padding: 10px;
     border: 1px solid #eee;
     border-radius: 10px;
-    margin-bottom :10px;
+    margin-bottom: 10px;
     //border-bottom: 1px solid #ccc;
 }
-
-.resource_admin_buttons button{
+.resource_admin_buttons button {
     margin-right: 10px;
 }
-
-
-
 .example-enter {
-  opacity: 0.01;
-
+    opacity: 0.01;
 }
-.example-enter input{
-  background: #f3f3f3;
-}
-
-.example-enter.example-enter-active {
-  opacity: 1;
-  transition: opacity 500ms ease-in;
-}
-
-.example-leave {
-  opacity: 1;
-}
-
-.example-leave.example-leave-active {
-  opacity: 0.01;
-  transition: opacity 300ms ease-in;
-}
-
-.inputAuthor input{
-  display: inline;
-  width: 60%;
-}
-.inp-80 {
-  width: 80%;
-  display: inline-block;
-}
-
-.create-form button{
-  zoom: 100%;
-  font-size: 12px;
-  margin: 2px 0 2px 0;
-}
-.required-label:after {
-  content:"*";
-  color:red;
-}
-
-.readonly
-{
+.example-enter input {
     background: #f3f3f3;
 }
-
-
+.example-enter.example-enter-active {
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+}
+.example-leave {
+    opacity: 1;
+}
+.example-leave.example-leave-active {
+    opacity: 0.01;
+    transition: opacity 300ms ease-in;
+}
+.inputAuthor input {
+    display: inline;
+    width: 60%;
+}
+.inp-80 {
+    width: 80%;
+    display: inline-block;
+}
+.create-form button {
+    zoom: 100%;
+    font-size: 12px;
+    margin: 2px 0 2px 0;
+}
+.required-label:after {
+    content: "*";
+    color: red;
+}
+.readonly {
+    background: #f3f3f3;
+}
 .spinner {
-  width: 20px;
-  height: 20px;
-
-  position: relative;
-  margin: 15px;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    margin: 15px;
 }
-
-.double-bounce1, .double-bounce2 {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: #333;
-  opacity: 0.6;
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
-  animation: sk-bounce 2.0s infinite ease-in-out;
-}
-
+.double-bounce1,
 .double-bounce2 {
-  -webkit-animation-delay: -1.0s;
-  animation-delay: -1.0s;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #333;
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+    animation: sk-bounce 2.0s infinite ease-in-out;
 }
-
+.double-bounce2 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+}
 @-webkit-keyframes sk-bounce {
-  0%, 100% { -webkit-transform: scale(0.0) }
-  50% { -webkit-transform: scale(1.0) }
+    0%, 100% {
+        -webkit-transform: scale(0.0)
+    }
+    50% {
+        -webkit-transform: scale(1.0)
+    }
 }
-
 @keyframes sk-bounce {
-  0%, 100% {
-    transform: scale(0.0);
-    -webkit-transform: scale(0.0);
-  } 50% {
-    transform: scale(1.0);
-    -webkit-transform: scale(1.0);
-  }
+    0%, 100% {
+        transform: scale(0.0);
+        -webkit-transform: scale(0.0);
+    }
+    50% {
+        transform: scale(1.0);
+        -webkit-transform: scale(1.0);
+    }
 }

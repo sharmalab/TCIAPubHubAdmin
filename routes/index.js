@@ -61,7 +61,9 @@ var createUrl = function(endpoint) {
 
 winston.remove(winston.transports.Console);
 
-winston.add(winston.transports.Console, { timestamp: true });
+winston.add(winston.transports.Console, {
+  timestamp: true
+});
 winston.log("info", "Starting pubhub admin");
 var makeID = function(length) {
   var text = "";
@@ -82,11 +84,15 @@ router.get("/", function(req, res, next) {
 
 /* GET home page. */
 router.get("/createDOI", function(req, res, next) {
-  res.render("create", { title: "Express" });
+  res.render("create", {
+    title: "Express"
+  });
 });
 
 router.get("/editDOI", function(req, res, next) {
-  res.render("edit", { title: "Express" });
+  res.render("edit", {
+    title: "Express"
+  });
 });
 
 router.get("/api/getAllDoi", function(req, res) {
@@ -103,7 +109,9 @@ router.get("/api/getAllDoi", function(req, res) {
       res.on("error", function(err) {
         //console.log("error");
         winston.log("error", err);
-        res.json(JSON.parse({ error: err }));
+        res.json(JSON.parse({
+          error: err
+        }));
       });
       res_.on("end", function() {
         //var response = JSON.parse(DOIs);
@@ -185,7 +193,9 @@ router.post("/api/editDOI", function(req, res) {
       .send(metadata)
       .end(function(p_err, p_res) {
         console.log("done");
-        return res.json({ status: "done" });
+        return res.json({
+          status: "done"
+        });
       });
   });
 });
@@ -208,29 +218,31 @@ function createJSON(formdata) {
   var jsondata = {
     identifier: {
       VAL: formdata.doi,
-      ATTR: { identifierType: "DOI" }
+      ATTR: {
+        identifierType: "DOI"
+      }
     },
     creators: creators,
     titles: titles,
     publisher: "The Cancer Imaging Archive",
     publicationYear: "2016",
-    contributors: [
-      {
-        contributor: {
-          contributorName: "TCIA Team",
-          affiliation: "The Cancer Imaging Archive",
-          ATTR: { contributorType: "DataCurator" }
+    contributors: [{
+      contributor: {
+        contributorName: "TCIA Team",
+        affiliation: "The Cancer Imaging Archive",
+        ATTR: {
+          contributorType: "DataCurator"
         }
       }
-    ],
-    descriptions: [
-      {
-        description: {
-          VAL: cleanData(formdata.description),
-          ATTR: { descriptionType: "Abstract" }
+    }],
+    descriptions: [{
+      description: {
+        VAL: cleanData(formdata.description),
+        ATTR: {
+          descriptionType: "Abstract"
         }
       }
-    ]
+    }]
   };
 
   winston.log("info", "JSON for python converter: " + JSON.stringify(jsondata));
@@ -279,8 +291,8 @@ router.post("/api/createJNLP", function(req, res) {
   var java = child_process.exec(
 
     'java -jar javautilities/TciaDoiClientAPP.jar -action dlm -sharedList "' +
-      shared_list_name +
-      '"'
+    shared_list_name +
+    '"'
   );
   var javaout = "";
   java.stdout.on("data", function(data) {
@@ -307,7 +319,8 @@ router.post("/api/createJNLP", function(req, res) {
     console.log("file loc:");
     console.log(lines[3].split(" ")[0]);
     var jnlpfile = lines[3].split(" ")[0];
-    if (!jnlpfile) return res.status(500).send("Couldn't create JNLP file");
+    if (!jnlpfile) return res.status(500).send(
+      "Couldn't create JNLP file");
 
     var jnlpfilename = jnlpfile.split("/")[4];
 
@@ -315,7 +328,9 @@ router.post("/api/createJNLP", function(req, res) {
       .createReadStream(jnlpfile)
       .pipe(fs.createWriteStream("public/JNLP/" + jnlpfilename));
 
-    return res.json({ jnlp: "/JNLP/" + jnlpfilename });
+    return res.json({
+      jnlp: "/JNLP/" + jnlpfilename
+    });
   });
 });
 
@@ -327,7 +342,9 @@ router.post("/api/createDOI", function(req, res) {
   var mongo_data = JSON.parse(JSON.stringify(form_data));
 
   var resources = req.body.resources;
-  resources = { resources: resources };
+  resources = {
+    resources: resources
+  };
   form_data = getFormData(form_data);
   authors_str = form_data.authors.toString();
 
@@ -365,10 +382,13 @@ router.post("/api/createDOI", function(req, res) {
     if (pyxml == xmlManifest + "Invalid" || pyError == true)
       return res
         .status(400)
-        .send("XML document generated from the match doesn't match the schema");
+        .send(
+          "XML document generated from the match doesn't match the schema"
+        );
     metadata += "datacite: " + pyxml;
     //console.log(metadata);
-    var bindaas_url = bindaas_postDOIMetadata + "?api_key=" + bindaas_api_key;
+    var bindaas_url = bindaas_postDOIMetadata + "?api_key=" +
+      bindaas_api_key;
     superagent
       .post(bindaas_url)
       .send(form_data)
@@ -387,7 +407,9 @@ router.post("/api/createDOI", function(req, res) {
                 return res.status(400).send("Error posting to EZID");
               }
               console.log(ezid_res.statusCode);
-              return res.json({ doi: DOI });
+              return res.json({
+                doi: DOI
+              });
             });
         } else {
           winston.log("error", err);
