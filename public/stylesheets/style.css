@@ -96,6 +96,10 @@ h3{
   background: #eee;
 }
 
+.doiSide {
+  font-weight: bold;
+}
+
 .previousResources{
     max-height: 300px;
     overflow-y: scroll;

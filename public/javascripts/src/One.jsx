@@ -377,6 +377,7 @@ var App = React.createClass({
                           </div>
                         </div>
                       : <div />}
+                    {/*
                     <div className="row doiRow">
                       <div className="col-md-3 doiSide">
                         Share
@@ -391,6 +392,7 @@ var App = React.createClass({
                         </div>
                       </div>
                     </div>
+                    */}
 
                   </div>
 
