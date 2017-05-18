@@ -64,7 +64,7 @@ var DOISmall = React.createClass({
     return (
       <div className="doiSummary">
         <div className="doiTitle">
-            <h3>{data.title}</h3>
+          <h3>{data.title}</h3>
         </div>
         <div className="btn-group resource_admin_buttons">
           <a href={resources_url}>
@@ -172,11 +172,11 @@ var App = React.createClass({
               </div>
             </div>
           </form>
-          <br/>
+          <br />
 
           <a href="createDOI">
             <button type="button" className="btn btn-large btn-primary">
-              <span className="glyphicon glyphicon-plus"></span>&nbsp;Create DOI
+              <span className="glyphicon glyphicon-plus" />&nbsp;Create DOI
 
             </button>
           </a>

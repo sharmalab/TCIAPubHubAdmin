@@ -124,7 +124,7 @@ var AddResourcePanel = React.createClass({
 
     var SaveButton = (
       <button className="btn btn-success" onClick={self.addResource}>
-        {" "}<span className="glyphicon glyphicon-plus"></span>&nbsp;Add{" "}
+        {" "}<span className="glyphicon glyphicon-plus" />&nbsp;Add{" "}
       </button>
     );
     if (selectType == "") {
@@ -239,10 +239,13 @@ var AddResourcePanel = React.createClass({
       return (
         <li className="list-group-item" key={id}>
 
-
-          <h5 className="list-group-item-heading">{res.info.resourceName || (res.info.resourceData || "Untitled")
-                .split("/")[(res.info.resourceData || "Untitled")
-                .split("/").length - 1]} </h5>
+          <h5 className="list-group-item-heading">
+            {res.info.resourceName ||
+              (res.info.resourceData || "Untitled").split("/")[
+                (res.info.resourceData || "Untitled").split("/").length - 1
+              ]}
+            {" "}
+          </h5>
           <div className="row">
             <p className="small" className="col-md-10">
               {res.info.resourceDescription}
@@ -350,9 +353,11 @@ var OldResources = React.createClass({
                     value={resource.resourceID}
                   />
                   <h5 className="list-group-item-heading">
-                    {resource.info.resourceName || (resource.info.resourceData || "Untitled")
-                      .split("/")[(resource.info.resourceData || "Untitled")
-                      .split("/").length - 1]}
+                    {resource.info.resourceName ||
+                      (resource.info.resourceData || "Untitled").split("/")[
+                        (resource.info.resourceData || "Untitled").split("/")
+                          .length - 1
+                      ]}
 
                   </h5>
                   <p className="list-group-item-text small">
@@ -521,9 +526,9 @@ var App = React.createClass({
             </div>
           </div>
           <div className="form-group">
-            <div className="spinner" id="spinner" style={{display: "none"}}>
-              <div className="double-bounce1"></div>
-              <div className="double-bounce2"></div>
+            <div className="spinner" id="spinner" style={{ display: "none" }}>
+              <div className="double-bounce1" />
+              <div className="double-bounce2" />
             </div>
             {disableSubmit
               ? <input

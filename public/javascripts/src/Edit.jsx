@@ -204,7 +204,6 @@ var Form = React.createClass({
                 value={self.state.metadata.doi}
                 readOnly
                 disabled
-
                 className="inp-80 form-control readonly"
                 name="doi"
               />
@@ -216,7 +215,6 @@ var Form = React.createClass({
                 value={self.state.metadata.url}
                 readOnly
                 disabled
-
                 className="inp-80 form-control readonly"
                 name="url"
               />
