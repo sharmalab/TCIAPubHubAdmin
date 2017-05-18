@@ -84,10 +84,18 @@ h3{
 }
 
 #doiBox{
-//    border: 1px solid #ddd;
-    padding: 9px;
-    margin: 18px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 9px;
+  margin: 18px 0;
 }
+
+#citationDisclaimer {
+  font-size: 10px;
+  padding: 4px;
+  background: #eee;
+}
+
 .previousResources{
     max-height: 300px;
     overflow-y: scroll;
