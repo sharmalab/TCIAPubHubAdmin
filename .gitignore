@@ -3,3 +3,4 @@ node_modules/
 config.js
 .DS_STORE
 public/javascripts/browserify/
+public/DOI_Resources/
