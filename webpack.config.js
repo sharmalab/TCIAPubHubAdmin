@@ -10,7 +10,6 @@ module.exports = {
         create: "./public/javascripts/src/Create.jsx",
         one: "./public/javascripts/src/One.jsx",
         version: "./public/javascripts/src/Version.jsx",
-        edit: "./public/javascripts/src/Edit.jsx",
         one: "./public/javascripts/src/One.jsx"
     },
     output: {
