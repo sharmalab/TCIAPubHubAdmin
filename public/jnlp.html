@@ -1,0 +1,50 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="jnlp.css">
+</head>
+<style>
+</style>
+<script type="text/javascript">
+function open_btn() {
+  document.getElementById("jnlpform").setAttribute("style", "display:block;");
+}
+
+function submit_btn() {
+  document.getElementById("spinner").setAttribute("style", "display:block;");
+  var list = document.getElementById('shared_list_name').value;
+  // get the file, call back on finish...
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/createJNLP", true);
+  xhr.setRequestHeader("Content-Type",
+    "application/x-www-form-urlencoded");
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      console.log(xhr.responseText);
+      var link = JSON.parse(xhr.responseText).jnlp;
+      // handle error
+      if (link) {
+        document.getElementById("spinner").setAttribute("style",
+          "display:none;");
+        document.getElementById("downloadbtn").innerHTML = '<iframe width="1" height="1" frameborder="0" src="' + link + '"></iframe>';
+      } else {
+        document.getElementById("downloadbtn").innerHTML = "ERROR";
+      }
+    }
+  }
+  xhr.send('shared_list_name=' + list);
+}
+</script>
+<div id="all">
+  <button onClick='open_btn()'>Get a JNLP</button>
+    <div id="jnlpform" style="display:none;">
+      <input type="text" name="shared_list_name" id="shared_list_name"></input>
+      <button onClick="submit_btn()">Create</button>
+      <div id="downloadbtn">
+      </div>
+      <div class="spinner" id="spinner" style="display:none;">
+        <div class="double-bounce1" />
+        <div class="double-bounce2" />
+      </div>
+    </div>
+  </div>
+</html>
