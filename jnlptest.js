@@ -5,7 +5,7 @@ var path = require('path');
 
 app.post("/api/createJNLP", function(req, res) {
   return res.json({
-    jnlp: "/JNLP/hi"
+    jnlp: "/JNLP/foo"
   });
 });
 
