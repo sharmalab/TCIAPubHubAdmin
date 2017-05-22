@@ -15,6 +15,13 @@ h3 {
 .missing_warning {
     text-transform: capitalize;
 }
+#HeadButtons{
+    overflow: hidden
+}
+#CreateDoiButton, #oneJNLP{
+    float:left;
+    margin-left: 10px;
+}
 .doiSummary {
     border: 1px solid #ddd;
     border-radius: 4px;

@@ -64,20 +64,20 @@ class OneJNLP extends React.Component {
   render(){
   return(
     <div id="oneJNLP">
-      <form class="form-inline">
         <button type="button" className="btn" onClick={OneJNLP.open_btn}>Get a JNLP</button>
           <div id="jnlpform" style={{display: 'none'}}>
-            <label class="sr-only" HTMLfor="shared_list_name">Shared List Name: </label>
-            <input type="text" name="shared_list_name" className="form-control" id="shared_list_name"></input>
-            <button type="button" className="btn btn-info" onClick={OneJNLP.submit_btn}>Create</button>
-            <div id="downloadbtn">
-            </div>
-            <div className="spinner" id="spinner" style={{display: 'none'}}>
-              <div className="double-bounce1" />
-              <div className="double-bounce2" />
-            </div>
+            <form className="form-inline">
+              <label class="sr-only" HTMLfor="shared_list_name">Shared List Name: </label>
+              <input type="text" name="shared_list_name" className="form-control" id="shared_list_name"></input>
+              <button type="button" className="btn btn-info" onClick={OneJNLP.submit_btn}>Download</button>
+              <div id="downloadbtn">
+              </div>
+              <div className="spinner" id="spinner" style={{display: 'none'}}>
+                <div className="double-bounce1" />
+                <div className="double-bounce2" />
+              </div>
+            </form>
           </div>
-        </form>
       </div>
     );
   }
@@ -225,15 +225,17 @@ var App = React.createClass({
             </div>
           </form>
           <br />
-          <div className="btn-group" role="group">
-            <a href="createDOI">
-              <button type="button" className="btn btn-large btn-primary">
-                <span className="glyphicon glyphicon-plus" />&nbsp;Create DOI
-              </button>
-            </a>
-
+          <div id="HeadButtons">
+            <div id="CreateDoiButton" role="group">
+              <a href="createDOI">
+                <button type="button" className="btn btn-large btn-primary">
+                  <span className="glyphicon glyphicon-plus" />&nbsp;Create DOI
+                </button>
+              </a>
+            </div>
             <OneJNLP></OneJNLP>
           </div>
+
           <div className="allDOIs">
             <AllDOIs />
           </div>
