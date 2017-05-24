@@ -52,7 +52,6 @@ class OneJNLP extends React.Component {
   static submit_btn() {
     document.getElementById("downloadbtn").classList.add("btn-warning");
     document.getElementById("downloadbtn").setAttribute("disabled", "true");
-    document.getElementById("downloadbtn").setAttribute("onClick", "");
     document.getElementById("downloadbtn").innerHTML =
       "<span class='glyphicon glyphicon-time'></span>";
     var list = document.getElementById("shared_list_name").value;
@@ -65,19 +64,24 @@ class OneJNLP extends React.Component {
         console.log(xhr.responseText);
         var link = JSON.parse(xhr.responseText).jnlp;
         // handle error
-        document.getElementById("downloadbtn").classList.remove("btn-warning");
         if (link) {
-          document.getElementById("downloadbtn").classList.add("btn-succcess");
           document.getElementById("download").innerHTML =
+            document.getElementById("download").innerHTML +
             '<iframe width="1" height="1" frameborder="0" src="' +
             link +
             '"></iframe>';
         } else {
-          document.getElementById("downloadbtn").classList.add("btn-danger");
+          alert(`Error generating JNLP from Shared List : ${list}`);
         }
-      } else if (xhr.status >= 300) {
-        document.getElementById("downloadbtn").classList.add("btn-danger");
+      } else if (xhr.status >= 400) {
+        alert(`Unable to generate JNLP from Shared List : ${list}`);
       }
+      // restore to normal
+      document.getElementById("downloadbtn").classList.remove("btn-warning");
+      document.getElementById("downloadbtn").removeAttribute("disabled");
+      document.getElementById("downloadbtn").innerHTML =
+        "<span class='glyphicon glyphicon-download-alt'></span>";
+      document.getElementById("shared_list_name").value="";
     };
     xhr.send("shared_list_name=" + list);
   }
