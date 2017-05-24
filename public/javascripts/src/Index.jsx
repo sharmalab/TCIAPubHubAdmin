@@ -32,52 +32,89 @@ var Citation = React.createClass({
 });
 
 class OneJNLP extends React.Component {
-  static open_btn(){
-    document.getElementById("jnlpform").setAttribute("style", "display:block;");
+  static open_btn() {
+    document.getElementById("jnlpform").classList.toggle("visibility");
+    if (document.getElementById("jnlpform").classList.contains("visibility")) {
+      document
+        .getElementById("jnlpform")
+        .setAttribute("style", "display:block;");
+      document.getElementById("jnlpformbtn").innerText = "Close Form";
+      document.getElementById("jnlpformbtn").classList.toggle("btn-danger");
+    } else {
+      document
+        .getElementById("jnlpform")
+        .setAttribute("style", "display:none;");
+      document.getElementById("jnlpformbtn").innerText = "Get a JNLP";
+      document.getElementById("jnlpformbtn").classList.toggle("btn-danger");
+    }
   }
 
-  static submit_btn(){
-    document.getElementById("spinner").setAttribute("style", "display:block;");
-    var list = document.getElementById('shared_list_name').value;
+  static submit_btn() {
+    document.getElementById("downloadbtn").classList.add("btn-warning");
+    document.getElementById("downloadbtn").setAttribute("disabled", "true");
+    document.getElementById("downloadbtn").setAttribute("onClick", "");
+    document.getElementById("downloadbtn").innerHTML =
+      "<span class='glyphicon glyphicon-time'></span>";
+    var list = document.getElementById("shared_list_name").value;
     // get the file, call back on finish...
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/createJNLP", true);
-    xhr.setRequestHeader("Content-Type",
-      "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function() {
       if (xhr.readyState == XMLHttpRequest.DONE) {
         console.log(xhr.responseText);
         var link = JSON.parse(xhr.responseText).jnlp;
         // handle error
+        document.getElementById("downloadbtn").classList.remove("btn-warning");
         if (link) {
-          document.getElementById("spinner").setAttribute("style",
-            "display:none;");
-          document.getElementById("downloadbtn").innerHTML = '<iframe width="1" height="1" frameborder="0" src="' + link + '"></iframe>';
+          document.getElementById("downloadbtn").classList.add("btn-succcess");
+          document.getElementById("download").innerHTML =
+            '<iframe width="1" height="1" frameborder="0" src="' +
+            link +
+            '"></iframe>';
         } else {
-          document.getElementById("downloadbtn").innerHTML = "ERROR";
+          document.getElementById("downloadbtn").classList.add("btn-danger");
         }
+      } else if (xhr.status >= 300) {
+        document.getElementById("downloadbtn").classList.add("btn-danger");
       }
-    }
-    xhr.send('shared_list_name=' + list);
+    };
+    xhr.send("shared_list_name=" + list);
   }
 
-  render(){
-  return(
-    <div id="oneJNLP">
-        <button type="button" className="btn" onClick={OneJNLP.open_btn}>Get a JNLP</button>
-          <div id="jnlpform" style={{display: 'none'}}>
-            <form className="form-inline">
-              <label class="sr-only" HTMLfor="shared_list_name">Shared List Name: </label>
-              <input type="text" name="shared_list_name" className="form-control" id="shared_list_name"></input>
-              <button type="button" className="btn btn-info" onClick={OneJNLP.submit_btn}>Download</button>
-              <div id="downloadbtn">
-              </div>
-              <div className="spinner" id="spinner" style={{display: 'none'}}>
-                <div className="double-bounce1" />
-                <div className="double-bounce2" />
-              </div>
-            </form>
+  render() {
+    return (
+      <div id="oneJNLP">
+        <button
+          type="button"
+          id="jnlpformbtn"
+          className="btn"
+          onClick={OneJNLP.open_btn}
+        >
+          Get a JNLP
+        </button>
+        <div id="jnlpform" style={{ display: "none" }}>
+          <div className="input-group" id="formbox">
+            <input
+              type="text"
+              name="shared_list_name"
+              className="form-control"
+              placeholder="Shared List Name"
+              id="shared_list_name"
+            />
+            <span className="input-group-btn">
+              <button
+                type="button"
+                id="downloadbtn"
+                className="btn btn-info"
+                onClick={OneJNLP.submit_btn}
+              >
+                <span className="glyphicon glyphicon-download-alt" />
+              </button>
+            </span>
           </div>
+          <div id="download" />
+        </div>
       </div>
     );
   }
@@ -233,7 +270,7 @@ var App = React.createClass({
                 </button>
               </a>
             </div>
-            <OneJNLP></OneJNLP>
+            <OneJNLP />
           </div>
 
           <div className="allDOIs">
