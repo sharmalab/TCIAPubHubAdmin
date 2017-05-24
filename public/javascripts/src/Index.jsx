@@ -36,8 +36,12 @@ class OneJNLP extends React.Component {
     document.getElementById("jnlpform").classList.toggle('visibility');
     if (document.getElementById("jnlpform").classList.contains('visibility')) {
       document.getElementById("jnlpform").setAttribute("style", "display:block;");
+      document.getElementById("jnlpformbtn").innerText="Close Form";
+      document.getElementById("jnlpformbtn").classList.toggle("btn-warning");
     } else {
       document.getElementById("jnlpform").setAttribute("style", "display:none;");
+      document.getElementById("jnlpformbtn").innerText="Get a JNLP";
+      document.getElementById("jnlpformbtn").classList.toggle("btn-warning");
     }
   }
 
@@ -69,7 +73,7 @@ class OneJNLP extends React.Component {
   render(){
   return(
     <div id="oneJNLP">
-        <button type="button" className="btn" onClick={OneJNLP.open_btn}>Get a JNLP</button>
+        <button type="button" id="jnlpformbtn" className="btn" onClick={OneJNLP.open_btn}>Get a JNLP</button>
           <div id="jnlpform" style={{display: 'none'}}>
             <form className="form-inline">
               <label class="sr-only" HTMLfor="shared_list_name">Shared List Name: </label>

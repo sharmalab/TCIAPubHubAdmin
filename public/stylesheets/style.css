@@ -18,7 +18,7 @@ h3 {
 #HeadButtons{
     overflow: hidden
 }
-#CreateDoiButton, #oneJNLP{
+#CreateDoiButton, #jnlpform, #jnlpformbtn{
     float:left;
     margin-left: 10px;
 }
