@@ -33,20 +33,11 @@ var Citation = React.createClass({
 
 class OneJNLP extends React.Component {
   static open_btn() {
-    document.getElementById("jnlpform").classList.toggle("visibility");
-    if (document.getElementById("jnlpform").classList.contains("visibility")) {
-      document
-        .getElementById("jnlpform")
-        .setAttribute("style", "display:block;");
-      document.getElementById("jnlpformbtn").innerText = "Close Form";
-      document.getElementById("jnlpformbtn").classList.toggle("btn-danger");
-    } else {
-      document
-        .getElementById("jnlpform")
-        .setAttribute("style", "display:none;");
-      document.getElementById("jnlpformbtn").innerText = "Get a JNLP";
-      document.getElementById("jnlpformbtn").classList.toggle("btn-danger");
-    }
+    document.getElementById("jnlpform").style.display = "block";
+  }
+
+  static close_modal() {
+    document.getElementById("jnlpform").style.display = "none";
   }
 
   static submit_btn() {
@@ -74,6 +65,7 @@ class OneJNLP extends React.Component {
           alert(`Error generating JNLP from Shared List : ${list}`);
         }
       } else if (xhr.status >= 400) {
+        console.log(`Failed to generate ${list}, status: ${xhr.status}`);
         alert(`Unable to generate JNLP from Shared List : ${list}`);
       }
       // restore to normal
@@ -81,7 +73,7 @@ class OneJNLP extends React.Component {
       document.getElementById("downloadbtn").removeAttribute("disabled");
       document.getElementById("downloadbtn").innerHTML =
         "<span class='glyphicon glyphicon-download-alt'></span>";
-      document.getElementById("shared_list_name").value="";
+      document.getElementById("shared_list_name").value = "";
     };
     xhr.send("shared_list_name=" + list);
   }
@@ -97,27 +89,38 @@ class OneJNLP extends React.Component {
         >
           Get a JNLP
         </button>
-        <div id="jnlpform" style={{ display: "none" }}>
-          <div className="input-group" id="formbox">
-            <input
-              type="text"
-              name="shared_list_name"
-              className="form-control"
-              placeholder="Shared List Name"
-              id="shared_list_name"
-            />
-            <span className="input-group-btn">
-              <button
-                type="button"
-                id="downloadbtn"
-                className="btn btn-info"
-                onClick={OneJNLP.submit_btn}
-              >
-                <span className="glyphicon glyphicon-download-alt" />
-              </button>
-            </span>
+        <div id="jnlpform" className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={OneJNLP.close_modal}>×</span>
+            <h1>Generate Standalone JNLP</h1>
+            <p>
+              Input a Shared List Name, and a JNLP will be generated and downloaded.
+              <br />
+              Please be patient, as the process takes some time.
+              <br />
+              Concurrent Downloads are Allowed.
+            </p>
+            <div className="input-group" id="formbox">
+              <input
+                type="text"
+                name="shared_list_name"
+                className="form-control"
+                placeholder="Shared List Name"
+                id="shared_list_name"
+              />
+              <span className="input-group-btn">
+                <button
+                  type="button"
+                  id="downloadbtn"
+                  className="btn btn-info"
+                  onClick={OneJNLP.submit_btn}
+                >
+                  <span className="glyphicon glyphicon-download-alt" />
+                </button>
+              </span>
+            </div>
+            <div id="download" />
           </div>
-          <div id="download" />
         </div>
       </div>
     );
