@@ -79,6 +79,9 @@ h3 {
 .citation {
     padding: 10px;
 }
+.Admin{
+  display:none;
+}
 .sublabel {
     font-weight: normal;
 }

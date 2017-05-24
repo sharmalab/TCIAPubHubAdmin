@@ -84,7 +84,7 @@ class OneJNLP extends React.Component {
         <button
           type="button"
           id="jnlpformbtn"
-          className="btn"
+          className="btn Admin Adminable"
           onClick={OneJNLP.open_btn}
         >
           Get a JNLP
@@ -164,7 +164,7 @@ var DOISmall = React.createClass({
         </div>
         <div className="btn-group resource_admin_buttons">
           <a href={resources_url}>
-            <button type="button" className="btn btn-default">
+            <button type="button" className="Admin Adminable btn btn-default">
               Add Resources
             </button>
           </a>
@@ -226,20 +226,28 @@ var AllDOIs = React.createClass({
   }
 });
 
-var App = React.createClass({
-  render: function() {
-    function livesearch(e) {
-      e.preventDefault();
-      var val = document.getElementById("srch-term").value;
-      // display none those that don't match
-      [].forEach.call(document.getElementsByClassName("doiSummary"), function(
-        elem
-      ) {
-        elem.innerHTML.search(new RegExp(val, "i")) == -1 && val
-          ? elem.setAttribute("style", "display:none;")
-          : elem.setAttribute("style", "display:block;");
-      });
+class App extends React.Component{
+  static livesearch(e) {
+    e.preventDefault();
+    var val = document.getElementById("srch-term").value;
+    // display none those that don't match
+    [].forEach.call(document.getElementsByClassName("doiSummary"), function(
+      elem
+    ) {
+      elem.innerHTML.search(new RegExp(val, "i")) == -1 && val
+        ? elem.setAttribute("style", "display:none;")
+        : elem.setAttribute("style", "display:block;");
+    });
+  }
+
+  static adminMode(){
+    document.getElementById('adminbtn').style.display = "none";
+    var x = document.querySelectorAll('.Adminable');
+    for (var i=0; i < x.length; i++){
+      x[i].classList.toggle("Admin")
     }
+  }
+  render() {
     return (
       <div>
         <div id="header">
@@ -259,7 +267,7 @@ var App = React.createClass({
               />
               <div className="input-group-btn">
                 <button
-                  onClick={livesearch}
+                  onClick={App.livesearch}
                   className="btn btn-lg"
                   type="submit"
                 >
@@ -272,10 +280,13 @@ var App = React.createClass({
           <div id="HeadButtons">
             <div id="CreateDoiButton" role="group">
               <a href="createDOI">
-                <button type="button" className="btn btn-large btn-primary">
+                <button type="button" className="Admin Adminable btn btn-large btn-primary">
                   <span className="glyphicon glyphicon-plus" />&nbsp;Create DOI
                 </button>
               </a>
+            <button id="adminbtn" type="button" className="btn btn-large btn-default" onClick={App.adminMode}>
+              <span className="glyphicon glyphicon-plus" />&nbsp;Admin Mode
+            </button>
             </div>
             <OneJNLP />
           </div>
@@ -287,6 +298,6 @@ var App = React.createClass({
       </div>
     );
   }
-});
+}
 
 ReactDOM.render(<App />, document.getElementById("app"));
