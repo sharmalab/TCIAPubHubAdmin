@@ -33,7 +33,12 @@ var Citation = React.createClass({
 
 class OneJNLP extends React.Component {
   static open_btn(){
-    document.getElementById("jnlpform").setAttribute("style", "display:block;");
+    document.getElementById("jnlpform").classList.toggle('visibility');
+    if (document.getElementById("jnlpform").classList.contains('visibility')) {
+      document.getElementById("jnlpform").setAttribute("style", "display:block;");
+    } else {
+      document.getElementById("jnlpform").setAttribute("style", "display:none;");
+    }
   }
 
   static submit_btn(){
