@@ -84,10 +84,10 @@ class OneJNLP extends React.Component {
         <button
           type="button"
           id="jnlpformbtn"
-          className="btn Admin Adminable"
+          className="btn btn-primary Admin Adminable"
           onClick={OneJNLP.open_btn}
         >
-          Get a JNLP
+          <span className="glyphicon glyphicon-save-file"/>&nbsp;Create JNLP
         </button>
         <div id="jnlpform" className="modal">
           <div className="modal-content">
@@ -164,7 +164,8 @@ var DOISmall = React.createClass({
         </div>
         <div className="btn-group resource_admin_buttons">
           <a href={resources_url}>
-            <button type="button" className="Admin Adminable btn btn-default">
+            <button type="button" className="Admin Adminable btn btn-info">
+              <span className="glyphicon glyphicon-file"/>
               Add Resources
             </button>
           </a>
@@ -278,6 +279,7 @@ class App extends React.Component{
           </form>
           <br />
           <div id="HeadButtons">
+            <OneJNLP />
             <div id="CreateDoiButton" role="group">
               <a href="createDOI">
                 <button type="button" className="Admin Adminable btn btn-large btn-primary">
@@ -288,7 +290,6 @@ class App extends React.Component{
               <span className="glyphicon glyphicon-plus" />&nbsp;Admin Mode
             </button>
             </div>
-            <OneJNLP />
           </div>
 
           <div className="allDOIs">
