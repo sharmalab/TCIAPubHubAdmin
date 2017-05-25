@@ -2,6 +2,8 @@ var React = require("react");
 var ReactDOM = require("react-dom");
 var superagent = require("superagent");
 var Bootstrap = require("react-bootstrap");
+var Accordion = Bootstrap.Accordion;
+var Panel = Bootstrap.Panel;
 
 var marked = require("marked");
 
@@ -129,21 +131,15 @@ var Versions = React.createClass({
 
         if (ver_in_url == version.versionID) {
           return (
-            <a href={ver_url} key={key}>
-              {" "}
-              <li className="list-group-item active">
-                Version {version.versionID}{" "}
-              </li>
-              {" "}
-            </a>
+          <Panel header={'Version '+ version.versionID} eventKey='open'>
+            Some V {version.versionID} Info here
+          </Panel>
           );
         } else {
           return (
-            <a href={ver_url} key={key}>
-              {" "}
-              <li className="list-group-item">Version {version.versionID} </li>
-              {" "}
-            </a>
+          <Panel header={'Version '+version.versionID} eventKey='{key}'>
+            Some V {version.versionID} Info here
+          </Panel>
           );
         }
       });
@@ -154,9 +150,9 @@ var Versions = React.createClass({
     }
     return (
       <div>
-        <div className="list-group">
+        <Accordion>
           {version_list}
-        </div>
+        </Accordion>
       </div>
     );
   }
