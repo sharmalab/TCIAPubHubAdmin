@@ -2,6 +2,8 @@ var React = require("react");
 var ReactDOM = require("react-dom");
 var superagent = require("superagent");
 var Bootstrap = require("react-bootstrap");
+var Accordion = Bootstrap.Accordion;
+var Panel = Bootstrap.Panel;
 
 var marked = require("marked");
 
@@ -92,6 +94,114 @@ var Citation = React.createClass({
   }
 });
 
+var ResourceList = React.createClass({
+  getInitialState: function() {
+    return { data: null, resources: null, version: null };
+  },
+  componentDidMount: function() {
+    var self = this;
+    var url = window.location.href;
+    var doi = getParameterByName("doi", url);
+    //console.log(doi);
+    var version = self.props.version;
+    var getDoiUrl = "api/getDoi?doi=" + encodeURI(doi);
+    console.log(getDoiUrl);
+    superagent.get(getDoiUrl).end(function(err, res) {
+      //console.log(res);
+      var data = JSON.parse(res.text);
+      console.log(data);
+      console.log("...");
+      URL = data[0].url;
+      if (doi) {
+        var getResources = "api/getResources?doi=" + encodeURI(doi);
+        if (version) {
+          var getResources = getResources + "&version=" + version;
+        }
+        console.log(getResources);
+        console.log("getting resources for version");
+        superagent.get(getResources).end(function(err, rres) {
+          if (err) {
+            self.setState({ resources_err: err, resources: [] });
+          }
+          var resources = JSON.parse(rres.text);
+          console.log(resources);
+          console.log("url: " + data[0].url);
+          self.setState({ resources: resources, data: data[0] });
+        });
+      } else {
+        self.setState({ data: data[0] });
+      }
+      //self.setState({data: data[0]});
+    });
+  },
+  markdownToHTML: function(markdown) {
+    var self = this;
+    var rawMarkup = marked(markdown, { sanitize: true });
+    return { __html: rawMarkup };
+  },
+  render: function() {
+    var self = this;
+    var Resources = <div>Data Not Found. Select a version. </div>;
+    if (self.state.resources) {
+      var res_key = 0;
+      console.log("resources");
+      //console.log(self.state.resources.resources);
+
+      if (self.state.resources.length) {
+        Resources = self.state.resources.map(function(r) {
+          res_key++;
+          var resource = r[0];
+          console.log(resource.info);
+          console.log(resource.info.resourceData);
+
+          if (resource.type == "file") {
+            resource.info.resourceData =
+              "api/getFile?resourceID=" +
+              resource.resourceID +
+              "&fileName=" +
+              resource.fileName;
+          }
+
+          return (
+            <li key={res_key} id={res_key} className="list-group-item">
+              <div className="row">
+                <strong
+                  style={{ paddingLeft: "16px" }}
+                  className="list-group-item-heading"
+                >
+                  {resource.info.resourceName}
+                </strong>
+                <div className="list-group-item-text">
+
+                  <div
+                    className="resourceType col-md-8"
+                    dangerouslySetInnerHTML={self.markdownToHTML(
+                      resource.info.resourceDescription
+                    )}
+                  />
+
+                  <div className="resourceVal col-md-3">
+                    <a href={resource.info.resourceData}>
+                      {" "}
+                      <button className="btn btn-default"> Download </button>
+                      {" "}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </li>
+          );
+        });
+      }
+    }
+    return(
+    <ul className="list-group">
+      {Resources}
+    </ul>
+    );
+  }
+});
+
 var Versions = React.createClass({
   getInitialState: function() {
     return { versions: null };
@@ -125,27 +235,17 @@ var Versions = React.createClass({
       ver_in_url = ver_in_url || self.state.versions[0].versionID;
       version_list = self.state.versions.map(function(version) {
         var ver_url = "/details?doi=" + doi + "&version=" + version.versionID;
-        key++;
-
-        if (ver_in_url == version.versionID) {
-          return (
-            <a href={ver_url} key={key}>
-              {" "}
-              <li className="list-group-item active">
-                Version {version.versionID}{" "}
-              </li>
-              {" "}
-            </a>
-          );
+        if(ver_in_url == version.versionID){
+          var vid = "act";
         } else {
-          return (
-            <a href={ver_url} key={key}>
-              {" "}
-              <li className="list-group-item">Version {version.versionID} </li>
-              {" "}
-            </a>
-          );
+          var vid = "v"+version.versionID;
         }
+        key++;
+        return (
+        <Panel bsStyle="info" eventKey={vid} header={'Version '+version.versionID}>
+          <ResourceList version={version.versionID}/>
+        </Panel>
+        );
       });
     }
     console.log(self.state.versions);
@@ -154,9 +254,9 @@ var Versions = React.createClass({
     }
     return (
       <div>
-        <div className="list-group">
+        <Accordion activeKey="act">
           {version_list}
-        </div>
+        </Accordion>
       </div>
     );
   }
@@ -401,22 +501,7 @@ var App = React.createClass({
                   </div>
 
                   <div className="data">
-
-                    <Tabs defaultActiveKey={1}>
-                      <Tab title="Data" eventKey={1}>
-                        <ul className="list-group">
-                          {Resources}
-                        </ul>
-                      </Tab>
-                      <Tab title="Versions" eventKey={2}>
-                        <div className="col-md-8">
-
-                          <Versions />
-                        </div>
-                      </Tab>
-
-                    </Tabs>
-
+                    <Versions />
                   </div>
                 </div>
               : <div>Loading ...</div>}
