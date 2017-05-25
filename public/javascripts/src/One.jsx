@@ -194,10 +194,10 @@ var ResourceList = React.createClass({
         });
       }
     }
-    return(
-    <ul className="list-group">
-      {Resources}
-    </ul>
+    return (
+      <ul className="list-group">
+        {Resources}
+      </ul>
     );
   }
 });
@@ -235,16 +235,20 @@ var Versions = React.createClass({
       ver_in_url = ver_in_url || self.state.versions[0].versionID;
       version_list = self.state.versions.map(function(version) {
         var ver_url = "/details?doi=" + doi + "&version=" + version.versionID;
-        if(ver_in_url == version.versionID){
+        if (ver_in_url == version.versionID) {
           var vid = "act";
         } else {
-          var vid = "v"+version.versionID;
+          var vid = "v" + version.versionID;
         }
         key++;
         return (
-        <Panel bsStyle="info" eventKey={vid} header={'Version '+version.versionID}>
-          <ResourceList version={version.versionID}/>
-        </Panel>
+          <Panel
+            bsStyle="info"
+            eventKey={vid}
+            header={"Version " + version.versionID}
+          >
+            <ResourceList version={version.versionID} />
+          </Panel>
         );
       });
     }
