@@ -7,6 +7,7 @@ var bindaas_api_key = "4fbb38a3-1821-436c-a44d-8d3bc5efd33e";
 /* URL Configuration*/
 var DOI_NAMESPACE = "10.5072/FK2";
 var URL_PREFIX = "http://localhost:3001/details?doi=";
+var URL_PREFIX_PUBLIC = "http://localhost:3003/details?doi=";
 var URL_HOST = "http://dragon.cci.emory.edu/tcia_pubhub";
 
 /* MetaData */
@@ -50,6 +51,7 @@ exports.ezid_password = ezid_password;
 exports.bindaas_api_key = bindaas_api_key;
 exports.DOI_NAMESPACE = DOI_NAMESPACE;
 exports.URL_PREFIX = URL_PREFIX;
+exports.URL_PREFIX_PUBLIC = URL_PREFIX_PUBLIC;
 
 exports.bindaas_postDOIMetadata = bindaas_postDOIMetadata;
 exports.bindaas_getAll = bindaas_getAll;
