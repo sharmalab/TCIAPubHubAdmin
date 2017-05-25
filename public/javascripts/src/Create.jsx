@@ -403,7 +403,6 @@ var Form = React.createClass({
                   name="publisher"
                   className="form-control readonly"
                   readOnly
-                  disabled
                 />
               </div>
               <div className="form-group">
@@ -414,7 +413,6 @@ var Form = React.createClass({
                   name="resource_type"
                   className="form-control readonly disabled"
                   readOnly
-                  disabled
                 />
               </div>
               <div className="form-group">

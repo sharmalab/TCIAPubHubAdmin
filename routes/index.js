@@ -86,15 +86,10 @@ router.get("/", function(req, res, next) {
 /* GET home page. */
 router.get("/createDOI", function(req, res, next) {
   res.render("create", {
-    title: "Express"
+    title: "TCIA PubHubAdmin"
   });
 });
 
-router.get("/editDOI", function(req, res, next) {
-  res.render("edit", {
-    title: "Express"
-  });
-});
 
 router.get("/api/getAllDoi", function(req, res) {
   var url = bindaas_getAll + "?api_key=" + bindaas_api_key;
@@ -147,59 +142,6 @@ function getFormData(serializedArray) {
   });
   return indexed_array;
 }
-
-router.get("/api/editDOI", function(req, res) {
-  //Get metadata for DOI
-  //
-
-  var doi = req.query.doi;
-  if (!doi) {
-    return res.status(400).send("Required parameter 'doi' not found");
-  }
-  //var url = createUrl("/getByDoi?api_key=4fbb38a3-1821-436c-a44d-8d3bc5efd33e&doi="+doi);
-  //var api_key="4fbb38a3-1821-436c-a44d-8d3bc5efd33e";
-  var api_key = bindaas_api_key;
-  var url = bindaas_getByDoi + "?api_key=" + api_key + "&doi=" + doi;
-  winston.log("info", "Getting: " + url);
-  http.get(url, function(res_) {
-    var DOI = "";
-    winston.log("info", "Status: " + res_.statusCode);
-    res_.on("data", function(data) {
-      DOI += data;
-    });
-    res_.on("end", function() {
-      var response = DOI;
-      winston.log("info", response);
-      return res.json(JSON.parse(response));
-    });
-  });
-});
-
-router.post("/api/editDOI", function(req, res) {
-  //console.log(req);
-  var metadata = req.body;
-  var api_key = bindaas_api_key;
-  var doi = metadata.doi;
-  var url = metadata.url;
-
-  var del_url = bindaas_deleteByDOI + "?api_key=" + api_key + "&doi=" + doi;
-
-  winston.log("info", "DELETE: " + del_url);
-  superagent.del(del_url).end(function(err, dres) {
-    //console.log(err);
-    //console.log(res);
-    console.log("deleted metadata");
-    superagent
-      .post(bindaas_postDOIMetadata + "?api_key=" + bindaas_api_key)
-      .send(metadata)
-      .end(function(p_err, p_res) {
-        console.log("done");
-        return res.json({
-          status: "done"
-        });
-      });
-  });
-});
 
 function createJSON(formdata) {
   var authors = formdata.authors;

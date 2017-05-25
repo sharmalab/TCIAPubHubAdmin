@@ -31,6 +31,102 @@ var Citation = React.createClass({
   }
 });
 
+class OneJNLP extends React.Component {
+  static open_btn() {
+    document.getElementById("jnlpform").style.display = "block";
+  }
+
+  static close_modal() {
+    document.getElementById("jnlpform").style.display = "none";
+  }
+
+  static submit_btn() {
+    document.getElementById("downloadbtn").classList.add("btn-warning");
+    document.getElementById("downloadbtn").setAttribute("disabled", "true");
+    document.getElementById("downloadbtn").innerHTML =
+      "<span class='glyphicon glyphicon-time'></span>";
+    var list = document.getElementById("shared_list_name").value;
+    // get the file, call back on finish...
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/createJNLP", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == XMLHttpRequest.DONE) {
+        console.log(xhr.responseText);
+        var link = JSON.parse(xhr.responseText).jnlp;
+        // handle error
+        if (link) {
+          document.getElementById("download").innerHTML =
+            document.getElementById("download").innerHTML +
+            '<iframe width="1" height="1" frameborder="0" src="' +
+            link +
+            '"></iframe>';
+        } else {
+          alert(`Error generating JNLP from Shared List : ${list}`);
+        }
+      } else if (xhr.status >= 400) {
+        console.log(`Failed to generate ${list}, status: ${xhr.status}`);
+        alert(`Unable to generate JNLP from Shared List : ${list}`);
+      }
+      // restore to normal
+      document.getElementById("downloadbtn").classList.remove("btn-warning");
+      document.getElementById("downloadbtn").removeAttribute("disabled");
+      document.getElementById("downloadbtn").innerHTML =
+        "<span class='glyphicon glyphicon-download-alt'></span>";
+      document.getElementById("shared_list_name").value = "";
+    };
+    xhr.send("shared_list_name=" + list);
+  }
+
+  render() {
+    return (
+      <div id="oneJNLP">
+        <button
+          type="button"
+          id="jnlpformbtn"
+          className="btn Admin Adminable"
+          onClick={OneJNLP.open_btn}
+        >
+          Get a JNLP
+        </button>
+        <div id="jnlpform" className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={OneJNLP.close_modal}>×</span>
+            <h1>Generate Standalone JNLP</h1>
+            <p>
+              Input a Shared List Name, and a JNLP will be generated and downloaded.
+              <br />
+              Please be patient, as the process takes some time.
+              <br />
+              Concurrent Downloads are Allowed.
+            </p>
+            <div className="input-group" id="formbox">
+              <input
+                type="text"
+                name="shared_list_name"
+                className="form-control"
+                placeholder="Shared List Name"
+                id="shared_list_name"
+              />
+              <span className="input-group-btn">
+                <button
+                  type="button"
+                  id="downloadbtn"
+                  className="btn btn-info"
+                  onClick={OneJNLP.submit_btn}
+                >
+                  <span className="glyphicon glyphicon-download-alt" />
+                </button>
+              </span>
+            </div>
+            <div id="download" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
 var DOISmall = React.createClass({
   getInitialState: function() {
     return { url_prefix: "" };
@@ -68,7 +164,7 @@ var DOISmall = React.createClass({
         </div>
         <div className="btn-group resource_admin_buttons">
           <a href={resources_url}>
-            <button type="button" className="btn btn-default">
+            <button type="button" className="Admin Adminable btn btn-default">
               Add Resources
             </button>
           </a>
@@ -130,20 +226,28 @@ var AllDOIs = React.createClass({
   }
 });
 
-var App = React.createClass({
-  render: function() {
-    function livesearch(e) {
-      e.preventDefault();
-      var val = document.getElementById("srch-term").value;
-      // display none those that don't match
-      [].forEach.call(document.getElementsByClassName("doiSummary"), function(
-        elem
-      ) {
-        elem.innerHTML.search(new RegExp(val, "i")) == -1 && val
-          ? elem.setAttribute("style", "display:none;")
-          : elem.setAttribute("style", "display:block;");
-      });
+class App extends React.Component{
+  static livesearch(e) {
+    e.preventDefault();
+    var val = document.getElementById("srch-term").value;
+    // display none those that don't match
+    [].forEach.call(document.getElementsByClassName("doiSummary"), function(
+      elem
+    ) {
+      elem.innerHTML.search(new RegExp(val, "i")) == -1 && val
+        ? elem.setAttribute("style", "display:none;")
+        : elem.setAttribute("style", "display:block;");
+    });
+  }
+
+  static adminMode(){
+    document.getElementById('adminbtn').style.display = "none";
+    var x = document.querySelectorAll('.Adminable');
+    for (var i=0; i < x.length; i++){
+      x[i].classList.toggle("Admin")
     }
+  }
+  render() {
     return (
       <div>
         <div id="header">
@@ -163,7 +267,7 @@ var App = React.createClass({
               />
               <div className="input-group-btn">
                 <button
-                  onClick={livesearch}
+                  onClick={App.livesearch}
                   className="btn btn-lg"
                   type="submit"
                 >
@@ -173,13 +277,20 @@ var App = React.createClass({
             </div>
           </form>
           <br />
-
-          <a href="createDOI">
-            <button type="button" className="btn btn-large btn-primary">
-              <span className="glyphicon glyphicon-plus" />&nbsp;Create DOI
-
+          <div id="HeadButtons">
+            <div id="CreateDoiButton" role="group">
+              <a href="createDOI">
+                <button type="button" className="Admin Adminable btn btn-large btn-primary">
+                  <span className="glyphicon glyphicon-plus" />&nbsp;Create DOI
+                </button>
+              </a>
+            <button id="adminbtn" type="button" className="btn btn-large btn-default" onClick={App.adminMode}>
+              <span className="glyphicon glyphicon-plus" />&nbsp;Admin Mode
             </button>
-          </a>
+            </div>
+            <OneJNLP />
+          </div>
+
           <div className="allDOIs">
             <AllDOIs />
           </div>
@@ -187,6 +298,6 @@ var App = React.createClass({
       </div>
     );
   }
-});
+}
 
 ReactDOM.render(<App />, document.getElementById("app"));
