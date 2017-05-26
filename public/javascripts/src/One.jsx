@@ -1,4 +1,4 @@
-var React= require("react");
+var React = require("react");
 var ReactDOM = require("react-dom");
 var superagent = require("superagent");
 var Bootstrap = require("react-bootstrap");
@@ -29,8 +29,8 @@ function getParameterByName(name, url) {
 
 var URL = "";
 
-class Citation extends React.Component{
-  constructor(props){
+class Citation extends React.Component {
+  constructor(props) {
     super(props);
     this.state = { doiCitation: null };
   }
@@ -95,8 +95,8 @@ class Citation extends React.Component{
   }
 }
 
-class ResourceList extends React.Component{
-  constructor(props){
+class ResourceList extends React.Component {
+  constructor(props) {
     super(props);
     this.state = { data: null, resources: null, version: null };
   }
@@ -137,12 +137,11 @@ class ResourceList extends React.Component{
     });
   }
   static markdownToHTML(markdown) {
-    if (markdown){
+    if (markdown) {
       var self = this;
       var rawMarkup = marked(markdown, { sanitize: true });
       return { __html: rawMarkup };
-    }
-    else {
+    } else {
       return { __html: "" };
     }
   }
@@ -209,8 +208,8 @@ class ResourceList extends React.Component{
   }
 }
 
-class Versions extends React.Component{
-  constructor(props){
+class Versions extends React.Component {
+  constructor(props) {
     super(props);
     this.state = { versions: null };
   }
@@ -274,10 +273,10 @@ class Versions extends React.Component{
   }
 }
 
-class App extends React.Component{
-  constructor(props){
+class App extends React.Component {
+  constructor(props) {
     super(props);
-    this.state = {data: null, resources: null, version: null};
+    this.state = { data: null, resources: null, version: null };
   }
   componentDidMount() {
     var self = this;
@@ -293,16 +292,15 @@ class App extends React.Component{
       console.log(data);
       console.log("...");
       URL = data[0].url;
-      self.setState({data: data[0]});
+      self.setState({ data: data[0] });
     });
   }
   static markdownToHTML(markdown) {
-    if (markdown){
+    if (markdown) {
       var self = this;
       var rawMarkup = marked(markdown, { sanitize: true });
       return { __html: rawMarkup };
-    }
-    else {
+    } else {
       return { __html: "" };
     }
   }

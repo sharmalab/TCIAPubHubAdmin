@@ -3,8 +3,8 @@ var ReactDOM = require("react-dom");
 var jQuery = require("jquery");
 var superagent = require("superagent");
 
-class Citation extends React.Component{
-  constructor(props){
+class Citation extends React.Component {
+  constructor(props) {
     super(props);
     this.state = { doiCitation: null };
   }
@@ -88,7 +88,7 @@ class OneJNLP extends React.Component {
           className="btn btn-primary Admin Adminable"
           onClick={OneJNLP.open_btn}
         >
-          <span className="glyphicon glyphicon-save-file"/>&nbsp;Create JNLP
+          <span className="glyphicon glyphicon-save-file" />&nbsp;Create JNLP
         </button>
         <div id="jnlpform" className="modal">
           <div className="modal-content">
@@ -128,8 +128,8 @@ class OneJNLP extends React.Component {
   }
 }
 
-class DOISmall extends React.Component{
-  constructor(props){
+class DOISmall extends React.Component {
+  constructor(props) {
     super(props);
     this.state = { url_prefix: "" };
   }
@@ -167,7 +167,7 @@ class DOISmall extends React.Component{
         <div className="btn-group resource_admin_buttons">
           <a href={resources_url}>
             <button type="button" className="Admin Adminable btn btn-info">
-              <span className="glyphicon glyphicon-file"/>
+              <span className="glyphicon glyphicon-file" />
               Add Resources
             </button>
           </a>
@@ -187,8 +187,8 @@ class DOISmall extends React.Component{
   }
 }
 
-class AllDOIs extends React.Component{
-  constructor(props){
+class AllDOIs extends React.Component {
+  constructor(props) {
     super(props);
     this.state = { DOIs: null };
   }
@@ -230,7 +230,7 @@ class AllDOIs extends React.Component{
   }
 }
 
-class App extends React.Component{
+class App extends React.Component {
   static livesearch(e) {
     e.preventDefault();
     var val = document.getElementById("srch-term").value;
@@ -244,11 +244,11 @@ class App extends React.Component{
     });
   }
 
-  static adminMode(){
-    document.getElementById('adminbtn').style.display = "none";
-    var x = document.querySelectorAll('.Adminable');
-    for (var i=0; i < x.length; i++){
-      x[i].classList.toggle("Admin")
+  static adminMode() {
+    document.getElementById("adminbtn").style.display = "none";
+    var x = document.querySelectorAll(".Adminable");
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.toggle("Admin");
     }
   }
   render() {
@@ -285,13 +285,21 @@ class App extends React.Component{
             <OneJNLP />
             <div id="CreateDoiButton" role="group">
               <a href="createDOI">
-                <button type="button" className="Admin Adminable btn btn-large btn-primary">
+                <button
+                  type="button"
+                  className="Admin Adminable btn btn-large btn-primary"
+                >
                   <span className="glyphicon glyphicon-plus" />&nbsp;Create DOI
                 </button>
               </a>
-            <button id="adminbtn" type="button" className="btn btn-large btn-default" onClick={App.adminMode}>
-              <span className="glyphicon glyphicon-plus" />&nbsp;Admin Mode
-            </button>
+              <button
+                id="adminbtn"
+                type="button"
+                className="btn btn-large btn-default"
+                onClick={App.adminMode}
+              >
+                <span className="glyphicon glyphicon-plus" />&nbsp;Admin Mode
+              </button>
             </div>
           </div>
 

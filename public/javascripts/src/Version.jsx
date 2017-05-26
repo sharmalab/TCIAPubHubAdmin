@@ -19,8 +19,8 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-class AddResourcePanel extends React.Component{
-  constructor(props){
+class AddResourcePanel extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       resources: [],
@@ -287,8 +287,8 @@ function isInArray(value, array) {
   return array.indexOf(value) > -1;
 }
 
-class OldResources extends React.Component{
-  constructor(props){
+class OldResources extends React.Component {
+  constructor(props) {
     super(props);
     this.state = { resources: [], selectedResources: [] };
   }
@@ -387,8 +387,8 @@ class OldResources extends React.Component{
   }
 }
 
-class App extends React.Component{
-  constructor(props){
+class App extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       previousResources: [],

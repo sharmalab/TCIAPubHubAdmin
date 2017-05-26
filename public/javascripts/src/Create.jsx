@@ -13,8 +13,8 @@ var makeID = function(length) {
   return text;
 };
 
-class AuthorsForm extends React.Component{
-  constructor(props){
+class AuthorsForm extends React.Component {
+  constructor(props) {
     super(props);
     this.state = { authors: [], value: [] };
   }
@@ -118,8 +118,8 @@ class AuthorsForm extends React.Component{
   }
 }
 
-class Form extends React.Component{
-  constructor(props){
+class Form extends React.Component {
+  constructor(props) {
     super(props);
     var d = new Date();
     var year = d.getFullYear();
@@ -467,8 +467,8 @@ class Form extends React.Component{
   }
 }
 
-class App extends React.Component{
-  constructor(props){
+class App extends React.Component {
+  constructor(props) {
     super(props);
   }
   render() {
