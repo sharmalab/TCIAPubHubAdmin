@@ -3,11 +3,12 @@ var ReactDOM = require("react-dom");
 var jQuery = require("jquery");
 var superagent = require("superagent");
 
-var Citation = React.createClass({
-  getInitialState: function() {
-    return { doiCitation: null };
-  },
-  componentDidMount: function() {
+class Citation extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = { doiCitation: null };
+  }
+  componentDidMount() {
     var self = this;
     var citationUrl = "api/getCitation?style=apa&lang=en-US&doi=";
     var doi = self.props.doi.slice(18, self.props.doi.length);
@@ -18,8 +19,8 @@ var Citation = React.createClass({
       console.log(response);
       self.setState({ doiCitation: response.text.replace("\\n", "") });
     });
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     return (
       <div className="doiCitation">
@@ -29,7 +30,7 @@ var Citation = React.createClass({
       </div>
     );
   }
-});
+}
 
 class OneJNLP extends React.Component {
   static open_btn() {
@@ -127,11 +128,12 @@ class OneJNLP extends React.Component {
   }
 }
 
-var DOISmall = React.createClass({
-  getInitialState: function() {
-    return { url_prefix: "" };
-  },
-  componentDidMount: function() {
+class DOISmall extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = { url_prefix: "" };
+  }
+  componentDidMount() {
     var self = this;
     superagent.get("/api/getDOINamespace").end(function(err, response) {
       console.log("get doi namespace");
@@ -140,8 +142,8 @@ var DOISmall = React.createClass({
         console.log(response.body);
       }
     });
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     var data = self.props.data;
     var authors = <div />;
@@ -183,13 +185,14 @@ var DOISmall = React.createClass({
       </div>
     );
   }
-});
+}
 
-var AllDOIs = React.createClass({
-  getInitialState: function() {
-    return { DOIs: null };
-  },
-  componentDidMount: function() {
+class AllDOIs extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = { DOIs: null };
+  }
+  componentDidMount() {
     var self = this;
     //console.log("getting data");
     superagent.get("api/getAllDoi").end(function(err, res) {
@@ -203,8 +206,8 @@ var AllDOIs = React.createClass({
         self.setState({ DOIs: response });
       }
     });
-  },
-  render: function() {
+  }
+  render() {
     console.log("woot");
     console.log(this.state.DOIs);
     if (this.state.error) {
@@ -225,7 +228,7 @@ var AllDOIs = React.createClass({
       return <div>Loading DOIs...</div>;
     }
   }
-});
+}
 
 class App extends React.Component{
   static livesearch(e) {
