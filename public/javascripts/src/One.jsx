@@ -1,4 +1,4 @@
-var React = require("react");
+var React= require("react");
 var ReactDOM = require("react-dom");
 var superagent = require("superagent");
 var Bootstrap = require("react-bootstrap");
@@ -135,9 +135,14 @@ var ResourceList = React.createClass({
     });
   },
   markdownToHTML: function(markdown) {
-    var self = this;
-    var rawMarkup = marked(markdown, { sanitize: true });
-    return { __html: rawMarkup };
+    if (markdown){
+      var self = this;
+      var rawMarkup = marked(markdown, { sanitize: true });
+      return { __html: rawMarkup };
+    }
+    else {
+      return { __html: "" };
+    }
   },
   render: function() {
     var self = this;
@@ -258,7 +263,7 @@ var Versions = React.createClass({
     }
     return (
       <div>
-        <Accordion activeKey="act">
+        <Accordion defaultActiveKey="act">
           {version_list}
         </Accordion>
       </div>
@@ -307,9 +312,14 @@ var App = React.createClass({
     });
   },
   markdownToHTML: function(markdown) {
-    var self = this;
-    var rawMarkup = marked(markdown, { sanitize: true });
-    return { __html: rawMarkup };
+    if (markdown){
+      var self = this;
+      var rawMarkup = marked(markdown, { sanitize: true });
+      return { __html: rawMarkup };
+    }
+    else {
+      return { __html: "" };
+    }
   },
   render: function() {
     var self = this;
