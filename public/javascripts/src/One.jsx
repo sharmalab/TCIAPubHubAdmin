@@ -29,11 +29,12 @@ function getParameterByName(name, url) {
 
 var URL = "";
 
-var Citation = React.createClass({
-  getInitialState: function() {
-    return { doiCitation: null };
-  },
-  componentDidMount: function() {
+class Citation extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = { doiCitation: null };
+  }
+  componentDidMount() {
     var self = this;
     var citationUrl = "api/getCitation?style=apa&lang=en-US&doi=";
     var doi = self.props.doi.slice(18, self.props.doi.length);
@@ -45,8 +46,8 @@ var Citation = React.createClass({
       //console.log(response);
       self.setState({ doiCitation: response.text.replace("\\n", "") });
     });
-  },
-  selectCitation: function(e, k) {
+  }
+  selectCitation(e, k) {
     console.log(e);
     console.log(k);
     var self = this;
@@ -61,8 +62,8 @@ var Citation = React.createClass({
       self.setState({ doiCitation: response.text.replace("\\n", "") });
     });
     //console.log(e.value);
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     return (
       <div className="doiCitation">
@@ -92,13 +93,14 @@ var Citation = React.createClass({
       </div>
     );
   }
-});
+}
 
-var ResourceList = React.createClass({
-  getInitialState: function() {
-    return { data: null, resources: null, version: null };
-  },
-  componentDidMount: function() {
+class ResourceList extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = { data: null, resources: null, version: null };
+  }
+  componentDidMount() {
     var self = this;
     var url = window.location.href;
     var doi = getParameterByName("doi", url);
@@ -133,8 +135,8 @@ var ResourceList = React.createClass({
       }
       //self.setState({data: data[0]});
     });
-  },
-  markdownToHTML: function(markdown) {
+  }
+  markdownToHTML(markdown) {
     if (markdown){
       var self = this;
       var rawMarkup = marked(markdown, { sanitize: true });
@@ -143,8 +145,8 @@ var ResourceList = React.createClass({
     else {
       return { __html: "" };
     }
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     var Resources = <div>Data Not Found. Select a version. </div>;
     if (self.state.resources) {
@@ -205,13 +207,14 @@ var ResourceList = React.createClass({
       </ul>
     );
   }
-});
+}
 
-var Versions = React.createClass({
-  getInitialState: function() {
-    return { versions: null };
-  },
-  componentDidMount: function() {
+class Versions extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = { versions: null };
+  }
+  componentDidMount() {
     var self = this;
     var url = window.location.href;
     var doi = getParameterByName("doi", url);
@@ -223,8 +226,8 @@ var Versions = React.createClass({
       console.log(data);
       self.setState({ versions: data });
     });
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     var version_list = <div>No versions available</div>;
     var url = window.location.href;
@@ -269,13 +272,14 @@ var Versions = React.createClass({
       </div>
     );
   }
-});
+}
 
-var App = React.createClass({
-  getInitialState: function() {
-    return { data: null, resources: null, version: null };
-  },
-  componentDidMount: function() {
+class App extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {data: null, resources: null, version: null};
+  }
+  componentDidMount() {
     var self = this;
     var url = window.location.href;
     var doi = getParameterByName("doi", url);
@@ -291,8 +295,8 @@ var App = React.createClass({
       URL = data[0].url;
       self.setState({data: data[0]});
     });
-  },
-  markdownToHTML: function(markdown) {
+  }
+  markdownToHTML(markdown) {
     if (markdown){
       var self = this;
       var rawMarkup = marked(markdown, { sanitize: true });
@@ -301,8 +305,8 @@ var App = React.createClass({
     else {
       return { __html: "" };
     }
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     var Authors = <div />;
     if (self.state.data) {
@@ -451,6 +455,6 @@ var App = React.createClass({
       </div>
     );
   }
-});
+}
 
 ReactDOM.render(<App />, document.getElementById("app"));
