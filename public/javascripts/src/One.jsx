@@ -317,60 +317,6 @@ var App = React.createClass({
         });
       }
     }
-    var Resources = <div>Data Not Found. Select a version. </div>;
-    if (self.state.resources) {
-      var res_key = 0;
-      console.log("resources");
-      //console.log(self.state.resources.resources);
-
-      if (self.state.resources.length) {
-        Resources = self.state.resources.map(function(r) {
-          res_key++;
-          var resource = r[0];
-          console.log(resource.info);
-          console.log(resource.info.resourceData);
-
-          if (resource.type == "file") {
-            resource.info.resourceData =
-              "api/getFile?resourceID=" +
-              resource.resourceID +
-              "&fileName=" +
-              resource.fileName;
-          }
-
-          return (
-            <li key={res_key} id={res_key} className="list-group-item">
-              <div className="row">
-                <strong
-                  style={{ paddingLeft: "16px" }}
-                  className="list-group-item-heading"
-                >
-                  {resource.info.resourceName}
-                </strong>
-                <div className="list-group-item-text">
-
-                  <div
-                    className="resourceType col-md-8"
-                    dangerouslySetInnerHTML={self.markdownToHTML(
-                      resource.info.resourceDescription
-                    )}
-                  />
-
-                  <div className="resourceVal col-md-3">
-                    <a href={resource.info.resourceData}>
-                      {" "}
-                      <button className="btn btn-default"> Download </button>
-                      {" "}
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </li>
-          );
-        });
-      }
-    }
-    console.log(Resources);
     return (
       <div>
         <div id="header">
