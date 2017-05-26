@@ -289,26 +289,7 @@ var App = React.createClass({
       console.log(data);
       console.log("...");
       URL = data[0].url;
-      if (doi) {
-        var getResources = "api/getResources?doi=" + encodeURI(doi);
-        if (version) {
-          var getResources = getResources + "&version=" + version;
-        }
-        console.log(getResources);
-        console.log("getting resources for version");
-        superagent.get(getResources).end(function(err, rres) {
-          if (err) {
-            self.setState({ resources_err: err, resources: [] });
-          }
-          var resources = JSON.parse(rres.text);
-          console.log(resources);
-          console.log("url: " + data[0].url);
-          self.setState({ resources: resources, data: data[0] });
-        });
-      } else {
-        self.setState({ data: data[0] });
-      }
-      //self.setState({data: data[0]});
+      self.setState({data: data[0]});
     });
   },
   markdownToHTML: function(markdown) {
