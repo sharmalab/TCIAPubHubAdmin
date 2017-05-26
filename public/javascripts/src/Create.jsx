@@ -13,11 +13,12 @@ var makeID = function(length) {
   return text;
 };
 
-var AuthorsForm = React.createClass({
-  getInitialState: function() {
-    return { authors: [], value: [] };
-  },
-  add: function(e) {
+class AuthorsForm extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = { authors: [], value: [] };
+  }
+  add(e) {
     e.preventDefault();
     var authors = this.state.authors;
     console.log(this.state.lastAuthor);
@@ -28,23 +29,23 @@ var AuthorsForm = React.createClass({
     console.log(authors);
     //authors.push
     this.setState({ authors: authors });
-  },
-  removeAuthor: function(id) {
+  }
+  removeAuthor(id) {
     console.log(id);
     console.log("eerer");
     var authors = this.state.authors;
     authors.pop();
     console.log(authors);
     this.setState({ authors: authors });
-  },
-  lastAuthor: function(e) {
+  }
+  lastAuthor(e) {
     console.log(e.target.value);
     var lastAuthor = e.target.value;
     var authors = this.state.authors;
     authors[authors.length - 1] = lastAuthor;
     this.setState({ lastAuthor: e.target.value, authors: authors });
-  },
-  remove_item: function(i, e) {
+  }
+  remove_item(i, e) {
     e.preventDefault();
     //var new_state = this.state.value.concat([]);
     var value = this.state.value;
@@ -53,8 +54,8 @@ var AuthorsForm = React.createClass({
     console.log(value);
     //new_state[i] = undefined;
     this.setState({ value: value });
-  },
-  add_more: function(e) {
+  }
+  add_more(e) {
     e.preventDefault();
     var new_val = this.state.value.concat([]);
     var authors = new_val;
@@ -62,16 +63,16 @@ var AuthorsForm = React.createClass({
     console.log(new_val);
     this.props.onAddAuthor(authors);
     this.setState({ value: new_val });
-  },
-  handleChange: function(id, e) {
+  }
+  handleChange(id, e) {
     //    console.log(id);
     var vals = this.state.value;
     vals[id] = e.target.value;
 
     //    console.log(e.target.value);
     this.setState({ value: vals });
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     var authors = this.state.authors;
     var authorIds = -1;
@@ -115,14 +116,15 @@ var AuthorsForm = React.createClass({
       </div>
     );
   }
-});
+}
 
-var Form = React.createClass({
-  getInitialState: function() {
+class Form extends React.Component{
+  constructor(props){
+    super(props);
     var d = new Date();
     var year = d.getFullYear();
     console.log(year);
-    return {
+    this.state = {
       authors: [],
       resources: [],
       url: "",
@@ -135,24 +137,24 @@ var Form = React.createClass({
       finalSubmitDisable: {},
       finalSubmitDisableObj: {}
     };
-  },
-  getResources: function(resources) {
+  }
+  getResources(resources) {
     console.log("main form");
     console.log(resources);
     this.setState({ resources: resources });
-  },
-  addAuthors: function(authors) {
+  }
+  addAuthors(authors) {
     console.log(authors);
     //e.preventDefault();
     //var authors = this.state.authors;
     //authors.push("");
     this.setState({ authors: authors });
-  },
-  onSubmit: function(e) {
+  }
+  onSubmit(e) {
     e.preventDefault();
     this.setState({ finalSubmit: true });
-  },
-  onFinalSubmit: function(e) {
+  }
+  onFinalSubmit(e) {
     e.preventDefault();
     var formData = jQuery("#createForm").serializeArray();
     var resources = this.state.resources;
@@ -216,8 +218,8 @@ var Form = React.createClass({
       finalSubmitDisableObj: { disabled: "disabled" }
     });
     console.log(postData);
-  },
-  generateURL: function(e) {
+  }
+  generateURL(e) {
     if (e) e.preventDefault();
     var self = this;
     jQuery.get("api/getDOINamespace", function(data) {
@@ -230,22 +232,22 @@ var Form = React.createClass({
       self.setState({ url: url, doi: doi });
       //return data.doi_namespace;
     });
-  },
-  handleYear: function(e) {
+  }
+  handleYear(e) {
     this.setState({ year: e.target.value });
     console.log("handling year");
     this.generateURL();
-  },
-  handleURL: function(e) {
+  }
+  handleURL(e) {
     this.setState({ url: e.target.value });
-  },
-  handleTitle: function(e) {
+  }
+  handleTitle(e) {
     this.setState({ title: e.target.value });
-  },
-  handleDescription: function(e) {
+  }
+  handleDescription(e) {
     this.setState({ description: e.target.value });
-  },
-  checkValidURL: function(str) {
+  }
+  checkValidURL(str) {
     /*
       var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
@@ -259,8 +261,8 @@ var Form = React.createClass({
       */
     if (str.indexOf("http") !== -1 && str.indexOf("://") !== -1) return true;
     else return false;
-  },
-  checkValid: function() {
+  }
+  checkValid() {
     var self = this;
     var year = self.state.year;
     var url = self.state.url;
@@ -286,13 +288,12 @@ var Form = React.createClass({
       missing.push("description");
     }
     return missing;
-  },
-  componentDidUpdate: function() {},
-  componentDidMount: function() {
+  }
+  componentDidMount() {
     var self = this;
     self.generateURL();
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     var authors = this.state.authors;
     var id = 0;
@@ -464,10 +465,13 @@ var Form = React.createClass({
       </div>
     );
   }
-});
+}
 
-var App = React.createClass({
-  render: function() {
+class App extends React.Component{
+  constructor(props){
+    super(props);
+  }
+  render() {
     return (
       <div>
         <div id="header">
@@ -487,7 +491,7 @@ var App = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Form;
 module.exports = AuthorsForm;
