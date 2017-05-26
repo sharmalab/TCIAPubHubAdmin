@@ -136,7 +136,7 @@ class ResourceList extends React.Component{
       //self.setState({data: data[0]});
     });
   }
-  markdownToHTML(markdown) {
+  static markdownToHTML(markdown) {
     if (markdown){
       var self = this;
       var rawMarkup = marked(markdown, { sanitize: true });
@@ -182,7 +182,7 @@ class ResourceList extends React.Component{
 
                   <div
                     className="resourceType col-md-8"
-                    dangerouslySetInnerHTML={self.markdownToHTML(
+                    dangerouslySetInnerHTML={ResourceList.markdownToHTML(
                       resource.info.resourceDescription
                     )}
                   />
@@ -296,7 +296,7 @@ class App extends React.Component{
       self.setState({data: data[0]});
     });
   }
-  markdownToHTML(markdown) {
+  static markdownToHTML(markdown) {
     if (markdown){
       var self = this;
       var rawMarkup = marked(markdown, { sanitize: true });
@@ -356,7 +356,7 @@ class App extends React.Component{
                           </div>
                           <div className="col-md-9">
                             <div
-                              dangerouslySetInnerHTML={self.markdownToHTML(
+                              dangerouslySetInnerHTML={App.markdownToHTML(
                                 self.state.data.description
                               )}
                             />
@@ -408,7 +408,7 @@ class App extends React.Component{
                           </div>
                           <div className="col-md-9">
                             <div
-                              dangerouslySetInnerHTML={self.markdownToHTML(
+                              dangerouslySetInnerHTML={App.markdownToHTML(
                                 self.state.data.references
                               )}
                             />
