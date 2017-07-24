@@ -102,6 +102,8 @@ urls = ["https://ezid.cdlib.org/manage/display_xml/doi:10.7937/K9TCIA.2017.SGW7C
 # for each url..
 for target_url in urls:
     try:
+        prefix = "http://datacite.org/schema/kernel-3"
+        prefix = root.findall(".")[0].tag
         #print "trying:"
         #print target_url
         # get the xml
@@ -112,31 +114,31 @@ for target_url in urls:
         doi = {}
         # get fields, with default
         try:
-            abstract = root.find("{http://datacite.org/schema/kernel-3}descriptions")[0].text
+            abstract = root.find("{"+prefix+"}descriptions")[0].text
         except:
             abstract = "NO ABSTRACT FOUND"
         try:
             authors = [author[0].text for author in
-                        root.find("{http://datacite.org/schema/kernel-3}creators").findall('{http://datacite.org/schema/kernel-3}creator')]
+                        root.find("{"+prefix+"}creators").findall('{http://datacite.org/schema/kernel-3}creator')]
         except:
             authors = "NO AUTHORS FOUND"
         try:
-            publisher = root.find("{http://datacite.org/schema/kernel-3}publisher").text
+            publisher = root.find("{"+prefix+"}publisher").text
         except:
             publisher = "NO PUBLISHER FOUND"
         try:
-            pubyr = root.find("{http://datacite.org/schema/kernel-3}publicationYear").text
+            pubyr = root.find("{"+prefix+"}publicationYear").text
         except:
             pubyr = "NO PUBLICATION YEAR FOUND"
         try:
-            resType = root.find("{http://datacite.org/schema/kernel-3}resourceType").text
+            resType = root.find("{"+prefix+"}resourceType").text
         except:
             resType = "NO TYPE FOUND"
         try:
-            title = root.find("{http://datacite.org/schema/kernel-3}titles")[0].text
+            title = root.find("{"+prefix+"}titles")[0].text
         except:
             title = "NO TITLE FOUND"
-        doiid = root.find("{http://datacite.org/schema/kernel-3}identifier").text
+        doiid = root.find("{"+prefix+"}identifier").text
 
         doiurl = "https://doi.org/" + doiid
         # set fields
