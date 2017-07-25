@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import urllib
 
 dois=[]
-collection = pymongo.MongoClient('localhost', 27017).db.collection
+collection = pymongo.MongoClient('localhost', 27017).TCIA.doi
 
 urls = ["https://ezid.cdlib.org/manage/display_xml/doi:10.7937/K9TCIA.2017.SGW7CAQW",
 "https://ezid.cdlib.org/manage/display_xml/doi:10.7937/K9TCIA.2017.MURS5CL",
@@ -102,10 +102,6 @@ urls = ["https://ezid.cdlib.org/manage/display_xml/doi:10.7937/K9TCIA.2017.SGW7C
 # for each url..
 for target_url in urls:
     try:
-        prefix = "http://datacite.org/schema/kernel-3"
-        prefix = root.findall(".")[0].tag
-        #print "trying:"
-        #print target_url
         # get the xml
         xmltxt = urllib.urlopen(target_url).read()
         # get fields from the xml
@@ -113,6 +109,8 @@ for target_url in urls:
         # make dict ready for insert
         doi = {}
         # get fields, with default
+        prefix = "http://datacite.org/schema/kernel-3"
+        prefix = root.findall(".")[0].tag.split("{")[1].split("}")[0]
         try:
             abstract = root.find("{"+prefix+"}descriptions")[0].text
         except:
