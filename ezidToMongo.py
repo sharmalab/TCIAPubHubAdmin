@@ -148,7 +148,7 @@ for target_url in urls:
                 "doi":doiurl,
                 "publisher":publisher
                 }
-        #collection.insert_one(post).inserted_id
+        collection.insert_one(post).inserted_id
     except BaseException as e:
         print e
         print "[ERRORED]" + target_url
