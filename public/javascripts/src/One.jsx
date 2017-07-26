@@ -53,7 +53,7 @@ class Citation extends React.Component {
     var self = this;
     self.setState({ doiCitation: null });
     var citationUrl = citationAPI + "?style=" + k + "&lang=en-US&doi=";
-    var doi = self.props.doi.slice(18, self.props.doi.length);
+    var doi = self.props.doi;
 
     citationUrl += doi;
     //citationUrl+=self.state.
