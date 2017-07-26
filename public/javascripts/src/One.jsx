@@ -37,7 +37,7 @@ class Citation extends React.Component {
   componentDidMount() {
     var self = this;
     var citationUrl = "api/getCitation?style=apa&lang=en-US&doi=";
-    var doi = self.props.doi.slice(18, self.props.doi.length);
+    var doi = self.props.doi;
 
     //console.log(doi);
     citationUrl += doi;
