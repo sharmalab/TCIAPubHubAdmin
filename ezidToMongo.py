@@ -145,7 +145,7 @@ for target_url in urls:
                 "url":doiurl,
                 "description":abstract,
                 "year":pubyr,
-                "doi":"123456789012345678"+doiid,
+                "doi":doiid,
                 "publisher":publisher
                 }
         collection.insert_one(post).inserted_id
