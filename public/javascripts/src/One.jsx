@@ -33,6 +33,7 @@ class Citation extends React.Component {
   constructor(props) {
     super(props);
     this.state = { doiCitation: null };
+    this.selectCitation = this.selectCitation.bind(this);
   }
   componentDidMount() {
     var self = this;

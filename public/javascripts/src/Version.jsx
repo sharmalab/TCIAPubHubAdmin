@@ -30,6 +30,15 @@ class AddResourcePanel extends React.Component {
       files: {},
       shared_list_name: ""
     };
+    this.getResourceInfo = this.getResourceInfo.bind(this);
+    this.addResource = this.addResource.bind(this);
+    this.deleteResource = this.deleteResource.bind(this);
+    this.handleSelectResourceType = this.handleSelectResourceType.bind(this);
+    this.handleURL = this.handleURL.bind(this);
+    this.handleFile = this.handleFile.bind(this);
+    this.handleSharedList = this.handleSharedList.bind(this);
+    this.handleName = this.handleName.bind(this);
+    this.handleDescription = this.handleDescription.bind(this);
   }
   showResources(e) {
     e.preventDefault();
@@ -291,6 +300,7 @@ class OldResources extends React.Component {
   constructor(props) {
     super(props);
     this.state = { resources: [], selectedResources: [] };
+    this.handleCheck = this.handleCheck.bind(this);
   }
   componentDidMount() {
     var self = this;
@@ -398,6 +408,9 @@ class App extends React.Component {
       error: false,
       errorMessage: "Error"
     };
+    this.getResources = this.getResources.bind(this);
+    this.getOldResources = this.getOldResources.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
   getResources(resources, files) {
     var self = this;
@@ -407,7 +420,7 @@ class App extends React.Component {
     var self = this;
     self.setState({ previousResources: resources });
   }
-  static onSubmit(e) {
+  onSubmit(e) {
     document.getElementById("spinner").setAttribute("style", "display:block;");
     var self = this;
     //Get a list of all the resources that were selected from previous version
@@ -526,14 +539,14 @@ class App extends React.Component {
                   type="submit"
                   className="btn btn-primary"
                   value="Save"
-                  onClick={App.onSubmit}
+                  onClick={this.onSubmit}
                   {...disableSubmit}
                 />
               : <input
                   type="submit"
                   className="btn btn-primary"
                   value="Submitting"
-                  onClick={App.onSubmit}
+                  onClick={this.onSubmit}
                   {...disableSubmit}
                 />}
             <span id="cancel_space">&nbsp;</span>

@@ -17,52 +17,48 @@ class AuthorsForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = { authors: [], value: [] };
+    this.add = this.add.bind(this);
+    this.add_more = this.add_more.bind(this);
+    this.removeAuthor = this.removeAuthor.bind(this);
+    this.lastAuthor = this.lastAuthor.bind(this);
+    this.remove_item = this.remove_item.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
   add(e) {
     e.preventDefault();
     var authors = this.state.authors;
-    console.log(this.state.lastAuthor);
     //authors.unshift(this.state.lastAuthor);
     //authors.push("#");
-    console.log(e);
-    console.log("add author");
-    console.log(authors);
     //authors.push
-    this.setState({ authors: authors });
+    this.setState({ authors: authors, value: this.state.value });
   }
   removeAuthor(id) {
-    console.log(id);
-    console.log("eerer");
     var authors = this.state.authors;
     authors.pop();
-    console.log(authors);
-    this.setState({ authors: authors });
+    this.setState({ authors: authors, value: this.state.value });
   }
   lastAuthor(e) {
-    console.log(e.target.value);
     var lastAuthor = e.target.value;
     var authors = this.state.authors;
     authors[authors.length - 1] = lastAuthor;
-    this.setState({ lastAuthor: e.target.value, authors: authors });
+    this.setState({ lastAuthor: e.target.value, authors: authors, value: this.state.value });
   }
   remove_item(i, e) {
     e.preventDefault();
-    //var new_state = this.state.value.concat([]);
     var value = this.state.value;
     value.splice(i, 1);
-    console.log(i);
-    console.log(value);
     //new_state[i] = undefined;
-    this.setState({ value: value });
+    this.setState({ authors: this.state.authors, value: value });
   }
   add_more(e) {
     e.preventDefault();
+    console.log(this.state);
     var new_val = this.state.value.concat([]);
     var authors = new_val;
     new_val.push("");
     console.log(new_val);
     this.props.onAddAuthor(authors);
-    this.setState({ value: new_val });
+    this.setState({ authors: this.state.authors, value: new_val });
   }
   handleChange(id, e) {
     //    console.log(id);
@@ -70,7 +66,7 @@ class AuthorsForm extends React.Component {
     vals[id] = e.target.value;
 
     //    console.log(e.target.value);
-    this.setState({ value: vals });
+    this.setState({ authors: this.state.authors, value: vals });
   }
   render() {
     var self = this;
@@ -84,7 +80,7 @@ class AuthorsForm extends React.Component {
 
           <input
             type="text"
-            placeholder="LastName, FirstName Initial."
+            placeholder="LastName, FirstName"
             className="form-control"
             defaultValue={e}
             onChange={self.handleChange.bind(this, authorIds)}
@@ -137,6 +133,16 @@ class Form extends React.Component {
       finalSubmitDisable: {},
       finalSubmitDisableObj: {}
     };
+    this.addAuthors = this.addAuthors.bind(this);
+    this.getResources = this.getResources.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onFinalSubmit = this.onFinalSubmit.bind(this);
+    this.generateURL = this.generateURL.bind(this);
+    this.handleYear = this.handleYear.bind(this);
+    this.handleURL = this.handleURL.bind(this);
+    this.handleTitle = this.handleTitle.bind(this);
+    this.handleDescription = this.handleDescription.bind(this);
+    this.checkValid = this.checkValid.bind(this);
   }
   getResources(resources) {
     console.log("main form");
