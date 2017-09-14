@@ -229,7 +229,7 @@ class Form extends React.Component {
     if (e) e.preventDefault();
     var self = this;
     jQuery.get("api/getDOINamespace", function(data) {
-      console.log(data.doi_namespace);
+      console.log(data);
       var year = self.state.year;
       var doi = data.doi_namespace + "." + year + "." + makeID(8);
       var url = data.url_prefix_public + doi;
