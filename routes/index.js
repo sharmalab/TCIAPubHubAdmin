@@ -168,7 +168,7 @@ function createJSON(formdata) {
     creators: creators,
     titles: titles,
     publisher: "The Cancer Imaging Archive",
-    publicationYear: "2016",
+    publicationYear: formdata.year,
     contributors: [{
       contributor: {
         contributorName: "TCIA Team",
