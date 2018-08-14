@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import urllib
 
 dois=[]
-collection = pymongo.MongoClient('localhost', 27017).db.collection
+collection = pymongo.MongoClient('localhost', 27017).TCIA.doi
 
 urls = ["https://ezid.cdlib.org/manage/display_xml/doi:10.7937/K9TCIA.2017.SGW7CAQW",
 "https://ezid.cdlib.org/manage/display_xml/doi:10.7937/K9TCIA.2017.MURS5CL",
@@ -102,8 +102,6 @@ urls = ["https://ezid.cdlib.org/manage/display_xml/doi:10.7937/K9TCIA.2017.SGW7C
 # for each url..
 for target_url in urls:
     try:
-        #print "trying:"
-        #print target_url
         # get the xml
         xmltxt = urllib.urlopen(target_url).read()
         # get fields from the xml
@@ -111,32 +109,34 @@ for target_url in urls:
         # make dict ready for insert
         doi = {}
         # get fields, with default
+        prefix = "http://datacite.org/schema/kernel-3"
+        prefix = root.findall(".")[0].tag.split("{")[1].split("}")[0]
         try:
-            abstract = root.find("{http://datacite.org/schema/kernel-3}descriptions")[0].text
+            abstract = root.find("{"+prefix+"}descriptions")[0].text
         except:
             abstract = "NO ABSTRACT FOUND"
         try:
             authors = [author[0].text for author in
-                        root.find("{http://datacite.org/schema/kernel-3}creators").findall('{http://datacite.org/schema/kernel-3}creator')]
+                        root.find("{"+prefix+"}creators").findall('{http://datacite.org/schema/kernel-3}creator')]
         except:
             authors = "NO AUTHORS FOUND"
         try:
-            publisher = root.find("{http://datacite.org/schema/kernel-3}publisher").text
+            publisher = root.find("{"+prefix+"}publisher").text
         except:
             publisher = "NO PUBLISHER FOUND"
         try:
-            pubyr = root.find("{http://datacite.org/schema/kernel-3}publicationYear").text
+            pubyr = root.find("{"+prefix+"}publicationYear").text
         except:
             pubyr = "NO PUBLICATION YEAR FOUND"
         try:
-            resType = root.find("{http://datacite.org/schema/kernel-3}resourceType").text
+            resType = root.find("{"+prefix+"}resourceType").text
         except:
             resType = "NO TYPE FOUND"
         try:
-            title = root.find("{http://datacite.org/schema/kernel-3}titles")[0].text
+            title = root.find("{"+prefix+"}titles")[0].text
         except:
             title = "NO TITLE FOUND"
-        doiid = root.find("{http://datacite.org/schema/kernel-3}identifier").text
+        doiid = root.find("{"+prefix+"}identifier").text
 
         doiurl = "https://doi.org/" + doiid
         # set fields
@@ -145,10 +145,10 @@ for target_url in urls:
                 "url":doiurl,
                 "description":abstract,
                 "year":pubyr,
-                "doi":doiurl,
+                "doi":doiid,
                 "publisher":publisher
                 }
-        #collection.insert_one(post).inserted_id
+        collection.insert_one(post).inserted_id
     except BaseException as e:
         print e
         print "[ERRORED]" + target_url

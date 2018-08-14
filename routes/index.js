@@ -168,7 +168,7 @@ function createJSON(formdata) {
     creators: creators,
     titles: titles,
     publisher: "The Cancer Imaging Archive",
-    publicationYear: "2016",
+    publicationYear: formdata.year,
     contributors: [{
       contributor: {
         contributorName: "TCIA Team",
@@ -226,12 +226,16 @@ var cleanData = function(data) {
 };
 
 router.post("/api/createJNLP", function(req, res) {
+  req.setTimeout(0);
   var shared_list_name = req.body.shared_list_name;
   if (!shared_list_name) {
     winston.log("error", "Bad request, missing shared_list_name");
     return res.status(400).send("Bad request! Missing shared_list_name");
   }
-
+  winston.log("info",
+    'java -jar javautilities/TciaDoiClientAPP.jar -action dlm -sharedList "' +
+    shared_list_name +
+    '"');
   var java = child_process.exec(
 
     'java -jar javautilities/TciaDoiClientAPP.jar -action dlm -sharedList "' +

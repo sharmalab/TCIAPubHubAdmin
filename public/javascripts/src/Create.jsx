@@ -13,65 +13,62 @@ var makeID = function(length) {
   return text;
 };
 
-var AuthorsForm = React.createClass({
-  getInitialState: function() {
-    return { authors: [], value: [] };
-  },
-  add: function(e) {
+class AuthorsForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { authors: [], value: [] };
+    this.add = this.add.bind(this);
+    this.add_more = this.add_more.bind(this);
+    this.removeAuthor = this.removeAuthor.bind(this);
+    this.lastAuthor = this.lastAuthor.bind(this);
+    this.remove_item = this.remove_item.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+  add(e) {
     e.preventDefault();
     var authors = this.state.authors;
-    console.log(this.state.lastAuthor);
     //authors.unshift(this.state.lastAuthor);
     //authors.push("#");
-    console.log(e);
-    console.log("add author");
-    console.log(authors);
     //authors.push
-    this.setState({ authors: authors });
-  },
-  removeAuthor: function(id) {
-    console.log(id);
-    console.log("eerer");
+    this.setState({ authors: authors, value: this.state.value });
+  }
+  removeAuthor(id) {
     var authors = this.state.authors;
     authors.pop();
-    console.log(authors);
-    this.setState({ authors: authors });
-  },
-  lastAuthor: function(e) {
-    console.log(e.target.value);
+    this.setState({ authors: authors, value: this.state.value });
+  }
+  lastAuthor(e) {
     var lastAuthor = e.target.value;
     var authors = this.state.authors;
     authors[authors.length - 1] = lastAuthor;
-    this.setState({ lastAuthor: e.target.value, authors: authors });
-  },
-  remove_item: function(i, e) {
+    this.setState({ lastAuthor: e.target.value, authors: authors, value: this.state.value });
+  }
+  remove_item(i, e) {
     e.preventDefault();
-    //var new_state = this.state.value.concat([]);
     var value = this.state.value;
     value.splice(i, 1);
-    console.log(i);
-    console.log(value);
     //new_state[i] = undefined;
-    this.setState({ value: value });
-  },
-  add_more: function(e) {
+    this.setState({ authors: this.state.authors, value: value });
+  }
+  add_more(e) {
     e.preventDefault();
+    console.log(this.state);
     var new_val = this.state.value.concat([]);
     var authors = new_val;
     new_val.push("");
     console.log(new_val);
     this.props.onAddAuthor(authors);
-    this.setState({ value: new_val });
-  },
-  handleChange: function(id, e) {
+    this.setState({ authors: this.state.authors, value: new_val });
+  }
+  handleChange(id, e) {
     //    console.log(id);
     var vals = this.state.value;
     vals[id] = e.target.value;
 
     //    console.log(e.target.value);
-    this.setState({ value: vals });
-  },
-  render: function() {
+    this.setState({ authors: this.state.authors, value: vals });
+  }
+  render() {
     var self = this;
     var authors = this.state.authors;
     var authorIds = -1;
@@ -83,7 +80,7 @@ var AuthorsForm = React.createClass({
 
           <input
             type="text"
-            placeholder="LastName, FirstName Initial."
+            placeholder="LastName, FirstName"
             className="form-control"
             defaultValue={e}
             onChange={self.handleChange.bind(this, authorIds)}
@@ -115,14 +112,15 @@ var AuthorsForm = React.createClass({
       </div>
     );
   }
-});
+}
 
-var Form = React.createClass({
-  getInitialState: function() {
+class Form extends React.Component {
+  constructor(props) {
+    super(props);
     var d = new Date();
     var year = d.getFullYear();
     console.log(year);
-    return {
+    this.state = {
       authors: [],
       resources: [],
       url: "",
@@ -135,24 +133,34 @@ var Form = React.createClass({
       finalSubmitDisable: {},
       finalSubmitDisableObj: {}
     };
-  },
-  getResources: function(resources) {
+    this.addAuthors = this.addAuthors.bind(this);
+    this.getResources = this.getResources.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onFinalSubmit = this.onFinalSubmit.bind(this);
+    this.generateURL = this.generateURL.bind(this);
+    this.handleYear = this.handleYear.bind(this);
+    this.handleURL = this.handleURL.bind(this);
+    this.handleTitle = this.handleTitle.bind(this);
+    this.handleDescription = this.handleDescription.bind(this);
+    this.checkValid = this.checkValid.bind(this);
+  }
+  getResources(resources) {
     console.log("main form");
     console.log(resources);
     this.setState({ resources: resources });
-  },
-  addAuthors: function(authors) {
+  }
+  addAuthors(authors) {
     console.log(authors);
     //e.preventDefault();
     //var authors = this.state.authors;
     //authors.push("");
     this.setState({ authors: authors });
-  },
-  onSubmit: function(e) {
+  }
+  onSubmit(e) {
     e.preventDefault();
     this.setState({ finalSubmit: true });
-  },
-  onFinalSubmit: function(e) {
+  }
+  onFinalSubmit(e) {
     e.preventDefault();
     var formData = jQuery("#createForm").serializeArray();
     var resources = this.state.resources;
@@ -216,12 +224,12 @@ var Form = React.createClass({
       finalSubmitDisableObj: { disabled: "disabled" }
     });
     console.log(postData);
-  },
-  generateURL: function(e) {
+  }
+  generateURL(e) {
     if (e) e.preventDefault();
     var self = this;
     jQuery.get("api/getDOINamespace", function(data) {
-      console.log(data.doi_namespace);
+      console.log(data);
       var year = self.state.year;
       var doi = data.doi_namespace + "." + year + "." + makeID(8);
       var url = data.url_prefix_public + doi;
@@ -230,22 +238,22 @@ var Form = React.createClass({
       self.setState({ url: url, doi: doi });
       //return data.doi_namespace;
     });
-  },
-  handleYear: function(e) {
+  }
+  handleYear(e) {
     this.setState({ year: e.target.value });
     console.log("handling year");
     this.generateURL();
-  },
-  handleURL: function(e) {
+  }
+  handleURL(e) {
     this.setState({ url: e.target.value });
-  },
-  handleTitle: function(e) {
+  }
+  handleTitle(e) {
     this.setState({ title: e.target.value });
-  },
-  handleDescription: function(e) {
+  }
+  handleDescription(e) {
     this.setState({ description: e.target.value });
-  },
-  checkValidURL: function(str) {
+  }
+  checkValidURL(str) {
     /*
       var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
@@ -259,8 +267,8 @@ var Form = React.createClass({
       */
     if (str.indexOf("http") !== -1 && str.indexOf("://") !== -1) return true;
     else return false;
-  },
-  checkValid: function() {
+  }
+  checkValid() {
     var self = this;
     var year = self.state.year;
     var url = self.state.url;
@@ -286,13 +294,12 @@ var Form = React.createClass({
       missing.push("description");
     }
     return missing;
-  },
-  componentDidUpdate: function() {},
-  componentDidMount: function() {
+  }
+  componentDidMount() {
     var self = this;
     self.generateURL();
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     var authors = this.state.authors;
     var id = 0;
@@ -464,10 +471,13 @@ var Form = React.createClass({
       </div>
     );
   }
-});
+}
 
-var App = React.createClass({
-  render: function() {
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
     return (
       <div>
         <div id="header">
@@ -487,7 +497,7 @@ var App = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Form;
 module.exports = AuthorsForm;

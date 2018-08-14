@@ -2,6 +2,8 @@ var React = require("react");
 var ReactDOM = require("react-dom");
 var superagent = require("superagent");
 var Bootstrap = require("react-bootstrap");
+var Accordion = Bootstrap.Accordion;
+var Panel = Bootstrap.Panel;
 
 var marked = require("marked");
 
@@ -27,14 +29,16 @@ function getParameterByName(name, url) {
 
 var URL = "";
 
-var Citation = React.createClass({
-  getInitialState: function() {
-    return { doiCitation: null };
-  },
-  componentDidMount: function() {
+class Citation extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { doiCitation: null };
+    this.selectCitation = this.selectCitation.bind(this);
+  }
+  componentDidMount() {
     var self = this;
     var citationUrl = "api/getCitation?style=apa&lang=en-US&doi=";
-    var doi = self.props.doi.slice(18, self.props.doi.length);
+    var doi = self.props.doi;
 
     //console.log(doi);
     citationUrl += doi;
@@ -43,14 +47,14 @@ var Citation = React.createClass({
       //console.log(response);
       self.setState({ doiCitation: response.text.replace("\\n", "") });
     });
-  },
-  selectCitation: function(e, k) {
+  }
+  selectCitation(e, k) {
     console.log(e);
     console.log(k);
     var self = this;
     self.setState({ doiCitation: null });
     var citationUrl = citationAPI + "?style=" + k + "&lang=en-US&doi=";
-    var doi = self.props.doi.slice(18, self.props.doi.length);
+    var doi = self.props.doi;
 
     citationUrl += doi;
     //citationUrl+=self.state.
@@ -59,8 +63,8 @@ var Citation = React.createClass({
       self.setState({ doiCitation: response.text.replace("\\n", "") });
     });
     //console.log(e.value);
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     return (
       <div className="doiCitation">
@@ -90,88 +94,19 @@ var Citation = React.createClass({
       </div>
     );
   }
-});
+}
 
-var Versions = React.createClass({
-  getInitialState: function() {
-    return { versions: null };
-  },
-  componentDidMount: function() {
-    var self = this;
-    var url = window.location.href;
-    var doi = getParameterByName("doi", url);
-    console.log(doi);
-    var url = getVersionsForDoi + "?doi=" + doi;
-    console.log(url);
-    superagent.get(url).end(function(err, res) {
-      var data = JSON.parse(res.text);
-      console.log(data);
-      self.setState({ versions: data });
-    });
-  },
-  render: function() {
-    var self = this;
-    var version_list = <div>No versions available</div>;
-    var url = window.location.href;
-    console.log(url);
-    var key = 0;
-    //check if version in url
-    var ver_in_url = getParameterByName("version", url);
-    var doi = getParameterByName("doi", url);
-    console.log("Showing version: " + ver_in_url);
-    console.log(self.state.versions);
-    if (self.state.versions) {
-      self.state.versions.reverse();
-      ver_in_url = ver_in_url || self.state.versions[0].versionID;
-      version_list = self.state.versions.map(function(version) {
-        var ver_url = "/details?doi=" + doi + "&version=" + version.versionID;
-        key++;
-
-        if (ver_in_url == version.versionID) {
-          return (
-            <a href={ver_url} key={key}>
-              {" "}
-              <li className="list-group-item active">
-                Version {version.versionID}{" "}
-              </li>
-              {" "}
-            </a>
-          );
-        } else {
-          return (
-            <a href={ver_url} key={key}>
-              {" "}
-              <li className="list-group-item">Version {version.versionID} </li>
-              {" "}
-            </a>
-          );
-        }
-      });
-    }
-    console.log(self.state.versions);
-    if (self.state.versions) {
-      if (!self.state.versions.length) return <div> No resources found </div>;
-    }
-    return (
-      <div>
-        <div className="list-group">
-          {version_list}
-        </div>
-      </div>
-    );
+class ResourceList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { data: null, resources: null, version: null };
   }
-});
-
-var App = React.createClass({
-  getInitialState: function() {
-    return { data: null, resources: null, version: null };
-  },
-  componentDidMount: function() {
+  componentDidMount() {
     var self = this;
     var url = window.location.href;
     var doi = getParameterByName("doi", url);
     //console.log(doi);
-    var version = getParameterByName("version", url);
+    var version = self.props.version;
     var getDoiUrl = "api/getDoi?doi=" + encodeURI(doi);
     console.log(getDoiUrl);
     superagent.get(getDoiUrl).end(function(err, res) {
@@ -201,27 +136,18 @@ var App = React.createClass({
       }
       //self.setState({data: data[0]});
     });
-  },
-  markdownToHTML: function(markdown) {
-    var self = this;
-    var rawMarkup = marked(markdown, { sanitize: true });
-    return { __html: rawMarkup };
-  },
-  render: function() {
-    var self = this;
-    var Authors = <div />;
-    if (self.state.data) {
-      if (Array.isArray(self.state.data.authors)) {
-        var num_authors = self.state.data.authors.length;
-        console.log(num_authors);
-        var id = 0;
-        Authors = self.state.data.authors.map(function(author) {
-          id++;
-          if (id == num_authors) return <span key={id}>{author}.</span>;
-          return <span key={id}>{author}; </span>;
-        });
-      }
+  }
+  static markdownToHTML(markdown) {
+    if (markdown) {
+      var self = this;
+      var rawMarkup = marked(markdown, { sanitize: true });
+      return { __html: rawMarkup };
+    } else {
+      return { __html: "" };
     }
+  }
+  render() {
+    var self = this;
     var Resources = <div>Data Not Found. Select a version. </div>;
     if (self.state.resources) {
       var res_key = 0;
@@ -256,7 +182,7 @@ var App = React.createClass({
 
                   <div
                     className="resourceType col-md-8"
-                    dangerouslySetInnerHTML={self.markdownToHTML(
+                    dangerouslySetInnerHTML={ResourceList.markdownToHTML(
                       resource.info.resourceDescription
                     )}
                   />
@@ -275,7 +201,125 @@ var App = React.createClass({
         });
       }
     }
-    console.log(Resources);
+    return (
+      <ul className="list-group">
+        {Resources}
+      </ul>
+    );
+  }
+}
+
+class Versions extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { versions: null };
+  }
+  componentDidMount() {
+    var self = this;
+    var url = window.location.href;
+    var doi = getParameterByName("doi", url);
+    console.log(doi);
+    var url = getVersionsForDoi + "?doi=" + doi;
+    console.log(url);
+    superagent.get(url).end(function(err, res) {
+      var data = JSON.parse(res.text);
+      console.log(data);
+      self.setState({ versions: data });
+    });
+  }
+  render() {
+    var self = this;
+    var version_list = <div>No versions available</div>;
+    var url = window.location.href;
+    console.log(url);
+    var key = 0;
+    //check if version in url
+    var ver_in_url = getParameterByName("version", url);
+    var doi = getParameterByName("doi", url);
+    console.log("Showing version: " + ver_in_url);
+    console.log(self.state.versions);
+    if (self.state.versions) {
+      self.state.versions.reverse();
+      ver_in_url = ver_in_url || self.state.versions[0].versionID;
+      version_list = self.state.versions.map(function(version) {
+        var ver_url = "/details?doi=" + doi + "&version=" + version.versionID;
+        if (ver_in_url == version.versionID) {
+          var vid = "act";
+        } else {
+          var vid = "v" + version.versionID;
+        }
+        key++;
+        return (
+          <Panel
+            bsStyle="info"
+            eventKey={vid}
+            header={"Version " + version.versionID}
+          >
+            <ResourceList version={version.versionID} />
+          </Panel>
+        );
+      });
+    }
+    console.log(self.state.versions);
+    if (self.state.versions) {
+      if (!self.state.versions.length) return <div> No resources found </div>;
+    }
+    return (
+      <div>
+        <Accordion defaultActiveKey="act">
+          {version_list}
+        </Accordion>
+      </div>
+    );
+  }
+}
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { data: null, resources: null, version: null };
+  }
+  componentDidMount() {
+    var self = this;
+    var url = window.location.href;
+    var doi = getParameterByName("doi", url);
+    //console.log(doi);
+    var version = getParameterByName("version", url);
+    var getDoiUrl = "api/getDoi?doi=" + encodeURI(doi);
+    console.log(getDoiUrl);
+    superagent.get(getDoiUrl).end(function(err, res) {
+      //console.log(res);
+      var data = JSON.parse(res.text);
+      console.log(data);
+      console.log("...");
+      URL = data[0].url;
+      self.setState({ data: data[0] });
+    });
+  }
+  static markdownToHTML(markdown) {
+    if (markdown) {
+      var self = this;
+      var rawMarkup = marked(markdown, { sanitize: true });
+      return { __html: rawMarkup };
+    } else {
+      return { __html: "" };
+    }
+  }
+  render() {
+    var self = this;
+    var Authors = <div />;
+    if (self.state.data) {
+      if (Array.isArray(self.state.data.authors)) {
+        var num_authors = self.state.data.authors.length;
+        console.log(num_authors);
+        var id = 0;
+        Authors = self.state.data.authors.map(function(author) {
+          id++;
+          if (id == num_authors) return <span key={id}>{author}.</span>;
+          return <span key={id}>{author}; </span>;
+        });
+      }
+    }
     return (
       <div>
         <div id="header">
@@ -311,7 +355,7 @@ var App = React.createClass({
                           </div>
                           <div className="col-md-9">
                             <div
-                              dangerouslySetInnerHTML={self.markdownToHTML(
+                              dangerouslySetInnerHTML={App.markdownToHTML(
                                 self.state.data.description
                               )}
                             />
@@ -363,7 +407,7 @@ var App = React.createClass({
                           </div>
                           <div className="col-md-9">
                             <div
-                              dangerouslySetInnerHTML={self.markdownToHTML(
+                              dangerouslySetInnerHTML={App.markdownToHTML(
                                 self.state.data.references
                               )}
                             />
@@ -401,22 +445,7 @@ var App = React.createClass({
                   </div>
 
                   <div className="data">
-
-                    <Tabs defaultActiveKey={1}>
-                      <Tab title="Data" eventKey={1}>
-                        <ul className="list-group">
-                          {Resources}
-                        </ul>
-                      </Tab>
-                      <Tab title="Versions" eventKey={2}>
-                        <div className="col-md-8">
-
-                          <Versions />
-                        </div>
-                      </Tab>
-
-                    </Tabs>
-
+                    <Versions />
                   </div>
                 </div>
               : <div>Loading ...</div>}
@@ -425,6 +454,6 @@ var App = React.createClass({
       </div>
     );
   }
-});
+}
 
 ReactDOM.render(<App />, document.getElementById("app"));

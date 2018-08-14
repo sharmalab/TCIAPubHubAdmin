@@ -19,9 +19,10 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-var AddResourcePanel = React.createClass({
-  getInitialState: function() {
-    return {
+class AddResourcePanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       resources: [],
       type: "",
       info: {},
@@ -29,11 +30,20 @@ var AddResourcePanel = React.createClass({
       files: {},
       shared_list_name: ""
     };
-  },
-  showResources: function(e) {
+    this.getResourceInfo = this.getResourceInfo.bind(this);
+    this.addResource = this.addResource.bind(this);
+    this.deleteResource = this.deleteResource.bind(this);
+    this.handleSelectResourceType = this.handleSelectResourceType.bind(this);
+    this.handleURL = this.handleURL.bind(this);
+    this.handleFile = this.handleFile.bind(this);
+    this.handleSharedList = this.handleSharedList.bind(this);
+    this.handleName = this.handleName.bind(this);
+    this.handleDescription = this.handleDescription.bind(this);
+  }
+  showResources(e) {
     e.preventDefault();
-  },
-  getResourceInfo: function(type, info) {
+  }
+  getResourceInfo(type, info) {
     //console.log("Parent: "+type + val);
     //console.log({
     //console.log(type, info);
@@ -41,8 +51,8 @@ var AddResourcePanel = React.createClass({
     //console.log(this.state.resources);
     var resources = this.state.resources;
     this.setState({ type: type, info: info, resources: resources });
-  },
-  addResource: function(e) {
+  }
+  addResource(e) {
     e.preventDefault();
     //console.log("adding resource");
     var resources = this.state.resources.slice();
@@ -70,52 +80,47 @@ var AddResourcePanel = React.createClass({
       resourceName: "",
       resourceDescription: ""
     });
-  },
-  deleteResource: function(id) {
+  }
+  deleteResource(id) {
     var index = id - 1;
     //console.log(this.state);
     var resources = this.state.resources;
     resources.splice(index, 1);
     this.setState({ resources: resources });
-  },
-  handleSelectResourceType: function(e) {
+  }
+  handleSelectResourceType(e) {
     //console.log(e);
     //var self = this;
     //console.log(this.state.type);
     //console.log(e.target.value);
     //this.props.resourceType(e.target.value);
     this.setState({ selectType: e.target.value });
-  },
-  handleURL: function(e) {
+  }
+  handleURL(e) {
     //this.props.resourceInfoToSelector({"resourceData": e.target.value});
     this.setState({ resourceData: e.target.value });
-  },
-  handleFile: function(f) {
+  }
+  handleFile(f) {
     var file = f[0];
-    //console.log(file);
-    //console.log(file);
-    //console.log(file.name);
-    //this.props.resourceDataToSelector({"resourceData", file
-    //this.props.resourceInfoToSelector({"resourceData": file});
-    this.setState({ resourceData: file, fileName: file.name });
-  },
-  handleSharedList: function(e) {
+    this.setSate({ resourceData: file, fileName: file.name });
+  }
+  handleSharedList(e) {
     this.setState({
       shared_list_name: e.target.value,
       resourceData: e.target.value
     });
-  },
-  handleName: function(e) {
+  }
+  handleName(e) {
     //console.log(e.target.value);
     //this.props.resourceInfoToSelector({"resourceName": e.target.value});
     this.setState({ resourceName: e.target.value });
-  },
-  handleDescription: function(e) {
+  }
+  handleDescription(e) {
     //this.props.resourceInfoToSelector({"resourceDescription": e.target.value});
     //console.log(e);
     this.setState({ resourceDescription: e.target.value });
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     var resources = self.state.resources;
     var selectType = self.state.selectType;
@@ -285,23 +290,22 @@ var AddResourcePanel = React.createClass({
       </div>
     );
   }
-});
+}
 
 function isInArray(value, array) {
   return array.indexOf(value) > -1;
 }
 
-var OldResources = React.createClass({
-  getInitialState: function() {
-    return { resources: [], selectedResources: [] };
-  },
-  componentDidMount: function() {
+class OldResources extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { resources: [], selectedResources: [] };
+    this.handleCheck = this.handleCheck.bind(this);
+  }
+  componentDidMount() {
     var self = this;
     var url = window.location.href;
     var doi = getParameterByName("doi", url);
-
-    //var getRes = "http://localhost:3000/api/getResourcesForDOI?doi="+encodeURI(doi);
-    //console.log(getRes);
     var getURL = "api/getResourcesForDOI?doi=" + doi;
     jQuery.get(getURL, function(data) {
       //console.log(data.doi[0]);
@@ -311,8 +315,8 @@ var OldResources = React.createClass({
       //console.log(resources);
       self.setState({ resources: resources });
     });
-  },
-  handleCheck: function(e) {
+  }
+  handleCheck(e) {
     var resourceID = e.target.value;
     var resources = this.state.selectedResources;
     var pos = resources.indexOf(resourceID);
@@ -328,8 +332,8 @@ var OldResources = React.createClass({
     this.props.sendResourcesToParent(resources);
     this.setState({ selectedResources: resources });
     //console.log(e.target.value);
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     var ResourceList = <div />;
 
@@ -391,11 +395,12 @@ var OldResources = React.createClass({
       return <div />;
     }
   }
-});
+}
 
-var App = React.createClass({
-  getInitialState: function() {
-    return {
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       previousResources: [],
       addedResources: [],
       files: [],
@@ -403,20 +408,19 @@ var App = React.createClass({
       error: false,
       errorMessage: "Error"
     };
-  },
-  getResources: function(resources, files) {
+    this.getResources = this.getResources.bind(this);
+    this.getOldResources = this.getOldResources.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+  }
+  getResources(resources, files) {
     var self = this;
-    //console.log("in App");
-    //console.log(resources);
     self.setState({ addedResources: resources, files: files });
-  },
-  getOldResources: function(resources) {
+  }
+  getOldResources(resources) {
     var self = this;
-    //console.log("in App");
-    //console.log(resources);
     self.setState({ previousResources: resources });
-  },
-  onSubmit: function(e) {
+  }
+  onSubmit(e) {
     document.getElementById("spinner").setAttribute("style", "display:block;");
     var self = this;
     //Get a list of all the resources that were selected from previous version
@@ -492,13 +496,13 @@ var App = React.createClass({
       .on("progress", function(e) {
         console.log(e.percent);
       });
-  },
-  componentDidMount: function() {
+  }
+  componentDidMount() {
     var url = window.location.href;
     var doi = getParameterByName("doi", url);
     this.setState({ doi: doi });
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     var disableSubmit = self.state.disableSubmit;
     console.log("disable submit: ");
@@ -535,14 +539,14 @@ var App = React.createClass({
                   type="submit"
                   className="btn btn-primary"
                   value="Save"
-                  onClick={self.onSubmit}
+                  onClick={this.onSubmit}
                   {...disableSubmit}
                 />
               : <input
                   type="submit"
                   className="btn btn-primary"
                   value="Submitting"
-                  onClick={self.onSubmit}
+                  onClick={this.onSubmit}
                   {...disableSubmit}
                 />}
             <span id="cancel_space">&nbsp;</span>
@@ -554,6 +558,6 @@ var App = React.createClass({
       </div>
     );
   }
-});
+}
 
 ReactDOM.render(<App />, document.getElementById("app"));

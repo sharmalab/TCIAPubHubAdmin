@@ -196,9 +196,12 @@ function postResources(addedResources, doi, version, cb) {
   );
 }
 
+
 router.post("/api/uploadFile", function(req, res, next) {
+  req.setTimeout(0);
   console.log("uploading file");
   console.log(req.body);
+
   req.pipe(req.busboy);
   var resources = {};
   var addedResources = [];

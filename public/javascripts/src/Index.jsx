@@ -3,11 +3,12 @@ var ReactDOM = require("react-dom");
 var jQuery = require("jquery");
 var superagent = require("superagent");
 
-var Citation = React.createClass({
-  getInitialState: function() {
-    return { doiCitation: null };
-  },
-  componentDidMount: function() {
+class Citation extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { doiCitation: null };
+  }
+  componentDidMount() {
     var self = this;
     var citationUrl = "api/getCitation?style=apa&lang=en-US&doi=";
     var doi = self.props.doi.slice(18, self.props.doi.length);
@@ -18,8 +19,8 @@ var Citation = React.createClass({
       console.log(response);
       self.setState({ doiCitation: response.text.replace("\\n", "") });
     });
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     return (
       <div className="doiCitation">
@@ -29,7 +30,7 @@ var Citation = React.createClass({
       </div>
     );
   }
-});
+}
 
 class OneJNLP extends React.Component {
   static open_btn() {
@@ -84,10 +85,10 @@ class OneJNLP extends React.Component {
         <button
           type="button"
           id="jnlpformbtn"
-          className="btn Admin Adminable"
+          className="btn btn-primary Admin Adminable"
           onClick={OneJNLP.open_btn}
         >
-          Get a JNLP
+          <span className="glyphicon glyphicon-save-file" />&nbsp;Create JNLP
         </button>
         <div id="jnlpform" className="modal">
           <div className="modal-content">
@@ -127,11 +128,12 @@ class OneJNLP extends React.Component {
   }
 }
 
-var DOISmall = React.createClass({
-  getInitialState: function() {
-    return { url_prefix: "" };
-  },
-  componentDidMount: function() {
+class DOISmall extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { url_prefix: "" };
+  }
+  componentDidMount() {
     var self = this;
     superagent.get("/api/getDOINamespace").end(function(err, response) {
       console.log("get doi namespace");
@@ -140,8 +142,8 @@ var DOISmall = React.createClass({
         console.log(response.body);
       }
     });
-  },
-  render: function() {
+  }
+  render() {
     var self = this;
     var data = self.props.data;
     var authors = <div />;
@@ -164,7 +166,8 @@ var DOISmall = React.createClass({
         </div>
         <div className="btn-group resource_admin_buttons">
           <a href={resources_url}>
-            <button type="button" className="Admin Adminable btn btn-default">
+            <button type="button" className="Admin Adminable btn btn-info">
+              <span className="glyphicon glyphicon-file" />
               Add Resources
             </button>
           </a>
@@ -182,13 +185,14 @@ var DOISmall = React.createClass({
       </div>
     );
   }
-});
+}
 
-var AllDOIs = React.createClass({
-  getInitialState: function() {
-    return { DOIs: null };
-  },
-  componentDidMount: function() {
+class AllDOIs extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { DOIs: null };
+  }
+  componentDidMount() {
     var self = this;
     //console.log("getting data");
     superagent.get("api/getAllDoi").end(function(err, res) {
@@ -202,8 +206,8 @@ var AllDOIs = React.createClass({
         self.setState({ DOIs: response });
       }
     });
-  },
-  render: function() {
+  }
+  render() {
     console.log("woot");
     console.log(this.state.DOIs);
     if (this.state.error) {
@@ -224,9 +228,9 @@ var AllDOIs = React.createClass({
       return <div>Loading DOIs...</div>;
     }
   }
-});
+}
 
-class App extends React.Component{
+class App extends React.Component {
   static livesearch(e) {
     e.preventDefault();
     var val = document.getElementById("srch-term").value;
@@ -240,11 +244,11 @@ class App extends React.Component{
     });
   }
 
-  static adminMode(){
-    document.getElementById('adminbtn').style.display = "none";
-    var x = document.querySelectorAll('.Adminable');
-    for (var i=0; i < x.length; i++){
-      x[i].classList.toggle("Admin")
+  static adminMode() {
+    document.getElementById("adminbtn").style.display = "none";
+    var x = document.querySelectorAll(".Adminable");
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.toggle("Admin");
     }
   }
   render() {
@@ -278,17 +282,25 @@ class App extends React.Component{
           </form>
           <br />
           <div id="HeadButtons">
+            <OneJNLP />
             <div id="CreateDoiButton" role="group">
               <a href="createDOI">
-                <button type="button" className="Admin Adminable btn btn-large btn-primary">
+                <button
+                  type="button"
+                  className="Admin Adminable btn btn-large btn-primary"
+                >
                   <span className="glyphicon glyphicon-plus" />&nbsp;Create DOI
                 </button>
               </a>
-            <button id="adminbtn" type="button" className="btn btn-large btn-default" onClick={App.adminMode}>
-              <span className="glyphicon glyphicon-plus" />&nbsp;Admin Mode
-            </button>
+              <button
+                id="adminbtn"
+                type="button"
+                className="btn btn-large btn-default"
+                onClick={App.adminMode}
+              >
+                <span className="glyphicon glyphicon-plus" />&nbsp;Admin Mode
+              </button>
             </div>
-            <OneJNLP />
           </div>
 
           <div className="allDOIs">
