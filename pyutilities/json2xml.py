@@ -70,23 +70,80 @@ def convert():
     """Convert JSON to XML.
     """
 
-    #with open("sample.json") as f:
-    #   sample_input = f.read()
-    #  Use sample.json as input
-    #obj = json.loads(sample_input, object_pairs_hook=OrderedDict)
+    sample_string = ("""
+    {
+      "identifier": {
+        "VAL": "10.7937\/K9\/TCIA.2016.FADS26KG",
+        "ATTR": {"identifierType": "DOI"}
+      },
+      "creators": [
+        {
+          "creator": {
+            "creatorName": "Fedorov, Andriy"
+          }
+        },
+        {
+          "creator": {
+            "creatorName": "Tempany, Clare"
+          }
+        }
+      ],
+      "titles": [
+        {
+          "title": "Data From QIN PROSTATE"
+        }
+      ],
+      "publisher": "The Cancer Imaging Archive",
+      "publicationYear": "2016",
+      "contributors": [
+        {
+          "contributor": {
+            "contributorName": "TCIA Team",
+            "affiliation": "The Cancer Imaging Archive",
+            "ATTR": {"contributorType": "DataCurator"}
+          }
+        }
+      ],
+      "resourceType": {
+        "VAL": "DICOM",
+        "ATTR": {"resourceTypeGeneral": "Dataset"}
+      },
+      "relatedIdentifiers": [
+        {
+          "relatedIdentifier": {
+            "VAL": "24560287",
+            "ATTR": {"relationType": "IsSupplementTo", "relatedIdentifierType": "PMID"}
+          }
+        },
+        {
+          "relatedIdentifier": {
+            "VAL": "10.1016/j.mri.2014.01.004",
+            "ATTR": {"relationType": "IsSupplementTo", "relatedIdentifierType": "DOI"}
+          }
+        }
+      ],
+      "descriptions": [
+        {
+          "description": {
+            "VAL": "This collection contains multiparametric MRI images collected for the purposes of detection and/or staging of prostate cancer. The MRI parameters include T1- and T2-weighted sequences as well as Diffusion Weighted and Dynamic Contrast-Enhanced MRI. The images were obtained using endorectal and phased array surface coils at 3.0T (GE Signa HDx 15.0) The value of this collection is to provide clinical image data for the development and evaluation of quantitative methods for prostate cancer characterization using multiparametric MRI. Data was provided by Brigham and Women's Hospital, PI Dr. Fiona Fennessy. MR imaging exam was performed on a GE Signa HDx 3.0 T magnet (GE Healthcare, Waukesha, WI) using a combination of 8-channel abdominal array and endorectal coil (Medrad, Pittsburgh, PA). The MR sequences included T1- and T2-weighted imaging, diffusion weighted (DW) imaging, and DCE MRI. T1-weighted imaging was performed with a spoiled gradient recalled echo (SPGR) sequence with TR/TE/α = 385 ms/6.2 ms/65° over a (16 cm)2 field of view (FOV). T2-weighted imaging was performed with a FRFSE (Fast Recovery Fast Spin Echo) sequence with TR/TE = 3500/102 ms, FOV = (16 cm)2. A DW echo planar imaging sequence with trace diffusion sensitization and b-values of 0 and 500 s/mm2, and TR/TE = 2500/65 ms provided data for an Apparent Diffusion Coefficient (ADC) map. Finally, DCE MRI utilized a 3D SPGR sequence with TR/TE/α = 3.6 ms/1.3 ms/15°, FOV = (26 cm)2, with full gland coverage and reconstructed image voxel size of 1×1×6 mm (interpolated to 256×256 matrix). DCE MRI frames were acquired at approximately 5 s intervals (the number of frames varied between 12 and 16 slices resulting in the time resolution between 4.4 and 5.3 seconds) to achieve a clinically appropriate compromise between spatial and temporal resolutions. Gadopentetate dimeglumine (Magnevist, Berlex Laboratories, Wayne, New Jersey) was injected intravenously using a syringe pump (0.15 mmol/kg) at the rate of 3 ml/s followed by 20 ml saline flush at the same rate. The protocol included ~ 5 baseline scans prior to contrast injection for estimation of baseline tissue properties.",
+            "ATTR": {"descriptionType": "Abstract"}
+          }
+        }
+      ]
+    }
+    """)
+
+    #  Use sample_string as input
+    #obj = json.loads(sample_string, object_pairs_hook=OrderedDict)
 
     # Read JSON data from standard input into dictionary
-    obj = json.loads(sys.stdin.read().decode('utf-8'), \
-                     object_pairs_hook=OrderedDict)
+    obj = json.loads(sys.stdin.read().decode('utf-8'), object_pairs_hook=OrderedDict)
 
     # Create XML root element. This is constant.
-    root = Element("resource", \
-                   attrib={
-                        "xmlns": "http://datacite.org/schema/kernel-3",
-                        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-                        "xsi:schemaLocation": "http://datacite.org/schema/kernel-3"
-                         + " http://schema.datacite.org/meta/kernel-3/metadata.xsd"
-                   })
+    root = Element("resource", attrib={"xmlns":"http://datacite.org/schema/kernel-4",
+                                       "xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance",
+                                       "xsi:schemaLocation":"http://datacite.org/schema/kernel-4" + " " +
+                                       "https://schema.datacite.org/meta/kernel-4.0/metadata.xsd"})
 
     # Build XML document tree from dictionary
     build(root, obj)

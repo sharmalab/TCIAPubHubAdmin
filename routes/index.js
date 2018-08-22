@@ -165,6 +165,7 @@ function createJSON(formdata) {
         identifierType: "DOI"
       }
     },
+    resourceType: {ATTR:{resourceTypeGeneral:"Dataset"}},
     creators: creators,
     titles: titles,
     publisher: "The Cancer Imaging Archive",
@@ -334,7 +335,7 @@ router.post("/api/createDOI", function(req, res) {
           "XML document generated from the match doesn't match the schema"
         );
     metadata += "datacite: " + pyxml;
-    //console.log(metadata);
+    winston.log("info",metadata);
     var bindaas_url = bindaas_postDOIMetadata + "?api_key=" +
       bindaas_api_key;
     superagent
@@ -344,7 +345,7 @@ router.post("/api/createDOI", function(req, res) {
         //posting to bindaas
         if (form_err.statusCode || !form_err) {
           superagent
-            .put("https://ezid.cdlib.org/id/doi:" + DOI_STR)
+            .put("https://ez.datacite.org/id/doi:" + DOI_STR)
             .auth(username, password)
             .set("Content-Type", "text/plain")
             .send(metadata)
@@ -352,7 +353,7 @@ router.post("/api/createDOI", function(req, res) {
               //posting to ezid
               winston.log("error", err);
               if (err) {
-                return res.status(400).send("Error posting to EZID");
+                return res.status(400).send("Error posting to DataCite!!");
               }
               console.log(ezid_res.statusCode);
               return res.json({
