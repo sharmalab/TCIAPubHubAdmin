@@ -49,11 +49,11 @@ class Citation extends React.Component {
     });
   }
   selectCitation(e, k) {
-    console.log(e);
-    console.log(k);
+    console.log('e', e);
+    console.log('k', k);
     var self = this;
     self.setState({ doiCitation: null });
-    var citationUrl = citationAPI + "?style=" + k + "&lang=en-US&doi=";
+    var citationUrl = citationAPI + "?style=" + e + "&lang=en-US&doi=";
     var doi = self.props.doi;
 
     citationUrl += doi;
@@ -79,7 +79,7 @@ class Citation extends React.Component {
                     <DropdownButton
                       bsSize="small"
                       title="Citation Style"
-                      onSelect={self.selectCitation}
+                      onSelect={self.selectCitation.bind(this)}
                       id="dropdown-size-small"
                       eventKey="ieee"
                     >
