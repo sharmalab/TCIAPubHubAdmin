@@ -4,4 +4,8 @@ node_js:
     - "7"
 before_install:
     - sudo apt-get install unixodbc unixodbc-dev
-script: webpack
+    - npm install
+    - npm install -g mocha
+script:
+  - npm run-script build
+  - npm run-script test
