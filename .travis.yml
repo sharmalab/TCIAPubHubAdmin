@@ -6,7 +6,7 @@ before_install:
     - sudo apt-get install unixodbc unixodbc-dev
     - npm install
     - npm install -g mocha
-    - npm run-script start &&
+    - npm run-script start &
 script:
   - npm run-script build
   - npm run-script test
