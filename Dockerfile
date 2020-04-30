@@ -1,5 +1,4 @@
-FROM node:boron
-MAINTAINER Ganesh Iyer <me@ganeshiyer.net>
+FROM node:carbon
 
 WORKDIR TCIAPubHubAdmin
 
