@@ -1,13 +1,19 @@
-FROM node:boron
-MAINTAINER Ganesh Iyer <me@ganeshiyer.net>
-
-# Clone 
-git clone https://github.com/sharmalab/TCIAPubHubAdmin.git
+FROM node:carbon
 
 WORKDIR TCIAPubHubAdmin
-RUN npm install 
+
+# Clone
+COPY ./ ./
+
+RUN apt-get update
+RUN apt-get -q -y install python-lxml
+
+
+RUN npm install
 RUN npm install -g forever
+RUN npm install -g webpack@3
+RUN webpack
 #RUN forever start bin/www
 
 EXPOSE 3001
-CMD [ "node", "bin/www" ]
+CMD [ "forever", "bin/www" ]
