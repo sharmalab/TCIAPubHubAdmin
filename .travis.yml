@@ -4,4 +4,8 @@ node_js:
     - "7"
 before_install:
     - sudo apt-get install unixodbc unixodbc-dev
-script: webpack
+    - npm install
+    - cp config.js.example config.js
+    - sudo pip install lxml
+script:
+  - webpack

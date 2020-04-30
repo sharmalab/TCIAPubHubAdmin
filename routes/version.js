@@ -283,10 +283,9 @@ router.post("/api/uploadFile", function(req, res, next) {
         superagent
           .post(bindaas_addVersionURL + "?api_key=" + bindaas_api_key)
           .send(version_payLoad)
-          .end(function(version_res) {
-            if (version_res.statusCode != 200) {
-              console.log("Error");
-              return res.status(500).send("Error");
+          .end(function(v_err, version_res) {
+            if (v_err && v_err.statusCode >305){
+              return res.status(500).send(JSON.stringify(v_err));
             } else {
               return res.json({ resources: resources });
             }

@@ -165,6 +165,7 @@ function createJSON(formdata) {
         identifierType: "DOI"
       }
     },
+    resourceType: {ATTR:{resourceTypeGeneral:"Dataset"}},
     creators: creators,
     titles: titles,
     publisher: "The Cancer Imaging Archive",
@@ -312,7 +313,6 @@ router.post("/api/createDOI", function(req, res) {
 
   metadata += "_target: " + URL + "\n";
   var pyjson = JSON.stringify(createJSON(form_data));
-
   var python = child_process.exec("python pyutilities/json2xml.py");
 
   var xmlManifest = "<?xml version='1.0' encoding='utf-8'?>";
@@ -334,7 +334,7 @@ router.post("/api/createDOI", function(req, res) {
           "XML document generated from the match doesn't match the schema"
         );
     metadata += "datacite: " + pyxml;
-    //console.log(metadata);
+    winston.log("info",metadata);
     var bindaas_url = bindaas_postDOIMetadata + "?api_key=" +
       bindaas_api_key;
     superagent
@@ -342,9 +342,9 @@ router.post("/api/createDOI", function(req, res) {
       .send(form_data)
       .end(function(form_err, form_res) {
         //posting to bindaas
-        if (form_err.statusCode || !form_err) {
+        if (!(form_err && form_err.statusCode>305)) {
           superagent
-            .put("https://ezid.cdlib.org/id/doi:" + DOI_STR)
+            .put("https://ez.datacite.org/id/doi:" + DOI_STR)
             .auth(username, password)
             .set("Content-Type", "text/plain")
             .send(metadata)
@@ -352,7 +352,7 @@ router.post("/api/createDOI", function(req, res) {
               //posting to ezid
               winston.log("error", err);
               if (err) {
-                return res.status(400).send("Error posting to EZID");
+                return res.status(400).send("Error posting to DataCite!!");
               }
               console.log(ezid_res.statusCode);
               return res.json({
@@ -360,7 +360,7 @@ router.post("/api/createDOI", function(req, res) {
               });
             });
         } else {
-          winston.log("error", err);
+          winston.log("error", form_err);
           return res.status(400).send("Error posting to Bindaas");
         }
       });
@@ -370,6 +370,63 @@ router.post("/api/createDOI", function(req, res) {
   python.stdin.end();
 });
 
+router.post("/api/checkmetadataa", function(req, res) {
+
+
+  var form_data = req.body.formData;
+
+  var mongo_data = JSON.parse(JSON.stringify(form_data));
+
+  var resources = req.body.resources;
+  resources = {
+    resources: resources
+  };
+  form_data = getFormData(form_data);
+  authors_str = form_data.authors.toString();
+
+  var DOI = form_data.doi;
+  var DOI_STR = DOI;
+  var URL = form_data.url;
+
+  form_data.url = URL;
+  form_data.doi = DOI;
+
+  resources.doi = form_data.doi;
+  if (!checkRequiredFields(form_data)) {
+    return res.status(400).send("Missing required fields in the form");
+  }
+
+  var metadata = "";
+
+  metadata += "_target: " + URL + "\n";    winston.log("info",metadata);
+  var pyjson = JSON.stringify(createJSON(form_data));
+  var python = child_process.exec("python pyutilities/json2xml.py");
+
+  var xmlManifest = "<?xml version='1.0' encoding='utf-8'?>";
+  var pyxml = xmlManifest;
+  python.stdout.on("data", function(data) {
+    //console.log(data);console.log('..');
+    pyxml += data.toString("utf-8");
+  });
+  var pyError = false;
+  python.stderr.on("data", function(data) {
+    winston.log("error", data.toString());
+    pyError = true;
+  });
+  python.on("exit", function(code) {
+    if (pyError){
+      res.status(500).send("ERROR with python")
+    }
+    metadata += "datacite: " + pyxml;
+    winston.log("info",metadata);
+     return res.send(metadata);
+
+
+  });
+
+  python.stdin.write(pyjson);
+  python.stdin.end();
+});
 
 router.get("/api/getCitation", function(req, res) {
   var doi = req.query.doi;
